@@ -35,6 +35,10 @@ int main()
 	quad.init("quad");*/
 
 
+	LEti::Resource_Loader::load_object("colliding_object", "Resources/Models/colliding_object.mdl");
+	LEti::Object coll_obj;
+	coll_obj.init("colliding_object");
+
 
 
 	LEti::Resource_Loader::load_object("pyramid", "Resources/Models/pyramid.mdl");
@@ -44,23 +48,12 @@ int main()
 
 
 
-	float pm_coords[36] =
-	{
-		0, 1, 0,	0, 0, 0,	0, 0, 1,	//A D C
-
-		0, 1, 0,	1, 0, 0,	0, 0, 1,	//A B C
-
-		0, 1, 0,	1, 0, 0,	0, 0, 0,	//A C D
-
-		0, 0, 1,	1, 0, 0,	0, 0, 0		//C B D
-	};
-
 	glm::mat4x4 move
 	(
 		1.0f, 0.0f, 0.0f, 0.0f,
 		0.0f, 1.0f, 0.0f, 0.0f,
 		0.0f, 0.0f, 1.0f, 0.0f,
-		0.0f, 4.0f, 0.0f, 1.0f
+		0.0f, 0.0f, 0.0f, 1.0f
 	);
 
 	glm::mat4x4 kostyl_matrix
@@ -71,14 +64,15 @@ int main()
 		0.0f, 0.0f, 0.0f, 1.0f
 	);
 
+	glm::vec3 point(0.3f, 0.3f, 0.3f);
+
 	LEti::Physical_Model pm;
 	pm.setup(LEti::Resource_Loader::get_data<float>("pyramid", "coords").first, 36);
 	pm.update(move, kostyl_matrix, kostyl_matrix);
-
-	std::cout << pm.is_intersecting_with_point({ 0.3f, 4.3f, 0.3f });
-
+	std::cout << pm.is_intersecting_with_point(point) << "\n";
 
 
+	std::cout.precision(1);
 
 
 	while (!LEti::Event_Controller::window_should_close())
@@ -92,16 +86,39 @@ int main()
 		LEti::Camera::update(false, true);
 
 		if (LEti::Event_Controller::key_was_pressed(GLFW_KEY_LEFT))
+		{
 			pyramid.move(-0.1f, 0.0f, 0.0f);
+			move[3][0] -= 0.1f;
+			pm.update(move, kostyl_matrix, kostyl_matrix);
+			std::cout /*<< std::fixed << move[3][0] << ' ' << move[3][2] << '\t'*/ << pm.is_intersecting_with_point(point) << "\n";
+		}
 		if (LEti::Event_Controller::key_was_pressed(GLFW_KEY_RIGHT))
+		{
 			pyramid.move(0.1f, 0.0f, 0.0f);
+			move[3][0] += 0.1f;
+			pm.update(move, kostyl_matrix, kostyl_matrix);
+			std::cout /*<< std::fixed << move[3][0] << ' ' << move[3][2] << '\t'*/ << pm.is_intersecting_with_point(point) << "\n";
+		}
 		if (LEti::Event_Controller::key_was_pressed(GLFW_KEY_DOWN))
+		{
 			pyramid.move(0.0f, 0.0f, 0.1f);
+			move[3][2] += 0.1f;
+			pm.update(move, kostyl_matrix, kostyl_matrix);
+			std::cout /*<< std::fixed << move[3][0] << ' ' << move[3][2] << '\t'*/ << pm.is_intersecting_with_point(point) << "\n";
+		}
 		if (LEti::Event_Controller::key_was_pressed(GLFW_KEY_UP))
+		{
 			pyramid.move(0.0f, 0.0f, -0.1f);
+			move[3][2] -= 0.1f;
+			pm.update(move, kostyl_matrix, kostyl_matrix);
+			std::cout /*<< std::fixed << move[3][0] << ' ' << move[3][2] << '\t'*/ << pm.is_intersecting_with_point(point) << "\n";
+		}
+
+
 
 		// quad.draw();
 		pyramid.draw();
+		coll_obj.draw();
 
 		LEti::Event_Controller::swap_buffers();
 	}
