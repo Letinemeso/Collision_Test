@@ -5,6 +5,9 @@
 
 #include "Object.h"
 
+#include "Physical_Model.h"
+
+
 int main()
 {
 	LEti::Event_Controller::init_and_create_window(1200, 800, "Board Game");
@@ -12,6 +15,9 @@ int main()
 	glEnable(GL_BLEND);
 	glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 	glEnable(GL_DEPTH_TEST);
+
+	glEnable(GL_CULL_FACE);
+	glCullFace(GL_CW);
 
 	LEti::Shader::init_shader("resources/shaders/vertex_shader.shader", "resources/shaders/fragment_shader.shader");
 	ASSERT(!LEti::Shader::is_valid());
@@ -28,9 +34,52 @@ int main()
 	LEti::Object quad;
 	quad.init("quad");*/
 
+
+
+
 	LEti::Resource_Loader::load_object("pyramid", "Resources/Models/pyramid.mdl");
 	LEti::Object pyramid;
 	pyramid.init("pyramid");
+
+
+
+
+	float pm_coords[36] =
+	{
+		0, 1, 0,	0, 0, 0,	0, 0, 1,	//A D C
+
+		0, 1, 0,	1, 0, 0,	0, 0, 1,	//A B C
+
+		0, 1, 0,	1, 0, 0,	0, 0, 0,	//A C D
+
+		0, 0, 1,	1, 0, 0,	0, 0, 0		//C B D
+	};
+
+	glm::mat4x4 move
+	(
+		1.0f, 0.0f, 0.0f, 0.0f,
+		0.0f, 1.0f, 0.0f, 0.0f,
+		0.0f, 0.0f, 1.0f, 0.0f,
+		0.0f, 4.0f, 0.0f, 1.0f
+	);
+
+	glm::mat4x4 kostyl_matrix
+	(
+		1.0f, 0.0f, 0.0f, 0.0f,
+		0.0f, 1.0f, 0.0f, 0.0f,
+		0.0f, 0.0f, 1.0f, 0.0f,
+		0.0f, 0.0f, 0.0f, 1.0f
+	);
+
+	LEti::Physical_Model pm;
+	pm.setup(LEti::Resource_Loader::get_data<float>("pyramid", "coords").first, 36);
+	pm.update(move, kostyl_matrix, kostyl_matrix);
+
+	std::cout << pm.is_intersecting_with_point({ 0.3f, 4.3f, 0.3f });
+
+
+
+
 
 	while (!LEti::Event_Controller::window_should_close())
 	{
