@@ -4,6 +4,7 @@
 #include "Resource_Loader.h"
 
 #include "Object.h"
+#include "Text_Field.h"
 
 #include "Physical_Model.h"
 
@@ -25,7 +26,7 @@ int main()
 	LEti::Shader::set_transform_matrix_uniform_name("transform_matrix");
 	LEti::Shader::set_projection_matrix_uniform_name("projection_matrix");
 
-	// LEti::Camera::setup_orthographic_matrix();
+    LEti::Camera::setup_orthographic_matrix();
 
     LEti::Camera::set_fov_and_max_distance(LEti::Utility::QUARTER_PI, 50.0f);
 	LEti::Camera::set_camera_data({ 0.0f, 2.0f, 2.0f }, { 0.0f, -2.0f, -1.0f });
@@ -38,6 +39,10 @@ int main()
 	LEti::Resource_Loader::load_object("colliding_object", "Resources/Models/colliding_object.mdl");
 	LEti::Object coll_obj;
 	coll_obj.init("colliding_object");
+
+    auto static_pm_data = LEti::Resource_Loader::get_data<float>("colliding_object", "coords");
+    LEti::Physical_Model static_pm;
+    static_pm.setup(static_pm_data.first, static_pm_data.second);
 
 
 
@@ -69,12 +74,23 @@ int main()
 	LEti::Physical_Model pm;
 	pm.setup(LEti::Resource_Loader::get_data<float>("pyramid", "coords").first, 36);
 	pm.update(move, kostyl_matrix, kostyl_matrix);
-	std::cout << pm.is_intersecting_with_point(point) << "\n";
+//	std::cout << pm.is_intersecting_with_point(point) << "\n";
 
+    static_pm.update(kostyl_matrix, kostyl_matrix, kostyl_matrix);
+
+
+
+    LEti::Resource_Loader::load_object("text_field", "Resources/Models/text_field.mdl");
+    LEti::Text_Field intersection_info_block;
+    intersection_info_block.init("text_field");
+
+    bool intersection_detected = pm.is_intersecting_with_another_model(static_pm);
+    if(intersection_detected)
+        intersection_info_block.set_text("Intersection detected");
+    else
+        intersection_info_block.set_text("Intersection not detected");
 
 	std::cout.precision(1);
-
-
 	while (!LEti::Event_Controller::window_should_close())
 	{
 		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
@@ -90,37 +106,52 @@ int main()
 			pyramid.move(-0.1f, 0.0f, 0.0f);
 			move[3][0] -= 0.1f;
 			pm.update(move, kostyl_matrix, kostyl_matrix);
-			std::cout /*<< std::fixed << move[3][0] << ' ' << move[3][2] << '\t'*/ << pm.is_intersecting_with_point(point) << "\n";
+//			std::cout /*<< std::fixed << move[3][0] << ' ' << move[3][2] << '\t'*/ << pm.is_intersecting_with_point(point) << "\n";
 		}
 		if (LEti::Event_Controller::key_was_pressed(GLFW_KEY_RIGHT))
 		{
 			pyramid.move(0.1f, 0.0f, 0.0f);
 			move[3][0] += 0.1f;
             pm.update(move, kostyl_matrix, kostyl_matrix);
-            std::cout /*<< std::fixed << move[3][0] << ' ' << move[3][2] << '\t'*/ << pm.is_intersecting_with_point(point) << "\n";
+//            std::cout /*<< std::fixed << move[3][0] << ' ' << move[3][2] << '\t'*/ << pm.is_intersecting_with_point(point) << "\n";
 		}
 		if (LEti::Event_Controller::key_was_pressed(GLFW_KEY_DOWN))
 		{
 			pyramid.move(0.0f, 0.0f, 0.1f);
 			move[3][2] += 0.1f;
 			pm.update(move, kostyl_matrix, kostyl_matrix);
-            std::cout /*<< std::fixed << move[3][0] << ' ' << move[3][2] << '\t'*/ << pm.is_intersecting_with_point(point) << "\n";
+//            std::cout /*<< std::fixed << move[3][0] << ' ' << move[3][2] << '\t'*/ << pm.is_intersecting_with_point(point) << "\n";
 		}
 		if (LEti::Event_Controller::key_was_pressed(GLFW_KEY_UP))
 		{
 			pyramid.move(0.0f, 0.0f, -0.1f);
 			move[3][2] -= 0.1f;
 			pm.update(move, kostyl_matrix, kostyl_matrix);
-            std::cout /*<< std::fixed << move[3][0] << ' ' << move[3][2] << '\t'*/ << pm.is_intersecting_with_point(point) << "\n";
+//            std::cout /*<< std::fixed << move[3][0] << ' ' << move[3][2] << '\t'*/ << pm.is_intersecting_with_point(point) << "\n";
 		}
 
-        std::cout << "look intersection: " << pm.is_intersecting_with_beam(LEti::Camera::get_pos(), LEti::Camera::get_look_direction()) << "\n";
+//        std::cout << pm.is_intersecting_with_another_model(static_pm) << '\n';
+
+        if(pm.is_intersecting_with_another_model(static_pm) && !intersection_detected)
+        {
+            intersection_info_block.set_text("Intersection detected");
+            intersection_detected = true;
+        }
+        else if(!pm.is_intersecting_with_another_model(static_pm) && intersection_detected)
+        {
+            intersection_info_block.set_text("Intersection not detected");
+            intersection_detected = false;
+        }
+
+//        std::cout << "look intersection: " << pm.is_intersecting_with_beam(LEti::Camera::get_pos(), LEti::Camera::get_look_direction()) << "\n";
 
 
 
 		// quad.draw();
 		pyramid.draw();
 		coll_obj.draw();
+
+        intersection_info_block.draw();
 
 		LEti::Event_Controller::swap_buffers();
 	}
