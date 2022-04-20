@@ -19,7 +19,7 @@ int main()
 	glEnable(GL_CULL_FACE);
 	glCullFace(GL_CW);
 
-	LEti::Shader::init_shader("resources/shaders/vertex_shader.shader", "resources/shaders/fragment_shader.shader");
+    LEti::Shader::init_shader("Resources/Shaders/vertex_shader.shader", "Resources/Shaders/fragment_shader.shader");
 	ASSERT(!LEti::Shader::is_valid());
 	LEti::Shader::set_texture_uniform_name("input_texture");
 	LEti::Shader::set_transform_matrix_uniform_name("transform_matrix");
@@ -27,7 +27,7 @@ int main()
 
 	// LEti::Camera::setup_orthographic_matrix();
 
-	LEti::Camera::set_fov_and_max_distance(LEti::Utility::HALF_PI, 50.0f);
+    LEti::Camera::set_fov_and_max_distance(LEti::Utility::QUARTER_PI, 50.0f);
 	LEti::Camera::set_camera_data({ 0.0f, 2.0f, 2.0f }, { 0.0f, -2.0f, -1.0f });
 
 	/*LEti::Resource_Loader::load_object("quad", "resources/models/quad.mdl");
@@ -96,23 +96,25 @@ int main()
 		{
 			pyramid.move(0.1f, 0.0f, 0.0f);
 			move[3][0] += 0.1f;
-			pm.update(move, kostyl_matrix, kostyl_matrix);
-			std::cout /*<< std::fixed << move[3][0] << ' ' << move[3][2] << '\t'*/ << pm.is_intersecting_with_point(point) << "\n";
+            pm.update(move, kostyl_matrix, kostyl_matrix);
+            std::cout /*<< std::fixed << move[3][0] << ' ' << move[3][2] << '\t'*/ << pm.is_intersecting_with_point(point) << "\n";
 		}
 		if (LEti::Event_Controller::key_was_pressed(GLFW_KEY_DOWN))
 		{
 			pyramid.move(0.0f, 0.0f, 0.1f);
 			move[3][2] += 0.1f;
 			pm.update(move, kostyl_matrix, kostyl_matrix);
-			std::cout /*<< std::fixed << move[3][0] << ' ' << move[3][2] << '\t'*/ << pm.is_intersecting_with_point(point) << "\n";
+            std::cout /*<< std::fixed << move[3][0] << ' ' << move[3][2] << '\t'*/ << pm.is_intersecting_with_point(point) << "\n";
 		}
 		if (LEti::Event_Controller::key_was_pressed(GLFW_KEY_UP))
 		{
 			pyramid.move(0.0f, 0.0f, -0.1f);
 			move[3][2] -= 0.1f;
 			pm.update(move, kostyl_matrix, kostyl_matrix);
-			std::cout /*<< std::fixed << move[3][0] << ' ' << move[3][2] << '\t'*/ << pm.is_intersecting_with_point(point) << "\n";
+            std::cout /*<< std::fixed << move[3][0] << ' ' << move[3][2] << '\t'*/ << pm.is_intersecting_with_point(point) << "\n";
 		}
+
+        std::cout << "look intersection: " << pm.is_intersecting_with_beam(LEti::Camera::get_pos(), LEti::Camera::get_look_direction()) << "\n";
 
 
 
