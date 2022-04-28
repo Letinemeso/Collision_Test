@@ -28,13 +28,14 @@ int main()
 
     LEti::Camera::setup_orthographic_matrix();
 
-    LEti::Camera::set_fov_and_max_distance(LEti::Utility::QUARTER_PI, 50.0f);
+    LEti::Camera::set_fov_and_max_distance(LEti::Utility::HALF_PI, 50.0f);
 	LEti::Camera::set_camera_data({ 0.0f, 2.0f, 2.0f }, { 0.0f, -2.0f, -1.0f });
 
 	/*LEti::Resource_Loader::load_object("quad", "resources/models/quad.mdl");
 	LEti::Object quad;
 	quad.init("quad");*/
 
+    LEti::Resource_Loader::load_object("textures", "Resources/Textures/textures.mdl");
 
 	LEti::Resource_Loader::load_object("colliding_object", "Resources/Models/colliding_object.mdl");
 	LEti::Object coll_obj;
@@ -72,7 +73,7 @@ int main()
 	glm::vec3 point(0.3f, 0.3f, 0.3f);
 
 	LEti::Physical_Model pm;
-	pm.setup(LEti::Resource_Loader::get_data<float>("pyramid", "coords").first, 36);
+    pm.setup(LEti::Resource_Loader::get_data<float>("pyramid", "coords").first, 72);
 	pm.update(move, kostyl_matrix, kostyl_matrix);
 //	std::cout << pm.is_intersecting_with_point(point) << "\n";
 
@@ -129,15 +130,29 @@ int main()
 			pm.update(move, kostyl_matrix, kostyl_matrix);
 //            std::cout /*<< std::fixed << move[3][0] << ' ' << move[3][2] << '\t'*/ << pm.is_intersecting_with_point(point) << "\n";
 		}
+        if (LEti::Event_Controller::key_was_pressed(GLFW_KEY_I))
+        {
+            pyramid.move(0.0f, 0.1f, 0.0f);
+            move[3][1] += 0.1f;
+            pm.update(move, kostyl_matrix, kostyl_matrix);
+//            std::cout /*<< std::fixed << move[3][0] << ' ' << move[3][2] << '\t'*/ << pm.is_intersecting_with_point(point) << "\n";
+        }
+        if (LEti::Event_Controller::key_was_pressed(GLFW_KEY_K))
+        {
+            pyramid.move(0.0f, -0.1f, 0.0f);
+            move[3][1] -= 0.1f;
+            pm.update(move, kostyl_matrix, kostyl_matrix);
+//            std::cout /*<< std::fixed << move[3][0] << ' ' << move[3][2] << '\t'*/ << pm.is_intersecting_with_point(point) << "\n";
+        }
 
 //        std::cout << pm.is_intersecting_with_another_model(static_pm) << '\n';
 
-        if(pm.is_intersecting_with_another_model(static_pm) && !intersection_detected)
+        if(static_pm.is_intersecting_with_another_model(pm) && !intersection_detected)
         {
             intersection_info_block.set_text("Intersection detected");
             intersection_detected = true;
         }
-        else if(!pm.is_intersecting_with_another_model(static_pm) && intersection_detected)
+        else if(!static_pm.is_intersecting_with_another_model(pm) && intersection_detected)
         {
             intersection_info_block.set_text("Intersection not detected");
             intersection_detected = false;
