@@ -6,7 +6,7 @@
 #include "Object.h"
 #include "Text_Field.h"
 
-#include "Physical_Model.h"
+#include "Physical_Model_3D.h"
 
 
 int main()
@@ -40,8 +40,9 @@ int main()
 	coll_obj.init("colliding_object");
 
     auto static_pm_data = LEti::Resource_Loader::get_data<float>("colliding_object", "coords");
-    LEti::Physical_Model static_pm;
-    static_pm.setup(static_pm_data.first, static_pm_data.second);
+//    LEti::Physical_Model_3D static_pm;
+    LEti::Physical_Model_Interface* static_pm = new LEti::Physical_Model_3D;
+    static_pm->setup(static_pm_data.first, static_pm_data.second);
 
 
 
@@ -70,12 +71,12 @@ int main()
 
 	glm::vec3 point(0.3f, 0.3f, 0.3f);
 
-	LEti::Physical_Model pm;
+    LEti::Physical_Model_3D pm;
     pm.setup(LEti::Resource_Loader::get_data<float>("pyramid", "coords").first, 72);
 	pm.update(move, kostyl_matrix, kostyl_matrix);
 //	std::cout << pm.is_intersecting_with_point(point) << "\n";
 
-    static_pm.update(kostyl_matrix, kostyl_matrix, kostyl_matrix);
+    static_pm->update(kostyl_matrix, kostyl_matrix, kostyl_matrix);
 
 
 
@@ -83,7 +84,7 @@ int main()
     LEti::Text_Field intersection_info_block;
     intersection_info_block.init("text_field");
 
-    bool intersection_detected = pm.is_intersecting_with_another_model(static_pm);
+    bool intersection_detected = static_pm->is_intersecting_with_another_model(pm);
     if(intersection_detected)
         intersection_info_block.set_text("Intersection detected");
     else
@@ -145,12 +146,12 @@ int main()
 
 //        std::cout << pm.is_intersecting_with_another_model(static_pm) << '\n';
 
-        if(static_pm.is_intersecting_with_another_model(pm) && !intersection_detected)
+        if(static_pm->is_intersecting_with_another_model(pm) && !intersection_detected)
         {
             intersection_info_block.set_text("Intersection detected");
             intersection_detected = true;
         }
-        else if(!static_pm.is_intersecting_with_another_model(pm) && intersection_detected)
+        else if(!static_pm->is_intersecting_with_another_model(pm) && intersection_detected)
         {
             intersection_info_block.set_text("Intersection not detected");
             intersection_detected = false;
@@ -168,6 +169,8 @@ int main()
 
 		LEti::Event_Controller::swap_buffers();
 	}
+
+    delete static_pm;
 
 	return 0;
 }
