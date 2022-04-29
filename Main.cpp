@@ -31,9 +31,7 @@ int main()
     LEti::Camera::set_fov_and_max_distance(LEti::Utility::HALF_PI, 50.0f);
 	LEti::Camera::set_camera_data({ 0.0f, 2.0f, 2.0f }, { 0.0f, -2.0f, -1.0f });
 
-	/*LEti::Resource_Loader::load_object("quad", "resources/models/quad.mdl");
-	LEti::Object quad;
-	quad.init("quad");*/
+    LEti::Resource_Loader::init();
 
     LEti::Resource_Loader::load_object("textures", "Resources/Textures/textures.mdl");
 
