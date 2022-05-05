@@ -9,6 +9,21 @@
 #include "Physical_Model_3D.h"
 #include "Physical_Model_2D.h"
 
+#include "Message_Translator.h"
+
+struct On_Button_Pressed_Msg : LEti::Message_Base
+{
+    DEFINE_TYPE("obpf");
+    char btn = 0;
+    On_Button_Pressed_Msg(char _btn) : btn(_btn) { }
+};
+
+void print_some_shit_om_btn_pressed(const LEti::Message_Base& _msg)
+{
+    const On_Button_Pressed_Msg& msg = (On_Button_Pressed_Msg&)_msg;
+
+    std::cout << msg.btn << '\n';
+}
 
 int main()
 {
@@ -33,6 +48,9 @@ int main()
 	LEti::Camera::set_camera_data({ 0.0f, 2.0f, 2.0f }, { 0.0f, -2.0f, -1.0f });
 
     LEti::Resource_Loader::init();
+
+    LEti::Message_Translator::register_message_type<On_Button_Pressed_Msg>();
+    LEti::Message_Translator::subscribe(On_Button_Pressed_Msg::type(), print_some_shit_om_btn_pressed);
 
     LEti::Resource_Loader::load_object("textures", "Resources/Textures/textures.mdl");
 
@@ -184,12 +202,14 @@ int main()
 		}
         if (LEti::Event_Controller::key_was_pressed(GLFW_KEY_I))
         {
+            LEti::Message_Translator::publish(On_Button_Pressed_Msg('I'));
 //            pyramid.move(0.0f, 0.1f, 0.0f);
 //            move[3][1] += 0.1f;
 //            pm.update(move, kostyl_matrix, kostyl_matrix);
         }
         if (LEti::Event_Controller::key_was_pressed(GLFW_KEY_K))
         {
+            LEti::Message_Translator::publish(On_Button_Pressed_Msg('K'));
 //            pyramid.move(0.0f, -0.1f, 0.0f);
 //            move[3][1] -= 0.1f;
 //            pm.update(move, kostyl_matrix, kostyl_matrix);
