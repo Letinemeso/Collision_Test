@@ -14,16 +14,9 @@
 struct On_Button_Pressed_Msg : LEti::Message_Base
 {
     DEFINE_TYPE("obpf");
-    char btn = 0;
-    On_Button_Pressed_Msg(char _btn) : btn(_btn) { }
+    unsigned int btn = 0;
+    On_Button_Pressed_Msg(unsigned int _btn) : btn(_btn) { }
 };
-
-void print_some_shit_om_btn_pressed(const LEti::Message_Base& _msg)
-{
-    const On_Button_Pressed_Msg& msg = (On_Button_Pressed_Msg&)_msg;
-
-    std::cout << msg.btn << '\n';
-}
 
 int main()
 {
@@ -50,7 +43,7 @@ int main()
     LEti::Resource_Loader::init();
 
     LEti::Message_Translator::register_message_type<On_Button_Pressed_Msg>();
-    LEti::Message_Translator::subscribe(On_Button_Pressed_Msg::type(), print_some_shit_om_btn_pressed);
+//    LEti::Message_Translator::subscribe(On_Button_Pressed_Msg::type(), print_some_shit_om_btn_pressed);
 
     LEti::Resource_Loader::load_object("textures", "Resources/Textures/textures.mdl");
 
@@ -151,6 +144,22 @@ int main()
     LEti::Text_Field intersection_info_block;
     intersection_info_block.init("text_field");
 
+    LEti::Message_Translator::subscribe(On_Button_Pressed_Msg::type(), [&](const LEti::Message_Base& _msg)
+    {
+        const On_Button_Pressed_Msg& msg = (On_Button_Pressed_Msg&)_msg;
+
+        if(msg.btn == GLFW_KEY_LEFT)
+        {
+            co_2d_2.move(-25, 0, 0);
+            move[3][0] -= 25;
+        }
+        if(msg.btn == GLFW_KEY_RIGHT)
+        {
+            co_2d_2.move(25, 0, 0);
+            move[3][0] += 25;
+        }
+    });
+
     bool intersection_detected = false;
     if(intersection_detected)
         intersection_info_block.set_text("Intersection detected");
@@ -173,16 +182,18 @@ int main()
 //			move[3][0] -= 0.1f;
 //			pm.update(move, kostyl_matrix, kostyl_matrix);
 
-            co_2d_2.move(-25, 0, 0);
-            move[3][0] -= 25;
+//            co_2d_2.move(-25, 0, 0);
+//            move[3][0] -= 25;
+            LEti::Message_Translator::publish(On_Button_Pressed_Msg(GLFW_KEY_LEFT));
 		}
 		if (LEti::Event_Controller::key_was_pressed(GLFW_KEY_RIGHT))
 		{
 //			pyramid.move(0.1f, 0.0f, 0.0f);
 //			move[3][0] += 0.1f;
 //            pm.update(move, kostyl_matrix, kostyl_matrix);
-            co_2d_2.move(25, 0, 0);
-            move[3][0] += 25;
+//            co_2d_2.move(25, 0, 0);
+//            move[3][0] += 25;
+            LEti::Message_Translator::publish(On_Button_Pressed_Msg(GLFW_KEY_RIGHT));
 		}
 		if (LEti::Event_Controller::key_was_pressed(GLFW_KEY_DOWN))
 		{
