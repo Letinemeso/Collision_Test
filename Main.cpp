@@ -11,7 +11,7 @@
 
 #include "Message_Translator.h"
 
-struct On_Button_Pressed_Msg : LEti::Message_Base
+struct On_Button_Pressed_Msg
 {
     DEFINE_TYPE("obpf");
     unsigned int btn = 0;
@@ -144,16 +144,14 @@ int main()
     LEti::Text_Field intersection_info_block;
     intersection_info_block.init("text_field");
 
-    LEti::Message_Translator::subscribe(On_Button_Pressed_Msg::type(), [&](const LEti::Message_Base& _msg)
+    LEti::Message_Translator::subscribe<On_Button_Pressed_Msg>([&](const On_Button_Pressed_Msg& _msg)
     {
-        const On_Button_Pressed_Msg& msg = (On_Button_Pressed_Msg&)_msg;
-
-        if(msg.btn == GLFW_KEY_LEFT)
+        if(_msg.btn == GLFW_KEY_LEFT)
         {
             co_2d_2.move(-25, 0, 0);
             move[3][0] -= 25;
         }
-        if(msg.btn == GLFW_KEY_RIGHT)
+        if(_msg.btn == GLFW_KEY_RIGHT)
         {
             co_2d_2.move(25, 0, 0);
             move[3][0] += 25;
