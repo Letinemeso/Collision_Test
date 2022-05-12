@@ -149,19 +149,21 @@ int main()
     indicator.init("indicator");
     indicator.set_visible(false);
 
-    LEti::Message_Translator::subscribe<On_Button_Pressed_Msg>([&](const On_Button_Pressed_Msg& _msg)
-    {
-        if(_msg.btn == GLFW_KEY_LEFT)
-        {
-            co_2d_2.move(-25, 0, 0);
-            move[3][0] -= 25;
-        }
-        if(_msg.btn == GLFW_KEY_RIGHT)
-        {
-            co_2d_2.move(25, 0, 0);
-            move[3][0] += 25;
-        }
-    });
+//    LEti::Message_Translator::subscribe<On_Button_Pressed_Msg>([&](const On_Button_Pressed_Msg& _msg)
+//    {
+//        if(_msg.btn == GLFW_KEY_LEFT)
+//        {
+//            co_2d_2.move(-25, 0, 0);
+//            move[3][0] -= 25;
+//        }
+//        if(_msg.btn == GLFW_KEY_RIGHT)
+//        {
+//            co_2d_2.move(25, 0, 0);
+//            move[3][0] += 25;
+//        }
+//    });
+
+    float triangle_speed = 50.0f;
 
     bool intersection_detected = false;
     if(intersection_detected)
@@ -179,7 +181,7 @@ int main()
 			LEti::Camera::toggle_controll(LEti::Camera::get_controllable() ? false : true);
 		LEti::Camera::update(false, true);
 
-		if (LEti::Event_Controller::key_was_pressed(GLFW_KEY_LEFT))
+        if (LEti::Event_Controller::is_key_down(GLFW_KEY_LEFT))
 		{
 //			pyramid.move(-0.1f, 0.0f, 0.0f);
 //			move[3][0] -= 0.1f;
@@ -187,57 +189,59 @@ int main()
 
 //            co_2d_2.move(-25, 0, 0);
 //            move[3][0] -= 25;
-            LEti::Message_Translator::publish(On_Button_Pressed_Msg(GLFW_KEY_LEFT));
+            co_2d_2.move(-triangle_speed * LEti::Event_Controller::get_dt(), 0, 0);
+            move[3][0] -= triangle_speed * LEti::Event_Controller::get_dt();
 		}
-		if (LEti::Event_Controller::key_was_pressed(GLFW_KEY_RIGHT))
+        if (LEti::Event_Controller::is_key_down(GLFW_KEY_RIGHT))
 		{
 //			pyramid.move(0.1f, 0.0f, 0.0f);
 //			move[3][0] += 0.1f;
 //            pm.update(move, kostyl_matrix, kostyl_matrix);
 //            co_2d_2.move(25, 0, 0);
 //            move[3][0] += 25;
-            LEti::Message_Translator::publish(On_Button_Pressed_Msg(GLFW_KEY_RIGHT));
+            co_2d_2.move(triangle_speed * LEti::Event_Controller::get_dt(), 0, 0);
+            move[3][0] += triangle_speed * LEti::Event_Controller::get_dt();
 		}
-		if (LEti::Event_Controller::key_was_pressed(GLFW_KEY_DOWN))
+        if (LEti::Event_Controller::is_key_down(GLFW_KEY_DOWN))
 		{
 //			pyramid.move(0.0f, 0.0f, 0.1f);
 //			move[3][2] += 0.1f;
 //			pm.update(move, kostyl_matrix, kostyl_matrix);
-            co_2d_2.move(0, -25, 0);
-            move[3][1] -= 25;
+            co_2d_2.move(0, -triangle_speed * LEti::Event_Controller::get_dt(), 0);
+            move[3][1] -= triangle_speed * LEti::Event_Controller::get_dt();
 		}
-		if (LEti::Event_Controller::key_was_pressed(GLFW_KEY_UP))
+        if (LEti::Event_Controller::is_key_down(GLFW_KEY_UP))
 		{
 //			pyramid.move(0.0f, 0.0f, -0.1f);
 //			move[3][2] -= 0.1f;
 //			pm.update(move, kostyl_matrix, kostyl_matrix);
-            co_2d_2.move(0, 25, 0);
-            move[3][1] += 25;
+            co_2d_2.move(0, triangle_speed * LEti::Event_Controller::get_dt(), 0);
+            move[3][1] += triangle_speed * LEti::Event_Controller::get_dt();
 		}
-        if (LEti::Event_Controller::key_was_pressed(GLFW_KEY_I))
+        if (LEti::Event_Controller::is_key_down(GLFW_KEY_I))
         {
             LEti::Message_Translator::publish(On_Button_Pressed_Msg('I'));
 //            pyramid.move(0.0f, 0.1f, 0.0f);
 //            move[3][1] += 0.1f;
 //            pm.update(move, kostyl_matrix, kostyl_matrix);
         }
-        if (LEti::Event_Controller::key_was_pressed(GLFW_KEY_K))
+        if (LEti::Event_Controller::is_key_down(GLFW_KEY_K))
         {
             LEti::Message_Translator::publish(On_Button_Pressed_Msg('K'));
 //            pyramid.move(0.0f, -0.1f, 0.0f);
 //            move[3][1] -= 0.1f;
 //            pm.update(move, kostyl_matrix, kostyl_matrix);
         }
-        if (LEti::Event_Controller::key_was_pressed(GLFW_KEY_Q))
+        if (LEti::Event_Controller::is_key_down(GLFW_KEY_Q))
         {
-            angle += LEti::Utility::QUARTER_PI / 4.0f;
+            angle += LEti::Utility::QUARTER_PI * LEti::Event_Controller::get_dt();
             co_2d_2.set_rotation_axis(axis.x, axis.y, axis.z);
             co_2d_2.set_rotation_angle(angle);
             rotation = glm::rotate(angle, axis);
         }
-        if (LEti::Event_Controller::key_was_pressed(GLFW_KEY_E))
+        if (LEti::Event_Controller::is_key_down(GLFW_KEY_E))
         {
-            angle -= LEti::Utility::QUARTER_PI / 4.0f;
+            angle -= LEti::Utility::QUARTER_PI * LEti::Event_Controller::get_dt();
             co_2d_2.set_rotation_axis(axis.x, axis.y, axis.z);
             co_2d_2.set_rotation_angle(angle);
             rotation = glm::rotate(angle, axis);
@@ -246,48 +250,15 @@ int main()
 //        auto pos = co_2d_2.get_pos();
         co_2d_fm_2->update(move, fake_size, rotation);
 
-//        if(static_pm->is_intersecting_with_another_model(pm) && !intersection_detected)
-//        {
-//            intersection_info_block.set_text("Intersection detected");
-//            intersection_detected = true;
-//        }
-//        else if(!static_pm->is_intersecting_with_another_model(pm) && intersection_detected)
-//        {
-//            intersection_info_block.set_text("Intersection not detected");
-//            intersection_detected = false;
-//        }
-
         LEti::Physical_Model_Interface::Intersection_Data id = co_2d_fm_2->is_intersecting_with_another_model(*co_2d_fm);
-//        if(id && !intersection_detected)
-//        {
-//            std::string intersection_message("detected ");
-//            if(id.type == LEti::Physical_Model_Interface::Intersection_Data::Intersection_Type::inside)
-//                intersection_message += "PM is fully inside";
-//            else if(id.type == LEti::Physical_Model_Interface::Intersection_Data::Intersection_Type::partly_outside)
-//            {
-//                intersection_message += "intsc crds ";
-//                intersection_message += std::to_string(id.closest_intersection_point.x);
-//                intersection_message += ' ';
-//                intersection_message += std::to_string(id.closest_intersection_point.y);
-//                intersection_message += ' ';
-//                intersection_message += std::to_string(id.closest_intersection_point.z);
-//            }
 
-//            intersection_info_block.set_text(/*"Intersection detected"*/ intersection_message.c_str());
-//            intersection_detected = true;
-//        }
-//        else if(!id && intersection_detected)
-//        {
-//            intersection_info_block.set_text("Intersection not detected");
-//            intersection_detected = false;
-//        }
         indicator.set_visible(false);
         std::string intersection_message;
         if(id.type == LEti::Physical_Model_Interface::Intersection_Data::Intersection_Type::inside)
             intersection_message += "PM is fully inside";
         else if(id.type == LEti::Physical_Model_Interface::Intersection_Data::Intersection_Type::partly_outside)
         {
-            intersection_message += "intsc crds ";
+            intersection_message += "intersection at ";
             intersection_message += std::to_string(id.closest_intersection_point.x);
             intersection_message += ' ';
             intersection_message += std::to_string(id.closest_intersection_point.y);
