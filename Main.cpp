@@ -144,6 +144,11 @@ int main()
     LEti::Text_Field intersection_info_block;
     intersection_info_block.init("text_field");
 
+    LEti::Resource_Loader::load_object("indicator", "Resources/Models/intersection_point_indicator.mdl");
+    LEti::Object indicator;
+    indicator.init("indicator");
+    indicator.set_visible(false);
+
     LEti::Message_Translator::subscribe<On_Button_Pressed_Msg>([&](const On_Button_Pressed_Msg& _msg)
     {
         if(_msg.btn == GLFW_KEY_LEFT)
@@ -252,23 +257,57 @@ int main()
 //            intersection_detected = false;
 //        }
 
-        if(co_2d_fm_2->is_intersecting_with_another_model(*co_2d_fm) && !intersection_detected)
+        LEti::Physical_Model_Interface::Intersection_Data id = co_2d_fm_2->is_intersecting_with_another_model(*co_2d_fm);
+//        if(id && !intersection_detected)
+//        {
+//            std::string intersection_message("detected ");
+//            if(id.type == LEti::Physical_Model_Interface::Intersection_Data::Intersection_Type::inside)
+//                intersection_message += "PM is fully inside";
+//            else if(id.type == LEti::Physical_Model_Interface::Intersection_Data::Intersection_Type::partly_outside)
+//            {
+//                intersection_message += "intsc crds ";
+//                intersection_message += std::to_string(id.closest_intersection_point.x);
+//                intersection_message += ' ';
+//                intersection_message += std::to_string(id.closest_intersection_point.y);
+//                intersection_message += ' ';
+//                intersection_message += std::to_string(id.closest_intersection_point.z);
+//            }
+
+//            intersection_info_block.set_text(/*"Intersection detected"*/ intersection_message.c_str());
+//            intersection_detected = true;
+//        }
+//        else if(!id && intersection_detected)
+//        {
+//            intersection_info_block.set_text("Intersection not detected");
+//            intersection_detected = false;
+//        }
+        indicator.set_visible(false);
+        std::string intersection_message;
+        if(id.type == LEti::Physical_Model_Interface::Intersection_Data::Intersection_Type::inside)
+            intersection_message += "PM is fully inside";
+        else if(id.type == LEti::Physical_Model_Interface::Intersection_Data::Intersection_Type::partly_outside)
         {
-            intersection_info_block.set_text("Intersection detected");
-            intersection_detected = true;
+            intersection_message += "intsc crds ";
+            intersection_message += std::to_string(id.closest_intersection_point.x);
+            intersection_message += ' ';
+            intersection_message += std::to_string(id.closest_intersection_point.y);
+            intersection_message += ' ';
+            intersection_message += std::to_string(id.closest_intersection_point.z);
+            indicator.set_pos(id.closest_intersection_point.x, id.closest_intersection_point.y, id.closest_intersection_point.z);
+            indicator.set_visible(true);
         }
-        else if(!co_2d_fm_2->is_intersecting_with_another_model(*co_2d_fm) && intersection_detected)
-        {
-            intersection_info_block.set_text("Intersection not detected");
-            intersection_detected = false;
-        }
+        else
+            intersection_message += "no intersection";
+        intersection_info_block.set_text(/*"Intersection detected"*/ intersection_message.c_str());
 
 //        std::cout << "look intersection: " << pm.is_intersecting_with_beam(LEti::Camera::get_pos(), LEti::Camera::get_look_direction()) << "\n";
 
 
+        glDisable(GL_DEPTH_TEST);
         co_2d.draw();
         co_2d_2.draw();
 
+        indicator.draw();
 
 		// quad.draw();
 //		pyramid.draw();
