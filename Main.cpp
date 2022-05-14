@@ -93,7 +93,7 @@ int main()
     //////////////////////
 
     LEti::Resource_Loader::load_object("co_2d", "Resources/Models/flat_co.mdl");
-    LEti::Object co_2d;
+    LEti::Object_2D co_2d;
     co_2d.init("co_2d");
 
     auto data = LEti::Resource_Loader::get_data<float>("co_2d", "coords");
@@ -101,7 +101,7 @@ int main()
     co_2d_fm->setup(data.first, data.second);
 
     LEti::Resource_Loader::load_object("co_2d_2", "Resources/Models/flat_co_2.mdl");
-    LEti::Object co_2d_2;
+    LEti::Object_2D co_2d_2;
     co_2d_2.init("co_2d_2");
 
     auto data2 = LEti::Resource_Loader::get_data<float>("co_2d_2", "coords");
@@ -145,7 +145,7 @@ int main()
     intersection_info_block.init("text_field");
 
     LEti::Resource_Loader::load_object("indicator", "Resources/Models/intersection_point_indicator.mdl");
-    LEti::Object indicator;
+    LEti::Object_2D indicator;
     indicator.init("indicator");
     indicator.set_visible(false);
 
