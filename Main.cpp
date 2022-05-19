@@ -44,6 +44,11 @@ int main()
 
     LEti::Resource_Loader::load_object("textures", "Resources/Textures/textures.mdl");
 
+    LEti::Resource_Loader::load_object("cube", "Resources/Models/intersection_indicator_3d.mdl");
+    LEti::Object_3D cube;
+    cube.init("cube");
+    cube.set_visible(false);
+
     ///////////////// 3d collision test
 
     LEti::Resource_Loader::load_object("colliding_object", "Resources/Models/colliding_object.mdl");
@@ -78,11 +83,6 @@ int main()
     LEti::Text_Field intersection_info_block;
     intersection_info_block.init("text_field");
 
-
-    LEti::Object_3D indicator;
-    indicator.init("pyramid");
-    indicator.set_overall_scale(0.1f);
-    indicator.set_visible(false);
 
     float triangle_speed = 0.5f;
 
@@ -144,7 +144,7 @@ int main()
         LEti::Physical_Model_Interface::Intersection_Data id = pyramid.is_colliding_with_other(coll_obj);
 
 
-        indicator.set_visible(false);
+        cube.set_visible(false);
         std::string intersection_message;
         if(id.type == LEti::Physical_Model_Interface::Intersection_Data::Intersection_Type::inside)
             intersection_message += "PM is fully inside";
@@ -156,20 +156,21 @@ int main()
             intersection_message += std::to_string(id.closest_intersection_point.y);
             intersection_message += ' ';
             intersection_message += std::to_string(id.closest_intersection_point.z);
-            indicator.set_pos(id.closest_intersection_point.x, id.closest_intersection_point.y, id.closest_intersection_point.z);
-            indicator.set_visible(true);
+            cube.set_pos(id.closest_intersection_point.x, id.closest_intersection_point.y, id.closest_intersection_point.z);
+            cube.set_visible(true);
         }
         else
             intersection_message += "no intersection";
         intersection_info_block.set_text(intersection_message.c_str());
 
-        indicator.draw();
 
         pyramid.update();
         coll_obj.update();
 
         pyramid.draw();
         coll_obj.draw();
+
+        cube.draw();
 
         intersection_info_block.draw();
 
