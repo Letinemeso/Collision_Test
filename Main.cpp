@@ -202,6 +202,58 @@ struct physical_model
 	physical_model(const vec& _1, const vec& _2, const vec& _3) : p1(_1), p2(_2), p3(_3) { }
 };
 
+struct border_data
+{
+	bool inf = true;
+	float value = 0.0f;
+
+	border_data() { }
+	border_data(float _v) : inf(false), value(_v) { }
+	void operator=(float _v) { value = _v; inf = false; }
+
+	operator bool() const { return !inf; }
+};
+
+struct area_data
+{
+	border_data left, right, top, bottom;
+	std::vector<const physical_model*> models;
+
+	bool point_is_inside(vec _point)
+	{
+		bool result = true;
+		if(left) result = result && left.value < _point.x;
+		if(right) result = result && right.value > _point.x;
+		if(top) result = result && top.value > _point.y;
+		if(bottom) result = result && bottom.value < _point.y;
+		return result;
+	}
+
+	friend std::ostream& operator<<(std::ostream& _stream, const area_data& _data);
+};
+std::ostream& operator<<(std::ostream& _stream, const area_data& _data)
+{
+	_stream << "\ttop border: ";
+	if(_data.top) _stream << _data.top.value; else _stream << "inf";
+	_stream << '\n';
+	_stream << "left border: ";
+	if(_data.left) _stream << _data.left.value; else _stream << "inf";
+	_stream << "   ";
+	_stream << "right border: ";
+	if(_data.right) _stream << _data.right.value; else _stream << "inf";
+	_stream << '\n';
+	_stream << "\tbottom border: ";
+	if(_data.bottom) _stream << _data.bottom.value; else _stream << "inf";
+	_stream << '\n';
+
+	_stream << "list of physical models:\n";
+	for(unsigned int i=0; i<_data.models.size(); ++i)
+		_stream << '\t' << _data.models[i] << '\n';
+
+	return _stream;
+}
+
+
 struct quadratic_border
 {
 	float left, right, top, bottom;
@@ -223,24 +275,21 @@ struct quadratic_border
 		if (top < _pm.p3.y) top = _pm.p3.y;
 		if (bottom > _pm.p3.y) bottom = _pm.p3.y;
 	}
-};
 
-struct border_data
-{
-	bool inf = true;
-	float value = 0.0f;
+	bool is_inside(const area_data& _ad)
+	{
+		bool result = true;
+		if(_ad.left) result = result&& _ad.left.value < right;
+		if(_ad.right) result = result && _ad.right.value > left;
+		if(_ad.top) result = result && _ad.top.value > bottom;
+		if(_ad.bottom) result = result && _ad.bottom.value < top;
+		return result;
+	}
 
-	border_data() { }
-	border_data(float _v) : value(_v) { }
-
-	operator float() { return value; }
-	operator bool() { return inf; }
-};
-
-struct area_data
-{
-	border_data left, right, top, bottom;
-	std::vector<const physical_model*> models;
+	vec left_top() const { return {left, top}; }
+	vec left_bottom() const { return {left, bottom}; }
+	vec right_top() const { return {right, top}; }
+	vec right_bottom() const { return {right, bottom}; }
 };
 
 
@@ -252,10 +301,65 @@ private:
 
 	void split_space(LEti::Tree<area_data, 4>::Iterator it)
 	{
-		const auto& models = (*it).models;
+		const auto& models = it->models;
 		if (models.size() < 3) return;
 
+		for(unsigned int i=0; i<models.size(); ++i)
+		{
+			quadratic_border qb(*models[i]);
 
+			vec split_point{0.0f, 0.0f};
+			if(it->point_is_inside(qb.left_top())) split_point = qb.left_top();
+			else if(it->point_is_inside(qb.left_bottom())) split_point = qb.left_bottom();
+			else if(it->point_is_inside(qb.right_top())) split_point = qb.right_top();
+			else if(it->point_is_inside(qb.right_bottom())) split_point = qb.right_bottom();
+			else continue;
+
+			LEti::Tree<area_data, 4>::Iterator next = it;
+			next.descend(it.insert_into_availible_index({}));
+			next->left = it->left;
+			next->top = it->top;
+			next->right = split_point.x;
+			next->bottom = split_point.y;
+
+			next.ascend();
+			next.descend(it.insert_into_availible_index({}));
+			next->left = split_point.x;
+			next->top = it->top;
+			next->right = it->right;
+			next->bottom = split_point.y;
+
+			next.ascend();
+			next.descend(it.insert_into_availible_index({}));
+			next->left = split_point.x;
+			next->top = split_point.y;
+			next->right = it->right;
+			next->bottom = it->bottom;
+
+			next.ascend();
+			next.descend(it.insert_into_availible_index({}));
+			next->left = it->left;
+			next->top = split_point.y;
+			next->right = split_point.x;
+			next->bottom = it->bottom;
+
+			break;
+		}
+
+		for(unsigned int i=0; i<4; ++i)
+		{
+			LEti::Tree<area_data, 4>::Iterator next = it;
+			next.descend(i);
+
+			for(unsigned int m=0; m<models.size(); ++m)
+			{
+				quadratic_border qb(*models[m]);
+				if(qb.is_inside(*next))
+					next->models.push_back(models[m]);
+			}
+
+			split_space(next);
+		}
 	}
 
 public:
@@ -270,10 +374,15 @@ public:
 		for (unsigned int i = 0; i < m_models.size(); ++i)
 			temp.models.push_back(m_models[i]);
 
-		auto it = m_tree.create_iterator();
+		LEti::Tree<area_data, 4>::Iterator it = m_tree.create_iterator();
+		if(it.valid()) it.delete_branch();
+		it = m_tree.create_iterator();
+
 		it.insert_into_availible_index(temp);
 
+		split_space(it);
 
+		return it;
 	}
 
 };
@@ -286,16 +395,89 @@ int main()
 	//LEti::Tree<int, 3>::Iterator it = tree.create_iterator();
 
 	physical_model pm(
-		{ 1.0f, 3.0f },
-		{ 4.2f, 12.9f },
-		{ 5.7f, 87.3f }
+		{6, 1},
+		{12, 2},
+		{10, 3}
+	);
+	physical_model pm2(
+		{1, 4},
+		{7, 4},
+		{3, 9}
+	);
+	physical_model pm3(
+		{2, 10},
+		{3, 5},
+		{5, 11}
 	);
 
-	quadratic_border qb(pm);
 
-	std::cout << "\t" << qb.top << "\n"
-		<< qb.left << "\t\t" << qb.right
-		<< "\n\t" << qb.bottom << "\n\n";
+	space_splitter ss;
+	ss.register_model(&pm3);
+	ss.register_model(&pm2);
+	ss.register_model(&pm);
+
+	auto it = ss.construct();
+
+	unsigned int i=0;
+	while(!it.end())
+	{
+		std::cout << "area_data #" << i << ":\n\n" << *it << "\n";
+		++it;
+		++i;
+	}
+	std::cout << "area_data #" << i << ":\n\n" << *it << "\n";
+
 
 	return 0;
 }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
