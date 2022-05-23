@@ -390,10 +390,6 @@ public:
 
 int main()
 {
-	//LEti::Tree<int, 3> tree;
-
-	//LEti::Tree<int, 3>::Iterator it = tree.create_iterator();
-
 	physical_model pm(
 		{6, 1},
 		{12, 2},
@@ -430,6 +426,42 @@ int main()
 
 	return 0;
 }
+
+
+
+/*#include "Tree.h"
+#include <iostream>
+
+
+int main()
+{
+	LEti::Tree<int, 3> tree;
+
+	LEti::Tree<int, 3>::Iterator it = tree.create_iterator();
+
+//	for(unsigned int i=0; i<3; ++i)
+//		it.insert_into_availible_index(i);
+
+	LEti::Tree<int, 3>::Const_Iterator cit = tree.create_iterator();
+
+	LEti::Tree<int, 3>::Iterator* it_casted = (LEti::Tree<int, 3>::Iterator*)&cit;
+	for(unsigned int i=0; i<3; ++i)
+		it_casted->insert_into_availible_index(i);
+
+//	it_casted
+
+	LEti::Tree<int, 3>::Iterator result_it = tree.create_iterator();
+	while(!result_it.end())
+	{
+		std::cout << *result_it << "\n";
+		++result_it;
+	}
+	std::cout << *result_it << "\n";
+
+	return 0;
+}*/
+
+
 
 
 
