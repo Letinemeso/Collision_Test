@@ -1,4 +1,4 @@
-/*#include "Event_Controller.h"
+#include "Event_Controller.h"
 #include "Shader.h"
 #include "Camera.h"
 #include "Resource_Loader.h"
@@ -10,6 +10,8 @@
 #include "Physical_Model_2D.h"
 
 #include "Message_Translator.h"
+
+//#include "Space_Splitter.h"
 
 struct On_Button_Pressed_Msg
 {
@@ -179,10 +181,10 @@ int main()
 
 	return 0;
 }
-*/
 
 
-#include <iostream>
+
+/*#include <iostream>
 #include <vector>
 
 #include "Tree.h"
@@ -425,7 +427,7 @@ int main()
 
 
 	return 0;
-}
+}*/
 
 
 
