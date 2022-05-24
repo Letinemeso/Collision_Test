@@ -1,5 +1,6 @@
 |is_3d| <int> [1] "0"
 |coords| <float> [9] "200""400""0" "200""100""0" "400""100""0"
+|physical_model_data| <float> [9] "200""400""0" "200""100""0" "400""100""0"
 |texture_name| <string> [1] "colliding_object_texture"
 |texture_coords| <float> [6] "0""1" "0""0" "1""0"
 |position| <float> [3] "0""0""0"

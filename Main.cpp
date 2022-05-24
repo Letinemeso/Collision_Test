@@ -1,4 +1,4 @@
-#include "Event_Controller.h"
+/*#include "Event_Controller.h"
 #include "Shader.h"
 #include "Camera.h"
 #include "Resource_Loader.h"
@@ -180,8 +180,176 @@ int main()
 	}
 
 	return 0;
-}
+}*/
 
+#include "Event_Controller.h"
+#include "Shader.h"
+#include "Camera.h"
+#include "Resource_Loader.h"
+
+#include "Object.h"
+#include "Text_Field.h"
+
+#include "Physical_Model_3D.h"
+#include "Physical_Model_2D.h"
+
+#include "Message_Translator.h"
+
+//#include "Space_Splitter.h"
+
+#define DT LEti::Event_Controller::get_dt()
+
+struct On_Button_Pressed_Msg
+{
+	DEFINE_TYPE("obpf");
+	unsigned int btn = 0;
+	On_Button_Pressed_Msg(unsigned int _btn) : btn(_btn) { }
+};
+
+int main()
+{
+	LEti::Event_Controller::init_and_create_window(1200, 800, "Board Game");
+
+	glEnable(GL_BLEND);
+	glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+	glEnable(GL_DEPTH_TEST);
+
+	glEnable(GL_CULL_FACE);
+	glCullFace(GL_CW);
+
+	LEti::Shader::init_shader("Resources/Shaders/vertex_shader.shader", "Resources/Shaders/fragment_shader.shader");
+	ASSERT(!LEti::Shader::is_valid());
+	LEti::Shader::set_texture_uniform_name("input_texture");
+	LEti::Shader::set_transform_matrix_uniform_name("transform_matrix");
+	LEti::Shader::set_projection_matrix_uniform_name("projection_matrix");
+
+	LEti::Camera::setup_orthographic_matrix();
+
+	LEti::Camera::set_fov_and_max_distance(LEti::Utility::HALF_PI, 50.0f);
+	LEti::Camera::set_camera_data({ 0.0f, 2.0f, 2.0f }, { 0.0f, -2.0f, -1.0f });
+
+	LEti::Resource_Loader::init();
+
+	LEti::Resource_Loader::load_object("textures", "Resources/Textures/textures.mdl");
+
+	
+
+	///////////////// 2d collision test
+
+	LEti::Resource_Loader::load_object("flat_co", "Resources/Models/flat_co.mdl");
+	LEti::Object_2D flat_co;
+	flat_co.init("flat_co");
+
+	LEti::Object_2D flat_co_2;
+	flat_co_2.init("flat_co");
+
+	flat_co_2.move(300, 300, 0);
+
+	
+	LEti::Resource_Loader::load_object("ind", "Resources/Models/intersection_point_indicator.mdl");
+	LEti::Object_2D ind;
+	ind.init("ind");
+
+	LEti::Resource_Loader::load_object("text_field", "Resources/Models/text_field.mdl");
+	LEti::Text_Field intersection_info_block;
+	intersection_info_block.init("text_field");
+
+
+	float triangle_speed = 50.0f;
+
+	bool intersection_detected = false;
+	if (intersection_detected)
+		intersection_info_block.set_text("Intersection detected");
+	else
+		intersection_info_block.set_text("Intersection not detected");
+
+	while (!LEti::Event_Controller::window_should_close())
+	{
+		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+
+		LEti::Event_Controller::update();
+
+		if (LEti::Event_Controller::key_was_pressed(GLFW_KEY_TAB))
+			LEti::Camera::toggle_controll(LEti::Camera::get_controllable() ? false : true);
+		LEti::Camera::update(false, true);
+
+		if (LEti::Event_Controller::is_key_down(GLFW_KEY_LEFT))
+		{
+			flat_co_2.move(-(triangle_speed * DT), 0.0f, 0.0f);
+		}
+		if (LEti::Event_Controller::is_key_down(GLFW_KEY_RIGHT))
+		{
+			flat_co_2.move((triangle_speed * DT), 0.0f, 0.0f);
+		}
+		if (LEti::Event_Controller::is_key_down(GLFW_KEY_DOWN))
+		{
+			flat_co_2.move(0.0f, -(triangle_speed * DT), 0.0f);
+		}
+		if (LEti::Event_Controller::is_key_down(GLFW_KEY_UP))
+		{
+			flat_co_2.move(0.0f, (triangle_speed * DT), 0.0f);
+		}
+		if (LEti::Event_Controller::is_key_down(GLFW_KEY_I))
+		{
+		}
+		if (LEti::Event_Controller::is_key_down(GLFW_KEY_K))
+		{
+		}
+		if (LEti::Event_Controller::is_key_down(GLFW_KEY_Q))
+		{
+		}
+		if (LEti::Event_Controller::is_key_down(GLFW_KEY_E))
+		{
+		}
+
+		/*fake_rotate = glm::rotate(pyramid.get_rotation_angle(), pyramid.get_rotation_axis());
+		glm::vec3 pyramid_pos = pyramid.get_pos();
+		move[3][0] = pyramid_pos.x;
+		move[3][1] = pyramid_pos.y;
+		move[3][2] = pyramid_pos.z;*/
+
+		//LEti::Physical_Model_Interface::Intersection_Data id = pyramid.is_colliding_with_other(coll_obj);
+
+
+		flat_co.update();
+		flat_co_2.update();
+
+
+		LEti::Physical_Model_Interface::Intersection_Data id = flat_co.is_colliding_with_other(flat_co_2);
+
+
+		ind.set_visible(false);
+		std::string intersection_message;
+		if (id.type == LEti::Physical_Model_Interface::Intersection_Data::Intersection_Type::inside)
+			intersection_message += "PM is fully inside";
+		else if (id.type == LEti::Physical_Model_Interface::Intersection_Data::Intersection_Type::partly_outside)
+		{
+			intersection_message += "intersection at ";
+			intersection_message += std::to_string(id.closest_intersection_point.x);
+			intersection_message += ' ';
+			intersection_message += std::to_string(id.closest_intersection_point.y);
+			intersection_message += ' ';
+			intersection_message += std::to_string(id.closest_intersection_point.z);
+			ind.set_pos(id.closest_intersection_point.x, id.closest_intersection_point.y, id.closest_intersection_point.z);
+			ind.set_visible(true);
+		}
+		else
+			intersection_message += "no intersection";
+		intersection_info_block.set_text(intersection_message.c_str());
+
+
+		flat_co.draw();
+		flat_co_2.draw();
+
+		ind.draw();
+
+		intersection_info_block.draw();
+
+		LEti::Event_Controller::swap_buffers();
+	}
+
+	return 0;
+}
 
 
 /*#include <iostream>
