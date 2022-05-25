@@ -195,7 +195,7 @@ int main()
 
 #include "Message_Translator.h"
 
-//#include "Space_Splitter.h"
+#include "Space_Splitter.h"
 
 #define DT LEti::Event_Controller::get_dt()
 
@@ -242,8 +242,12 @@ int main()
 
 	LEti::Object_2D flat_co_2;
 	flat_co_2.init("flat_co");
-
 	flat_co_2.move(300, 300, 0);
+
+
+	LEti::Object_2D flat_co_3;
+	flat_co_3.init("flat_co");
+	flat_co_3.move(300, 600, 0);
 
 	
 	LEti::Resource_Loader::load_object("ind", "Resources/Models/intersection_point_indicator.mdl");
@@ -254,8 +258,15 @@ int main()
 	LEti::Text_Field intersection_info_block;
 	intersection_info_block.init("text_field");
 
+	LEti::Space_Splitter_2D::register_object(&flat_co);
+	LEti::Space_Splitter_2D::register_object(&flat_co_2);
+	LEti::Space_Splitter_2D::register_object(&flat_co_3);
 
-	float triangle_speed = 50.0f;
+	LEti::Space_Splitter_2D::unregister_object(&flat_co);
+	LEti::Space_Splitter_2D::unregister_object(&flat_co_2);
+	LEti::Space_Splitter_2D::unregister_object(&flat_co_3);
+
+	float triangle_speed = 100.0f;
 
 	bool intersection_detected = false;
 	if (intersection_detected)
@@ -302,18 +313,19 @@ int main()
 		{
 		}
 
-		/*fake_rotate = glm::rotate(pyramid.get_rotation_angle(), pyramid.get_rotation_axis());
-		glm::vec3 pyramid_pos = pyramid.get_pos();
-		move[3][0] = pyramid_pos.x;
-		move[3][1] = pyramid_pos.y;
-		move[3][2] = pyramid_pos.z;*/
-
-		//LEti::Physical_Model_Interface::Intersection_Data id = pyramid.is_colliding_with_other(coll_obj);
-
-
 		flat_co.update();
 		flat_co_2.update();
+		flat_co_3.update();
 
+		auto list = LEti::Space_Splitter_2D::get_possible_collisions();
+
+		auto it = list.begin();
+		while(it != list.end())
+		{
+			std::cout << it->first << ' ' << it->second << "\n";
+			++it;
+		}
+		std::cout << "\n";
 
 		LEti::Physical_Model_Interface::Intersection_Data id = flat_co.is_colliding_with_other(flat_co_2);
 
@@ -340,6 +352,7 @@ int main()
 
 		flat_co.draw();
 		flat_co_2.draw();
+		flat_co_3.draw();
 
 		ind.draw();
 
