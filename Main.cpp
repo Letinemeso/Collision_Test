@@ -11,7 +11,8 @@
 
 #include "Message_Translator.h"
 
-#include "Space_Splitter.h"
+//#include "Space_Splitter_2D.h"
+#include "Space_Splitter_3D.h"
 
 struct On_Button_Pressed_Msg
 {
@@ -64,6 +65,7 @@ int main()
 	LEti::Object_3D pyramid_far;
 	pyramid_far.init("pyramid");
 //	pyramid_far.move(5.0f, 5.0f, 5.0f);
+	pyramid_far.move(5, 0, 0);
 
 	LEti::Space_Splitter_3D::register_object(&pyramid);
 	LEti::Space_Splitter_3D::register_object(&pyramid_far);
