@@ -1,4 +1,4 @@
-/*#include "Event_Controller.h"
+#include "Event_Controller.h"
 #include "Shader.h"
 #include "Camera.h"
 #include "Resource_Loader.h"
@@ -11,7 +11,7 @@
 
 #include "Message_Translator.h"
 
-//#include "Space_Splitter.h"
+#include "Space_Splitter.h"
 
 struct On_Button_Pressed_Msg
 {
@@ -60,6 +60,14 @@ int main()
 	LEti::Resource_Loader::load_object("pyramid", "Resources/Models/pyramid.mdl");
 	LEti::Object_3D pyramid;
 	pyramid.init("pyramid");
+
+	LEti::Object_3D pyramid_far;
+	pyramid_far.init("pyramid");
+//	pyramid_far.move(5.0f, 5.0f, 5.0f);
+
+	LEti::Space_Splitter_3D::register_object(&pyramid);
+	LEti::Space_Splitter_3D::register_object(&pyramid_far);
+	LEti::Space_Splitter_3D::register_object(&coll_obj);
 
 	glm::mat4x4 move
 	(
@@ -143,6 +151,21 @@ int main()
 		move[3][1] = pyramid_pos.y;
 		move[3][2] = pyramid_pos.z;
 
+		pyramid_far.update();
+		pyramid.update();
+		coll_obj.update();
+
+		LEti::Space_Splitter_3D::update();
+
+		auto list = LEti::Space_Splitter_3D::get_collisions();
+		auto it = list.begin();
+		while(it != list.end())
+		{
+			std::cout << it->first << ' ' << it->second << "\n";
+			++it;
+		}
+		std::cout << "\n";
+
 		LEti::Physical_Model_Interface::Intersection_Data id = pyramid.is_colliding_with_other(coll_obj);
 
 
@@ -165,10 +188,7 @@ int main()
 			intersection_message += "no intersection";
 		intersection_info_block.set_text(intersection_message.c_str());
 
-
-		pyramid.update();
-		coll_obj.update();
-
+		pyramid_far.draw();
 		pyramid.draw();
 		coll_obj.draw();
 
@@ -180,9 +200,9 @@ int main()
 	}
 
 	return 0;
-}*/
+}
 
-#include "Event_Controller.h"
+/*#include "Event_Controller.h"
 #include "Shader.h"
 #include "Camera.h"
 #include "Resource_Loader.h"
@@ -262,9 +282,9 @@ int main()
 	LEti::Space_Splitter_2D::register_object(&flat_co_2);
 	LEti::Space_Splitter_2D::register_object(&flat_co_3);
 
-	LEti::Space_Splitter_2D::unregister_object(&flat_co);
-	LEti::Space_Splitter_2D::unregister_object(&flat_co_2);
-	LEti::Space_Splitter_2D::unregister_object(&flat_co_3);
+//	LEti::Space_Splitter_2D::unregister_object(&flat_co);
+//	LEti::Space_Splitter_2D::unregister_object(&flat_co_2);
+//	LEti::Space_Splitter_2D::unregister_object(&flat_co_3);
 
 	float triangle_speed = 100.0f;
 
@@ -362,7 +382,7 @@ int main()
 	}
 
 	return 0;
-}
+}*/
 
 
 /*#include <iostream>
