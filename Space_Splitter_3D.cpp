@@ -3,6 +3,7 @@
 using namespace LEti;
 
 
+
 std::list<const Object_3D*> Space_Splitter_3D::m_registred_models;
 
 unsigned int Space_Splitter_3D::m_max_tree_depth = 100;
@@ -28,14 +29,23 @@ bool Space_Splitter_3D::Area::model_is_inside(const Object_3D* _object) const
 	const Physical_Model_3D* _model = (const Physical_Model_3D*)(_object->get_physical_model());
 	Physical_Model_3D::Volumetric_Rectangular_Border rb = _model->construct_volumetric_rectangular_border();
 
-	return point_is_inside({rb.left, rb.top, rb.close}) || point_is_inside({rb.left, rb.bottom, rb.close})
+	if(point_is_inside({rb.left, rb.top, rb.close}) || point_is_inside({rb.left, rb.bottom, rb.close})
 			|| point_is_inside({rb.right, rb.top, rb.close}) || point_is_inside({rb.right, rb.bottom, rb.close})
 			|| point_is_inside({rb.left, rb.top, rb.far}) || point_is_inside({rb.left, rb.bottom, rb.far})
-			|| point_is_inside({rb.right, rb.top, rb.far}) || point_is_inside({rb.right, rb.bottom, rb.far});
+			|| point_is_inside({rb.right, rb.top, rb.far}) || point_is_inside({rb.right, rb.bottom, rb.far}))
+		return true;
+
+	const Physical_Model_3D& pm = *((const Physical_Model_3D*)_object->get_physical_model());
+
+	for(unsigned int pyr=0; pyr<pm.get_pyramids_count(); ++pyr)
+		for(unsigned int pol=0; pol < 4; ++pol)
+			for(unsigned int vert=0; vert < 3; ++vert)
+				if(point_is_inside(pm[pyr][pol][vert])) return true;
+	return false;
 }
 
 
-glm::vec3 Space_Splitter_3D::Area::get_point_to_split() const
+std::pair<const Object_3D*, glm::vec3> Space_Splitter_3D::Area::get_point_to_split() const
 {
 	glm::vec3 result;
 
@@ -56,11 +66,11 @@ glm::vec3 Space_Splitter_3D::Area::get_point_to_split() const
 		else if(point_is_inside({rb.right, rb.bottom, rb.close})) result = {rb.right, rb.bottom, rb.close};
 		else found = false;
 
-		if(found) break;
+		if(found) return { *it, result };
 		++it;
 	}
 
-	return result;
+	return {nullptr, {}};
 }
 
 
@@ -102,9 +112,8 @@ void Space_Splitter_3D::split_space_recursive(LEti::Tree<Area, 8>::Iterator _it,
 	const auto& models = _it->models;
 	if (models.size() < 3 || _level > m_max_tree_depth) return;
 
-	std::cout << "level: " << _level << '\n';
-
-	glm::vec3 split_point = _it->get_point_to_split();
+	std::pair<const Object_3D*, glm::vec3> split_data = _it->get_point_to_split();
+	glm::vec3 split_point = split_data.second;
 
 	_it.insert_into_availible_index({_it->left, split_point.x, _it->top, split_point.y, split_point.z, _it->close});
 	_it.insert_into_availible_index({split_point.x, _it->right, _it->top, split_point.y, split_point.z, _it->close});
@@ -120,21 +129,18 @@ void Space_Splitter_3D::split_space_recursive(LEti::Tree<Area, 8>::Iterator _it,
 	{
 		LEti::Tree<Area, 8>::Iterator next = _it;
 		next.descend(i);
+		next->models.push_back(split_data.first);
 
 		std::list<const Object_3D*>::const_iterator model_it = models.begin();
 		while(model_it != models.end())
 		{
+			if(*model_it == split_data.first) { ++model_it; continue; }
 			if(next->model_is_inside(*model_it))
-			{
 				next->models.push_back(*model_it);
-				std::cout << "i: " << i << " model: " << *model_it << '\n';
-			}
 			++model_it;
 		}
-
 		split_space_recursive(next, _level + 1);
 	}
-
 }
 
 

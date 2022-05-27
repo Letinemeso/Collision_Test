@@ -47,10 +47,13 @@ int main()
 
 	LEti::Resource_Loader::load_object("textures", "Resources/Textures/textures.mdl");
 
-	LEti::Resource_Loader::load_object("cube", "Resources/Models/intersection_indicator_3d.mdl");
+	LEti::Resource_Loader::load_object("red_cube", "Resources/Models/red_cube.mdl");
 	LEti::Object_3D cube;
-	cube.init("cube");
-	cube.set_visible(false);
+	cube.init("red_cube");
+
+//	LEti::global_indicator.init("cube");
+
+	LEti::Resource_Loader::load_object("cube", "Resources/Models/intersection_indicator_3d.mdl");
 
 	///////////////// 3d collision test
 
@@ -65,7 +68,7 @@ int main()
 	LEti::Object_3D pyramid_far;
 	pyramid_far.init("pyramid");
 //	pyramid_far.move(5.0f, 5.0f, 5.0f);
-	pyramid_far.move(5, 0, 0);
+	pyramid_far.move(0, 0, 0);
 
 	LEti::Space_Splitter_3D::register_object(&pyramid);
 	LEti::Space_Splitter_3D::register_object(&pyramid_far);
@@ -116,11 +119,11 @@ int main()
 
 		if (LEti::Event_Controller::is_key_down(GLFW_KEY_LEFT))
 		{
-			pyramid.move(-(triangle_speed * LEti::Event_Controller::get_dt()), 0.0f, 0.0f);
+			pyramid.move((triangle_speed * LEti::Event_Controller::get_dt()), 0.0f, 0.0f);
 		}
 		if (LEti::Event_Controller::is_key_down(GLFW_KEY_RIGHT))
 		{
-			pyramid.move((triangle_speed * LEti::Event_Controller::get_dt()), 0.0f, 0.0f);
+			pyramid.move(-(triangle_speed * LEti::Event_Controller::get_dt()), 0.0f, 0.0f);
 		}
 		if (LEti::Event_Controller::is_key_down(GLFW_KEY_DOWN))
 		{
@@ -163,38 +166,41 @@ int main()
 		auto it = list.begin();
 		while(it != list.end())
 		{
-			std::cout << it->first << ' ' << it->second << "\n";
+//			std::cout << it->first << ' ' << it->second << "\n";
+			intersection_info_block.set_text(std::to_string(list.size()).c_str());
+			cube.set_pos(it->collision_data.closest_intersection_point.x, it->collision_data.closest_intersection_point.y, it->collision_data.closest_intersection_point.z);
+			cube.draw();
 			++it;
 		}
 		std::cout << "\n";
 
-		LEti::Physical_Model_Interface::Intersection_Data id = pyramid.is_colliding_with_other(coll_obj);
+//		LEti::Physical_Model_Interface::Intersection_Data id = pyramid.is_colliding_with_other(coll_obj);
 
 
-		cube.set_visible(false);
-		std::string intersection_message;
-		if(id.type == LEti::Physical_Model_Interface::Intersection_Data::Intersection_Type::inside)
-			intersection_message += "PM is fully inside";
-		else if(id.type == LEti::Physical_Model_Interface::Intersection_Data::Intersection_Type::partly_outside)
-		{
-			intersection_message += "intersection at ";
-			intersection_message += std::to_string(id.closest_intersection_point.x);
-			intersection_message += ' ';
-			intersection_message += std::to_string(id.closest_intersection_point.y);
-			intersection_message += ' ';
-			intersection_message += std::to_string(id.closest_intersection_point.z);
-			cube.set_pos(id.closest_intersection_point.x, id.closest_intersection_point.y, id.closest_intersection_point.z);
-			cube.set_visible(true);
-		}
-		else
-			intersection_message += "no intersection";
-		intersection_info_block.set_text(intersection_message.c_str());
+//		cube.set_visible(false);
+//		std::string intersection_message;
+//		if(id.type == LEti::Physical_Model_Interface::Intersection_Data::Intersection_Type::inside)
+//			intersection_message += "PM is fully inside";
+//		else if(id.type == LEti::Physical_Model_Interface::Intersection_Data::Intersection_Type::partly_outside)
+//		{
+//			intersection_message += "intersection at ";
+//			intersection_message += std::to_string(id.closest_intersection_point.x);
+//			intersection_message += ' ';
+//			intersection_message += std::to_string(id.closest_intersection_point.y);
+//			intersection_message += ' ';
+//			intersection_message += std::to_string(id.closest_intersection_point.z);
+//			cube.set_pos(id.closest_intersection_point.x, id.closest_intersection_point.y, id.closest_intersection_point.z);
+////			cube.set_visible(true);
+//		}
+//		else
+//			intersection_message += "no intersection";
+//		intersection_info_block.set_text(intersection_message.c_str());
 
 		pyramid_far.draw();
 		pyramid.draw();
 		coll_obj.draw();
 
-		cube.draw();
+//		cube.draw();
 
 		intersection_info_block.draw();
 

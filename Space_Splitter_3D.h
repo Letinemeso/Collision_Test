@@ -6,7 +6,6 @@
 #include "Tree.h"
 #include "Object.h"
 
-
 namespace LEti {
 
 	class Space_Splitter_3D final
@@ -42,7 +41,7 @@ namespace LEti {
 			bool point_is_inside(const glm::vec3& _point) const;
 			bool model_is_inside(const Object_3D* _model) const;
 
-			glm::vec3 get_point_to_split() const;
+			std::pair<const Object_3D*, glm::vec3> get_point_to_split() const;
 		};
 
 	public:
