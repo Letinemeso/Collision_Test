@@ -8,7 +8,7 @@
 
 
 namespace LEti {
-
+void init_frame(const char* _obj_name);
 	class Space_Splitter_2D final
 	{
 	private:
@@ -41,7 +41,7 @@ namespace LEti {
 			bool point_is_inside(const glm::vec3& _point) const;
 			bool model_is_inside(const Object_2D* _object) const;
 
-			glm::vec3 get_point_to_split() const;
+			std::pair<const Object_2D*, glm::vec3> get_point_to_split() const;
 		};
 
 	public:

@@ -1,4 +1,4 @@
-#include "Event_Controller.h"
+/*#include "Event_Controller.h"
 #include "Shader.h"
 #include "Camera.h"
 #include "Resource_Loader.h"
@@ -13,6 +13,8 @@
 
 //#include "Space_Splitter_2D.h"
 #include "Space_Splitter_3D.h"
+
+//#include "Timer.h"
 
 struct On_Button_Pressed_Msg
 {
@@ -172,7 +174,7 @@ int main()
 			cube.draw();
 			++it;
 		}
-		std::cout << "\n";
+//		std::cout << "\n";
 
 //		LEti::Physical_Model_Interface::Intersection_Data id = pyramid.is_colliding_with_other(coll_obj);
 
@@ -208,9 +210,9 @@ int main()
 	}
 
 	return 0;
-}
+}*/
 
-/*#include "Event_Controller.h"
+#include "Event_Controller.h"
 #include "Shader.h"
 #include "Camera.h"
 #include "Resource_Loader.h"
@@ -223,7 +225,10 @@ int main()
 
 #include "Message_Translator.h"
 
-#include "Space_Splitter.h"
+#include "Space_Splitter_2D.h"
+
+#include "Debug_Drawable_Frame.h"
+
 
 #define DT LEti::Event_Controller::get_dt()
 
@@ -275,9 +280,21 @@ int main()
 
 	LEti::Object_2D flat_co_3;
 	flat_co_3.init("flat_co");
-	flat_co_3.move(300, 600, 0);
+	flat_co_3.move(100, 0, 0);
 
-	
+
+	LEti::Resource_Loader::load_object("flat_indicator_red", "Resources/Models/flat_indicator_red.mdl");
+	LEti::Resource_Loader::load_object("debug_frame", "Resources/Models/debug_frame.mdl");
+	LEti::init_frame("debug_frame");
+//	LEti::Debug_Drawable_Frame frame;
+//	frame.init("debug_frame");
+//	frame.get_vertices()[0] = -50.0f;
+
+//	frame.set_point(0, {0.0f, 500.0f, 0.0f}).set_point(1, {500.0f, 0.0f, 0.0f}).set_point(2, {0.0f, 0.0f, 0.0f}).set_point(3, {500, 500, 0}).set_point(3, {700, 250, 0});
+//	frame.set_sequence_element(0, 0).set_sequence_element(1, 1).set_sequence_element(2, 2).set_sequence_element(3, 3).set_sequence_element(4, 4);
+//	frame.update();
+
+
 	LEti::Resource_Loader::load_object("ind", "Resources/Models/intersection_point_indicator.mdl");
 	LEti::Object_2D ind;
 	ind.init("ind");
@@ -286,13 +303,9 @@ int main()
 	LEti::Text_Field intersection_info_block;
 	intersection_info_block.init("text_field");
 
-	LEti::Space_Splitter_2D::register_object(&flat_co);
 	LEti::Space_Splitter_2D::register_object(&flat_co_2);
+	LEti::Space_Splitter_2D::register_object(&flat_co);
 	LEti::Space_Splitter_2D::register_object(&flat_co_3);
-
-//	LEti::Space_Splitter_2D::unregister_object(&flat_co);
-//	LEti::Space_Splitter_2D::unregister_object(&flat_co_2);
-//	LEti::Space_Splitter_2D::unregister_object(&flat_co_3);
 
 	float triangle_speed = 100.0f;
 
@@ -345,52 +358,35 @@ int main()
 		flat_co_2.update();
 		flat_co_3.update();
 
-		auto list = LEti::Space_Splitter_2D::get_possible_collisions();
-
-		auto it = list.begin();
-		while(it != list.end())
-		{
-			std::cout << it->first << ' ' << it->second << "\n";
-			++it;
-		}
-		std::cout << "\n";
-
-		LEti::Physical_Model_Interface::Intersection_Data id = flat_co.is_colliding_with_other(flat_co_2);
-
-
-		ind.set_visible(false);
-		std::string intersection_message;
-		if (id.type == LEti::Physical_Model_Interface::Intersection_Data::Intersection_Type::inside)
-			intersection_message += "PM is fully inside";
-		else if (id.type == LEti::Physical_Model_Interface::Intersection_Data::Intersection_Type::partly_outside)
-		{
-			intersection_message += "intersection at ";
-			intersection_message += std::to_string(id.closest_intersection_point.x);
-			intersection_message += ' ';
-			intersection_message += std::to_string(id.closest_intersection_point.y);
-			intersection_message += ' ';
-			intersection_message += std::to_string(id.closest_intersection_point.z);
-			ind.set_pos(id.closest_intersection_point.x, id.closest_intersection_point.y, id.closest_intersection_point.z);
-			ind.set_visible(true);
-		}
-		else
-			intersection_message += "no intersection";
-		intersection_info_block.set_text(intersection_message.c_str());
-
-
 		flat_co.draw();
 		flat_co_2.draw();
 		flat_co_3.draw();
 
-		ind.draw();
+		LEti::Space_Splitter_2D::update();
 
+
+//		frame.draw();
+
+		auto list = LEti::Space_Splitter_2D::get_collisions();
+
+		auto it = list.begin();
+		while(it != list.end())
+		{
+//			std::cout << it->first << ' ' << it->second << "\n";
+			ind.set_pos(it->collision_data.closest_intersection_point.x, it->collision_data.closest_intersection_point.y, 0.0f);
+			ind.draw();
+			++it;
+		}
+		std::cout << "\n";
+
+		intersection_info_block.set_text(std::to_string(list.size()).c_str());
 		intersection_info_block.draw();
 
 		LEti::Event_Controller::swap_buffers();
 	}
 
 	return 0;
-}*/
+}
 
 
 /*#include <iostream>
