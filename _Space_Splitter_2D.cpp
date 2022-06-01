@@ -25,60 +25,51 @@ LEti::Tree<Space_Splitter_2D::Area, 4> Space_Splitter_2D::m_quad_tree;
 std::list<Space_Splitter_2D::Collision_Data> Space_Splitter_2D::m_collisions;
 
 
-//bool Space_Splitter_2D::Area::point_is_inside(const glm::vec3 &_point) const
-//{
-//	bool result = true;
-//	if(!left.inf) result = result && left.value < _point.x;
-//	if(!right.inf) result = result && right.value > _point.x;
-//	if(!top.inf) result = result && top.value > _point.y;
-//	if(!bottom.inf) result = result && bottom.value < _point.y;
-//	return result;
-//}
-
-//bool Space_Splitter_2D::Area::model_is_inside(const Object_2D* _object) const
-//{
-//	const Physical_Model_2D* _model = (const Physical_Model_2D*)(_object->get_physical_model());
-//	Physical_Model_2D::Rectangular_Border rb = _model->construct_rectangular_border();
-
-//	return point_is_inside({rb.left, rb.top, 0.0f}) || point_is_inside({rb.left, rb.bottom, 0.0f})
-//			|| point_is_inside({rb.right, rb.top, 0.0f}) || point_is_inside({rb.right, rb.bottom, 0.0f});
-//}
-
-
-bool Space_Splitter_2D::Area::point_is_on_edge(const Point *_point) const
+bool Space_Splitter_2D::Area::point_is_inside(const glm::vec3 &_point) const
 {
-	const glm::vec3& pos = _point->pos;
-
-	return ((Utility::floats_are_equal(pos.x, left.value) && Utility::floats_are_equal(pos.y, top.value)) ||
-			(Utility::floats_are_equal(pos.x, left.value) && Utility::floats_are_equal(pos.y, bottom.value)) ||
-			(Utility::floats_are_equal(pos.x, right.value) && Utility::floats_are_equal(pos.y, top.value)) ||
-			(Utility::floats_are_equal(pos.x, right.value) && Utility::floats_are_equal(pos.y, bottom.value)));
+	bool result = true;
+	if(!left.inf) result = result && left.value < _point.x;
+	if(!right.inf) result = result && right.value > _point.x;
+	if(!top.inf) result = result && top.value > _point.y;
+	if(!bottom.inf) result = result && bottom.value < _point.y;
+	return result;
 }
 
-bool Space_Splitter_2D::Area::was_split_point_before(const Point *_point, LEti::Tree<Area, 4>::Iterator _before_what) const
+bool Space_Splitter_2D::Area::model_is_inside(const Object_2D* _object) const
 {
-	if(_before_what.begin()) return true;
+	const Physical_Model_2D* _model = (const Physical_Model_2D*)(_object->get_physical_model());
+	Physical_Model_2D::Rectangular_Border rb = _model->construct_rectangular_border();
 
-	while(!_before_what.begin())
-	{
-		_before_what.ascend();
-		if(_before_what->split_point == _point) return true;
-	}
-
-	return false;
+	return point_is_inside({rb.left, rb.top, 0.0f}) || point_is_inside({rb.left, rb.bottom, 0.0f})
+			|| point_is_inside({rb.right, rb.top, 0.0f}) || point_is_inside({rb.right, rb.bottom, 0.0f});
 }
 
 
-
-void Space_Splitter_2D::Area::split(LEti::Tree<Area, 4>::Iterator _it)
+std::pair<const Object_2D*, glm::vec3> Space_Splitter_2D::Area::get_point_to_split() const
 {
-	std::list<const Point*>::const_iterator point_it = points.cbegin();
-	while(point_it != points.end())
+	glm::vec3 result;
+
+	std::list<const Object_2D*>::iterator it = m_registred_models.begin();
+	while(it != m_registred_models.end())
 	{
+		const Physical_Model_2D* ptr = (const Physical_Model_2D*)((*it)->get_physical_model());
+		Physical_Model_2D::Rectangular_Border rb = ptr->construct_rectangular_border();
+		bool found = true;
 
+		if(point_is_inside({rb.left, rb.top, 0.0f})) result = {rb.left, rb.top, 0.0f};
+		else if(point_is_inside({rb.left, rb.bottom, 0.0f})) result = {rb.left, rb.bottom, 0.0f};
+		else if(point_is_inside({rb.right, rb.top, 0.0f})) result = {rb.right, rb.top, 0.0f};
+		else if(point_is_inside({rb.right, rb.bottom, 0.0f})) result = {rb.right, rb.bottom, 0.0f};
+		else found = false;
 
-		++point_it;
+		if(found) break;
+		++it;
 	}
+
+	sp_ind->set_pos(result.x, result.y, result.z);
+	sp_ind->draw();
+
+	return {*it, result};
 }
 
 

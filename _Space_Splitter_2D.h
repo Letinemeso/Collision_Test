@@ -15,13 +15,6 @@ void init_frame(const char* _obj_name);
 		Space_Splitter_2D() = delete;
 
 	private:
-		struct Point
-		{
-			glm::vec3 pos;
-			const Object_2D* belongs_to = nullptr;
-			Point(const glm::vec3& _pos, const Object_2D* _belongs_to) : pos(_pos), belongs_to(_belongs_to) { }
-		};
-
 		struct Border
 		{
 			bool inf = true;
@@ -40,22 +33,15 @@ void init_frame(const char* _obj_name);
 		struct Area
 		{
 			Border left, right, top, bottom;
-			std::list<const Point*> points;
 			std::list<const Object_2D*> models;
 
 			Area(const Border& _left, const Border& _right, const Border& _top, const Border& _bottom)
 				: left(_left), right(_right), top(_top), bottom(_bottom) { }
 
-//			bool point_is_inside(const glm::vec3& _point) const;
-//			bool model_is_inside(const Object_2D* _object) const;
+			bool point_is_inside(const glm::vec3& _point) const;
+			bool model_is_inside(const Object_2D* _object) const;
 
-			bool point_is_on_edge(const Point* _point) const;
-			bool was_split_point_before(const Point* _point, LEti::Tree<Area, 4>::Iterator _before_what) const;
-			void check_for_models_inside();
-
-//			std::pair<const Object_2D*, glm::vec3> get_point_to_split() const;
-			const Point* split_point = nullptr;
-			void split(LEti::Tree<Area, 4>::Iterator _it);
+			std::pair<const Object_2D*, glm::vec3> get_point_to_split() const;
 		};
 
 	public:
