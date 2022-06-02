@@ -269,18 +269,20 @@ int main()
 
 	///////////////// 2d collision test
 
-	LEti::Resource_Loader::load_object("flat_co", "Resources/Models/flat_co.mdl");
+	LEti::Resource_Loader::load_object("flat_co_1", "Resources/Models/flat_cos/flat_co_1.mdl");
 	LEti::Object_2D flat_co;
-	flat_co.init("flat_co");
 
+	LEti::Resource_Loader::load_object("flat_co_2", "Resources/Models/flat_cos/flat_co_2.mdl");
 	LEti::Object_2D flat_co_2;
-	flat_co_2.init("flat_co");
-	flat_co_2.move(300, 300, 0);
+//	flat_co_2.move(300, 300, 0);
 
-
+	LEti::Resource_Loader::load_object("flat_co_3", "Resources/Models/flat_cos/flat_co_3.mdl");
 	LEti::Object_2D flat_co_3;
-	flat_co_3.init("flat_co");
-	flat_co_3.move(100, 0, 0);
+
+	flat_co.init("flat_co_1");
+	flat_co_2.init("flat_co_2");
+	flat_co_3.init("flat_co_3");
+//	flat_co_3.move(500, 50, 0);
 
 
 	LEti::Resource_Loader::load_object("flat_indicator_red", "Resources/Models/flat_indicator_red.mdl");
@@ -303,8 +305,8 @@ int main()
 	LEti::Text_Field intersection_info_block;
 	intersection_info_block.init("text_field");
 
-	LEti::Space_Splitter_2D::register_object(&flat_co_2);
 	LEti::Space_Splitter_2D::register_object(&flat_co);
+	LEti::Space_Splitter_2D::register_object(&flat_co_2);
 	LEti::Space_Splitter_2D::register_object(&flat_co_3);
 
 	float triangle_speed = 100.0f;
@@ -314,6 +316,9 @@ int main()
 		intersection_info_block.set_text("Intersection detected");
 	else
 		intersection_info_block.set_text("Intersection not detected");
+
+
+	bool flat_co_enabled = true;
 
 	while (!LEti::Event_Controller::window_should_close())
 	{
@@ -354,12 +359,27 @@ int main()
 		{
 		}
 
+		if(LEti::Event_Controller::key_was_pressed(GLFW_KEY_C))
+		{
+//			flat_co_enabled = flat_co_enabled ? false : true;
+//			if(flat_co_enabled)
+//				LEti::Space_Splitter_2D::register_object(&flat_co);
+//			else
+//				LEti::Space_Splitter_2D::unregister_object(&flat_co);
+
+			flat_co.set_pos(0, 0, 0);
+			flat_co_2.set_pos(0, 0, 0);
+			flat_co_3.set_pos(0, 0, 0);
+		}
+
 		flat_co.update();
 		flat_co_2.update();
 		flat_co_3.update();
 
-		flat_co.draw();
+//		flat_co.draw();
 		flat_co_2.draw();
+		if(flat_co_enabled)
+			flat_co.draw();
 		flat_co_3.draw();
 
 		LEti::Space_Splitter_2D::update();

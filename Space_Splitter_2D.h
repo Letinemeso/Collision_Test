@@ -6,6 +6,8 @@
 #include "Tree.h"
 #include "Object.h"
 
+#include "Timer.h"
+
 
 namespace LEti {
 void init_frame(const char* _obj_name);
@@ -20,6 +22,7 @@ void init_frame(const char* _obj_name);
 			glm::vec3 pos;
 			const Object_2D* belongs_to = nullptr;
 			Point(const glm::vec3& _pos, const Object_2D* _belongs_to) : pos(_pos), belongs_to(_belongs_to) { }
+			Point(const Point& _other) : pos(_other.pos), belongs_to(_other.belongs_to) { }
 		};
 
 		struct Border
@@ -46,16 +49,15 @@ void init_frame(const char* _obj_name);
 			Area(const Border& _left, const Border& _right, const Border& _top, const Border& _bottom)
 				: left(_left), right(_right), top(_top), bottom(_bottom) { }
 
-//			bool point_is_inside(const glm::vec3& _point) const;
-//			bool model_is_inside(const Object_2D* _object) const;
+			bool point_is_inside(const Point* _point) const;
 
 			bool point_is_on_edge(const Point* _point) const;
 			bool was_split_point_before(const Point* _point, LEti::Tree<Area, 4>::Iterator _before_what) const;
-			void check_for_models_inside();
+			void register_models_inside();
 
 //			std::pair<const Object_2D*, glm::vec3> get_point_to_split() const;
 			const Point* split_point = nullptr;
-			void split(LEti::Tree<Area, 4>::Iterator _it);
+			bool split(LEti::Tree<Area, 4>::Iterator _it);
 		};
 
 	public:
@@ -70,6 +72,7 @@ void init_frame(const char* _obj_name);
 
 	private:
 		static std::list<const Object_2D*> m_registred_models;
+		static std::list<Point> m_models_points;
 
 		static unsigned int m_max_tree_depth;
 		static LEti::Tree<Area, 4> m_quad_tree;
@@ -85,6 +88,8 @@ void init_frame(const char* _obj_name);
 
 	private:
 		static void split_space_recursive(LEti::Tree<Area, 4>::Iterator _it, unsigned int _level);
+	private:
+		static Timer m_timer;
 	public:
 		static void update();
 
