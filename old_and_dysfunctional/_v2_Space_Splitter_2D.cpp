@@ -33,12 +33,38 @@ bool Space_Splitter_2D::Area::point_is_inside(const Point *_point) const
 {
 	bool result = true;
 
-	if(!right.inf) result = result && _point->pos.x <= right.value;
-	if(!left.inf) result = result && _point->pos.x >= left.value;
-	if(!top.inf) result = result && _point->pos.y <= top.value;
-	if(!bottom.inf) result = result && _point->pos.y >= bottom.value;
+	if(!right.inf) result = _point->pos.x <= right.value;
+	if(!left.inf) result = _point->pos.x >= left.value;
+	if(!top.inf) result = _point->pos.y <= top.value;
+	if(!bottom.inf) result = _point->pos.y >= bottom.value;
 
 	return result;
+//	return _point->pos.x <= right.value && _point->pos.x >= left.value
+//			&& _point->pos.y <= top.value && _point->pos.y >= bottom.value;
+}
+
+
+bool Space_Splitter_2D::Area::point_is_on_edge(const Point *_point) const
+{
+	const glm::vec3& pos = _point->pos;
+
+	return ((Utility::floats_are_equal(pos.x, left.value) && Utility::floats_are_equal(pos.y, top.value)) ||
+			(Utility::floats_are_equal(pos.x, left.value) && Utility::floats_are_equal(pos.y, bottom.value)) ||
+			(Utility::floats_are_equal(pos.x, right.value) && Utility::floats_are_equal(pos.y, top.value)) ||
+			(Utility::floats_are_equal(pos.x, right.value) && Utility::floats_are_equal(pos.y, bottom.value)));
+}
+
+bool Space_Splitter_2D::Area::was_split_point_before(const Point *_point, LEti::Tree<Area, 4>::Iterator _before_what) const
+{
+	if(_before_what.begin()) return false;
+
+	while(!_before_what.begin())
+	{
+		_before_what.ascend();
+		if(_before_what->split_point == _point) return true;
+	}
+
+	return false;
 }
 
 void Space_Splitter_2D::Area::register_models_inside()
@@ -69,18 +95,25 @@ void Space_Splitter_2D::Area::register_models_inside()
 
 
 
-void Space_Splitter_2D::Area::split(LEti::Tree<Area, 4>::Iterator _it)
+bool Space_Splitter_2D::Area::split(LEti::Tree<Area, 4>::Iterator _it)
 {
-	glm::vec3 split_point;
-//	split_point.x = _it->right.value - ((fabs(_it->right.value) + fabs(_it->left.value)) / 2.0f);
-//	split_point.y = _it->top.value - ((fabs(_it->top.value) + fabs(_it->bottom.value)) / 2.0f);
-	split_point.x = (_it->right.value + _it->left.value) / 2.0f;
-	split_point.y = (_it->top.value + _it->bottom.value) / 2.0f;
+	std::list<const Point*>::const_iterator point_it = points.cbegin();
+	while(point_it != points.end())
+	{
+		if(!point_is_on_edge(*point_it) && !was_split_point_before(*point_it, _it))
+			break;
 
-	_it.insert_into_availible_index({_it->left, split_point.x, _it->top, split_point.y});
-	_it.insert_into_availible_index({split_point.x, _it->right, _it->top, split_point.y});
-	_it.insert_into_availible_index({split_point.x, _it->right, split_point.y, _it->bottom});
-	_it.insert_into_availible_index({_it->left, split_point.x, split_point.y, _it->bottom});
+		++point_it;
+	}
+
+	if(point_it == points.end()) return false;
+	split_point = *point_it;
+
+	_it.insert_into_availible_index({_it->left, split_point->pos.x, _it->top, split_point->pos.y});
+	_it.insert_into_availible_index({split_point->pos.x, _it->right, _it->top, split_point->pos.y});
+	_it.insert_into_availible_index({split_point->pos.x, _it->right, split_point->pos.y, _it->bottom});
+	_it.insert_into_availible_index({_it->left, split_point->pos.x, split_point->pos.y, _it->bottom});
+	return true;
 }
 
 
@@ -122,7 +155,8 @@ void Space_Splitter_2D::split_space_recursive(LEti::Tree<Area, 4>::Iterator _it,
 	const auto& models = _it->models;
 	if (models.size() < 3 || _level > m_max_tree_depth) return;
 
-	_it->split(_it);
+	if(!_it->split(_it)) return;
+//	_it->split(_it);
 
 	for(unsigned int i=0; i<4; ++i)
 	{
@@ -173,8 +207,6 @@ void Space_Splitter_2D::update()
 
 	it.insert_into_availible_index({{}, {}, {}, {}});
 
-	if(m_registred_models.size() == 0) return;
-
 	m_models_points.clear();
 	std::list<const Object_2D*>::iterator model_it = m_registred_models.begin();
 	while(model_it != m_registred_models.end())
@@ -184,20 +216,6 @@ void Space_Splitter_2D::update()
 		m_models_points.push_back(Point({rb.left, rb.bottom, 0.0f}, *model_it));
 		m_models_points.push_back(Point({rb.right, rb.top, 0.0f}, *model_it));
 		m_models_points.push_back(Point({rb.right, rb.bottom, 0.0f}, *model_it));
-
-		sp_ind->set_pos(rb.left, rb.top, 0.0f);
-		sp_ind->draw();
-		sp_ind->set_pos(rb.left, rb.bottom, 0.0f);
-		sp_ind->draw();
-		sp_ind->set_pos(rb.right, rb.top, 0.0f);
-		sp_ind->draw();
-		sp_ind->set_pos(rb.right, rb.bottom, 0.0f);
-		sp_ind->draw();
-
-		if(rb.left < it->left.value || it->left.inf) it->left = rb.left;
-		if(rb.right > it->right.value || it->right.inf) it->right = rb.right;
-		if(rb.top > it->top.value || it->top.inf) it->top = rb.top;
-		if(rb.bottom < it->bottom.value || it->bottom.inf) it->bottom = rb.bottom;
 
 		it->models.push_back(*model_it);
 

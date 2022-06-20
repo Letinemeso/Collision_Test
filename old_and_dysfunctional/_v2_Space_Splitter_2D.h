@@ -9,11 +9,8 @@
 #include "Timer.h"
 
 
-namespace LEti
-{
-
+namespace LEti {
 void init_frame(const char* _obj_name);
-
 	class Space_Splitter_2D final
 	{
 	private:
@@ -54,9 +51,13 @@ void init_frame(const char* _obj_name);
 
 			bool point_is_inside(const Point* _point) const;
 
+			bool point_is_on_edge(const Point* _point) const;
+			bool was_split_point_before(const Point* _point, LEti::Tree<Area, 4>::Iterator _before_what) const;
 			void register_models_inside();
 
-			void split(LEti::Tree<Area, 4>::Iterator _it);
+//			std::pair<const Object_2D*, glm::vec3> get_point_to_split() const;
+			const Point* split_point = nullptr;
+			bool split(LEti::Tree<Area, 4>::Iterator _it);
 		};
 
 	public:

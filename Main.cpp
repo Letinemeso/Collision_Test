@@ -305,6 +305,10 @@ int main()
 	LEti::Text_Field intersection_info_block;
 	intersection_info_block.init("text_field");
 
+	LEti::Text_Field fps_info_block;
+	fps_info_block.init("text_field");
+	fps_info_block.set_pos(1150, 770, 0);
+
 	LEti::Space_Splitter_2D::register_object(&flat_co);
 	LEti::Space_Splitter_2D::register_object(&flat_co_2);
 	LEti::Space_Splitter_2D::register_object(&flat_co_3);
@@ -325,6 +329,8 @@ int main()
 		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
 		LEti::Event_Controller::update();
+
+		fps_info_block.set_text((std::to_string((int)(1.0f / LEti::Event_Controller::get_dt()))).c_str());
 
 		if (LEti::Event_Controller::key_was_pressed(GLFW_KEY_TAB))
 			LEti::Camera::toggle_controll(LEti::Camera::get_controllable() ? false : true);
@@ -401,6 +407,9 @@ int main()
 
 		intersection_info_block.set_text(std::to_string(list.size()).c_str());
 		intersection_info_block.draw();
+
+		fps_info_block.update();
+		fps_info_block.draw();
 
 		LEti::Event_Controller::swap_buffers();
 	}
