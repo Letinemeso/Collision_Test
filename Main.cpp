@@ -269,20 +269,35 @@ int main()
 
 	///////////////// 2d collision test
 
-	LEti::Resource_Loader::load_object("flat_co_1", "Resources/Models/flat_cos/flat_co_1.mdl");
+//	LEti::Resource_Loader::load_object("flat_co_1", "Resources/Models/flat_cos/flat_co_1.mdl");
+	LEti::Resource_Loader::load_object("flat_co_1", "Resources/Models/quad.mdl");
 	LEti::Object_2D flat_co;
 
-	LEti::Resource_Loader::load_object("flat_co_2", "Resources/Models/flat_cos/flat_co_2.mdl");
+//	LEti::Resource_Loader::load_object("flat_co_2", "Resources/Models/flat_cos/flat_co_2.mdl");
+	LEti::Resource_Loader::load_object("flat_co_2", "Resources/Models/quad.mdl");
 	LEti::Object_2D flat_co_2;
 //	flat_co_2.move(300, 300, 0);
 
-	LEti::Resource_Loader::load_object("flat_co_3", "Resources/Models/flat_cos/flat_co_3.mdl");
+	LEti::Resource_Loader::load_object("flat_co_3", "Resources/Models/quad.mdl");
 	LEti::Object_2D flat_co_3;
 
 	flat_co.init("flat_co_1");
+	flat_co.set_pos(50, 400, 0);
+
+	glm::vec3 velocity;
+	float angle =  0.0f /*LEti::Utility::QUARTER_PI*/ /* * 1.75f*/;
+	float speed = 50.0f;
+	velocity.x = cos(angle);
+	velocity.y = sin(angle);
+
 	flat_co_2.init("flat_co_2");
+	flat_co_2.set_pos(600, 400, 0);
+	flat_co_2.set_overall_scale(100.0f);
+
 	flat_co_3.init("flat_co_3");
-//	flat_co_3.move(500, 50, 0);
+//	flat_co_3.set_collision_possibility(false);
+//	flat_co_3.set_visible(false);
+	flat_co_3.move(1000, 300, 0);
 
 
 	LEti::Resource_Loader::load_object("flat_indicator_red", "Resources/Models/flat_indicator_red.mdl");
@@ -315,11 +330,11 @@ int main()
 
 	float triangle_speed = 100.0f;
 
-	bool intersection_detected = false;
-	if (intersection_detected)
-		intersection_info_block.set_text("Intersection detected");
-	else
-		intersection_info_block.set_text("Intersection not detected");
+//	bool intersection_detected = false;
+//	if (intersection_detected)
+//		intersection_info_block.set_text("Intersection detected");
+//	else
+//		intersection_info_block.set_text("Intersection not detected");
 
 
 	bool flat_co_enabled = true;
@@ -353,17 +368,23 @@ int main()
 		{
 			flat_co_2.move(0.0f, (triangle_speed * DT), 0.0f);
 		}
-		if (LEti::Event_Controller::is_key_down(GLFW_KEY_I))
+		if (LEti::Event_Controller::key_was_pressed(GLFW_KEY_I))
 		{
+			speed += 50.0f;
 		}
-		if (LEti::Event_Controller::is_key_down(GLFW_KEY_K))
+		if (LEti::Event_Controller::key_was_pressed(GLFW_KEY_K))
 		{
+			speed -= 50.0f;
+			if(speed < 0.0f)
+				speed = 0.0f;
 		}
-		if (LEti::Event_Controller::is_key_down(GLFW_KEY_Q))
+		if (LEti::Event_Controller::is_key_down(GLFW_KEY_J))
 		{
+			angle += LEti::Utility::HALF_PI * LEti::Event_Controller::get_dt();
 		}
-		if (LEti::Event_Controller::is_key_down(GLFW_KEY_E))
+		if (LEti::Event_Controller::is_key_down(GLFW_KEY_L))
 		{
+			angle -= LEti::Utility::HALF_PI * LEti::Event_Controller::get_dt();
 		}
 
 		if(LEti::Event_Controller::key_was_pressed(GLFW_KEY_C))
@@ -378,6 +399,37 @@ int main()
 			flat_co_2.set_pos(0, 0, 0);
 			flat_co_3.set_pos(0, 0, 0);
 		}
+
+		if(flat_co.get_pos().y >= 800.0f)
+		{
+			flat_co.set_pos(flat_co.get_pos().x, 799.0f, 0.0f);
+			angle = LEti::Utility::DOUBLE_PI - angle;
+		}
+		else if(flat_co.get_pos().y <= 0.0f)
+		{
+			flat_co.set_pos(flat_co.get_pos().x, 1.0f, 0.0f);
+			angle = LEti::Utility::DOUBLE_PI - angle;
+		}
+
+		if(flat_co.get_pos().x >= 1200.0f)
+		{
+			flat_co.set_pos(1199.0f, flat_co.get_pos().y, 0.0f);
+			angle = LEti::Utility::DOUBLE_PI - angle + LEti::Utility::PI;
+		}
+		else if(flat_co.get_pos().x <= 0.0f)
+		{
+			flat_co.set_pos(1.0f, flat_co.get_pos().y, 0.0f);
+			angle = LEti::Utility::DOUBLE_PI - angle + LEti::Utility::PI;
+		}
+
+		if(angle < 0.0f)
+			angle += LEti::Utility::DOUBLE_PI;
+		else if(angle > LEti::Utility::DOUBLE_PI)
+			angle -= LEti::Utility::DOUBLE_PI;
+
+		velocity.x = speed * cos(angle) * LEti::Event_Controller::get_dt();;
+		velocity.y = speed * sin(angle) * LEti::Event_Controller::get_dt();;
+		flat_co.move(velocity.x, velocity.y, 0.0f);
 
 		flat_co.update();
 		flat_co_2.update();
@@ -402,9 +454,24 @@ int main()
 //			std::cout << it->first << ' ' << it->second << "\n";
 			ind.set_pos(it->collision_data.closest_intersection_point.x, it->collision_data.closest_intersection_point.y, 0.0f);
 			ind.draw();
+
+			glm::vec3 diff = it->first->get_pos() - it->second->get_pos();
+			if(fabs(diff.x) > fabs(diff.y))
+				angle = LEti::Utility::DOUBLE_PI - angle + LEti::Utility::PI;
+			else
+				angle = LEti::Utility::DOUBLE_PI - angle;
+
+			flat_co.move(diff.x, diff.y, 0.0f);
+
+
 			++it;
 		}
-		std::cout << "\n";
+//		std::cout << "\n";
+
+		if(angle < 0.0f)
+			angle += LEti::Utility::DOUBLE_PI;
+		else if(angle > LEti::Utility::DOUBLE_PI)
+			angle -= LEti::Utility::DOUBLE_PI;
 
 		intersection_info_block.set_text(std::to_string(list.size()).c_str());
 		intersection_info_block.draw();

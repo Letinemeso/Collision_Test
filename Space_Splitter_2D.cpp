@@ -150,6 +150,12 @@ void Space_Splitter_2D::update()
 	std::list<const Object_2D*>::iterator model_it = m_registred_models.begin();
 	while(model_it != m_registred_models.end())
 	{
+		if((*model_it)->get_collision_possibility() == false)
+		{
+			++model_it;
+			continue;
+		}
+
 		Physical_Model_2D::Rectangular_Border rb = ((Physical_Model_2D*)((*model_it)->get_physical_model()))->construct_rectangular_border();
 
 //		sp_ind->set_pos(rb.left, rb.top, 0.0f);
