@@ -11,19 +11,21 @@
 
 namespace LEti
 {
+
+void init_frame(const char* _obj_name);
+
 	class Space_Splitter_2D final
 	{
 	private:
 		Space_Splitter_2D() = delete;
 
 	private:
-		struct Rectangle_Wrapper
+		struct Point
 		{
+			glm::vec3 pos;
 			const Object_2D* belongs_to = nullptr;
-			Physical_Model_2D::Rectangular_Border rectangle;
-			Rectangle_Wrapper(const Object_2D* _belongs_to) : belongs_to(_belongs_to), rectangle((((Physical_Model_2D*)(belongs_to->get_physical_model()))->construct_rectangular_border())) { }
-			Rectangle_Wrapper(const Object_2D* _belongs_to, const Physical_Model_2D::Rectangular_Border& _rectangle) : belongs_to(_belongs_to), rectangle(_rectangle) { }
-			Rectangle_Wrapper(const Rectangle_Wrapper& _other) : belongs_to(_other.belongs_to), rectangle(_other.rectangle) { }
+			Point(const glm::vec3& _pos, const Object_2D* _belongs_to) : pos(_pos), belongs_to(_belongs_to) { }
+			Point(const Point& _other) : pos(_other.pos), belongs_to(_other.belongs_to) { }
 		};
 
 		struct Border
@@ -44,12 +46,15 @@ namespace LEti
 		struct Area
 		{
 			Border left, right, top, bottom;
-			std::list<Rectangle_Wrapper> rectangles;
+			std::list<const Point*> points;
+			std::list<const Object_2D*> models;
 
 			Area(const Border& _left, const Border& _right, const Border& _top, const Border& _bottom)
 				: left(_left), right(_right), top(_top), bottom(_bottom) { }
 
-			bool rectangle_is_inside(const Physical_Model_2D::Rectangular_Border& _rectangle) const;
+			bool point_is_inside(const Point* _point) const;
+
+			void register_models_inside();
 
 			void split(LEti::Tree<Area, 4>::Iterator _it);
 		};
@@ -66,6 +71,7 @@ namespace LEti
 
 	private:
 		static std::list<const Object_2D*> m_registred_models;
+		static std::list<Point> m_models_points;
 
 		static unsigned int m_max_tree_depth;
 		static LEti::Tree<Area, 4> m_quad_tree;

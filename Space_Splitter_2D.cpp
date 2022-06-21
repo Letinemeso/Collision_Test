@@ -5,22 +5,21 @@ using namespace LEti;
 
 #include "Debug_Drawable_Frame.h"
 
-Debug_Drawable_Frame* df = nullptr;
-Object_2D* sp_ind = nullptr;
+//Debug_Drawable_Frame* df = nullptr;
+//Object_2D* sp_ind = nullptr;
 
-void LEti::init_frame(const char* _obj_name)
-{
-	df = new Debug_Drawable_Frame;
-	df->init("debug_frame");
+//void LEti::init_frame(const char* _obj_name)
+//{
+//	df = new Debug_Drawable_Frame;
+//	df->init("debug_frame");
 
-	sp_ind = new Object_2D;
-	sp_ind->init("flat_indicator_red");
-}
+//	sp_ind = new Object_2D;
+//	sp_ind->init("flat_indicator_red");
+//}
 
 std::list<const Object_2D*> Space_Splitter_2D::m_registred_models;
-std::list<Space_Splitter_2D::Point> Space_Splitter_2D::m_models_points;
 
-unsigned int Space_Splitter_2D::m_max_tree_depth = 100;
+unsigned int Space_Splitter_2D::m_max_tree_depth = 4;
 LEti::Tree<Space_Splitter_2D::Area, 4> Space_Splitter_2D::m_quad_tree;
 
 std::list<Space_Splitter_2D::Collision_Data> Space_Splitter_2D::m_collisions;
@@ -29,42 +28,16 @@ Timer Space_Splitter_2D::m_timer;
 
 
 
-bool Space_Splitter_2D::Area::point_is_inside(const Point *_point) const
+bool Space_Splitter_2D::Area::rectangle_is_inside(const Physical_Model_2D::Rectangular_Border& _rectangle) const
 {
 	bool result = true;
 
-	if(!right.inf) result = result && _point->pos.x <= right.value;
-	if(!left.inf) result = result && _point->pos.x >= left.value;
-	if(!top.inf) result = result && _point->pos.y <= top.value;
-	if(!bottom.inf) result = result && _point->pos.y >= bottom.value;
+	if(!right.inf) result = result && _rectangle.left <= right.value;
+	if(!left.inf) result = result && _rectangle.right >= left.value;
+	if(!top.inf) result = result && _rectangle.bottom <= top.value;
+	if(!bottom.inf) result = result && _rectangle.top >= bottom.value;
 
 	return result;
-}
-
-void Space_Splitter_2D::Area::register_models_inside()
-{
-	models.clear();
-
-	std::list<const Point*>::const_iterator point_it = points.begin();
-	while(point_it != points.end())
-	{
-		std::list<const Object_2D*>::const_iterator obj_it = models.begin();
-		bool model_is_registred = false;
-		while(obj_it != models.end())
-		{
-			if((*point_it)->belongs_to == *obj_it)
-			{
-				model_is_registred = true;
-				break;
-			}
-			++obj_it;
-		}
-
-		if(!model_is_registred)
-			models.push_back((*point_it)->belongs_to);;
-
-		++point_it;
-	}
 }
 
 
@@ -119,8 +92,8 @@ void Space_Splitter_2D::unregister_object(const Object_2D *_model)
 
 void Space_Splitter_2D::split_space_recursive(LEti::Tree<Area, 4>::Iterator _it, unsigned int _level)
 {
-	const auto& models = _it->models;
-	if (models.size() < 3 || _level > m_max_tree_depth) return;
+	const auto& rectangles = _it->rectangles;
+	if (rectangles.size() < 3 || _level > m_max_tree_depth) return;
 
 	_it->split(_it);
 
@@ -129,30 +102,29 @@ void Space_Splitter_2D::split_space_recursive(LEti::Tree<Area, 4>::Iterator _it,
 		LEti::Tree<Area, 4>::Iterator next = _it;
 		next.descend(i);
 
-		float left = next->left.inf ? -10000 : next->left.value;
-		float right = next->right.inf ? 10000 : next->right.value;
-		float top = next->top.inf ? 10000 : next->top.value;
-		float bottom = next->bottom.inf ? -10000 : next->bottom.value;
-		Debug_Drawable_Frame& dfl = *df;
-		dfl.clear_points();
-		dfl.set_point(0, {left, top, 0.0f});
-		dfl.set_point(1, {right, top, 0.0f});
-		dfl.set_point(2, {right, bottom, 0.0f});
-		dfl.set_point(3, {left, next->bottom.value, 0.0f});
+//		float left = next->left.inf ? -10000 : next->left.value;
+//		float right = next->right.inf ? 10000 : next->right.value;
+//		float top = next->top.inf ? 10000 : next->top.value;
+//		float bottom = next->bottom.inf ? -10000 : next->bottom.value;
+//		Debug_Drawable_Frame& dfl = *df;
+//		dfl.clear_points();
+//		dfl.set_point(0, {left, top, 0.0f});
+//		dfl.set_point(1, {right, top, 0.0f});
+//		dfl.set_point(2, {right, bottom, 0.0f});
+//		dfl.set_point(3, {left, next->bottom.value, 0.0f});
 
-		dfl.clear_sequence().set_sequence_element(0, 0).set_sequence_element(1, 1).set_sequence_element(2, 2).set_sequence_element(3, 3);
+//		dfl.clear_sequence().set_sequence_element(0, 0).set_sequence_element(1, 1).set_sequence_element(2, 2).set_sequence_element(3, 3);
 
-		dfl.update();
-		dfl.draw();
+//		dfl.update();
+//		dfl.draw();
 
-		std::list<const Point*>::const_iterator point_it = _it->points.begin();
-		while(point_it != _it->points.end())
+		std::list<Rectangle_Wrapper>::const_iterator point_it = rectangles.begin();
+		while(point_it != rectangles.end())
 		{
-			if(next->point_is_inside(*point_it))
-				next->points.push_back(*point_it);
+			if(next->rectangle_is_inside(point_it->rectangle))
+				next->rectangles.push_back(*point_it);
 			++point_it;
 		}
-		next->register_models_inside();
 
 		split_space_recursive(next, _level+1);
 	}
@@ -161,9 +133,9 @@ void Space_Splitter_2D::split_space_recursive(LEti::Tree<Area, 4>::Iterator _it,
 
 void Space_Splitter_2D::update()
 {
-//	m_timer.update();
-//	if(m_timer.is_active()) return;
-//	m_timer.start(0.1f);
+	m_timer.update();
+	if(m_timer.is_active()) return;
+	m_timer.start(0.05f);
 
 	m_collisions.clear();
 
@@ -175,24 +147,19 @@ void Space_Splitter_2D::update()
 
 	if(m_registred_models.size() == 0) return;
 
-	m_models_points.clear();
 	std::list<const Object_2D*>::iterator model_it = m_registred_models.begin();
 	while(model_it != m_registred_models.end())
 	{
 		Physical_Model_2D::Rectangular_Border rb = ((Physical_Model_2D*)((*model_it)->get_physical_model()))->construct_rectangular_border();
-		m_models_points.push_back(Point({rb.left, rb.top, 0.0f}, *model_it));
-		m_models_points.push_back(Point({rb.left, rb.bottom, 0.0f}, *model_it));
-		m_models_points.push_back(Point({rb.right, rb.top, 0.0f}, *model_it));
-		m_models_points.push_back(Point({rb.right, rb.bottom, 0.0f}, *model_it));
 
-		sp_ind->set_pos(rb.left, rb.top, 0.0f);
-		sp_ind->draw();
-		sp_ind->set_pos(rb.left, rb.bottom, 0.0f);
-		sp_ind->draw();
-		sp_ind->set_pos(rb.right, rb.top, 0.0f);
-		sp_ind->draw();
-		sp_ind->set_pos(rb.right, rb.bottom, 0.0f);
-		sp_ind->draw();
+//		sp_ind->set_pos(rb.left, rb.top, 0.0f);
+//		sp_ind->draw();
+//		sp_ind->set_pos(rb.left, rb.bottom, 0.0f);
+//		sp_ind->draw();
+//		sp_ind->set_pos(rb.right, rb.top, 0.0f);
+//		sp_ind->draw();
+//		sp_ind->set_pos(rb.right, rb.bottom, 0.0f);
+//		sp_ind->draw();
 
 		if(rb.left < it->left.value || it->left.inf) it->left = rb.left;
 		if(rb.right > it->right.value || it->right.inf) it->right = rb.right;
@@ -218,28 +185,21 @@ void Space_Splitter_2D::update()
 			}
 		}*/
 
-		it->models.push_back(*model_it);
+		it->rectangles.push_back({*model_it, rb});
 
 		++model_it;
-	}
-
-	std::list<Point>::const_iterator point_it = m_models_points.begin();
-	while(point_it != m_models_points.end())
-	{
-		it->points.push_back(&(*point_it));
-		++point_it;
 	}
 
 	split_space_recursive(it, 0);
 
 	while(!it.end())
 	{
-		if(it->models.size() == 2)
+		if(it->rectangles.size() == 2)
 		{
-			std::list<const Object_2D*>::iterator colliding_model = it->models.begin();
-			std::list<const Object_2D*>::iterator next = colliding_model;
+			std::list<Rectangle_Wrapper>::iterator colliding_model = it->rectangles.begin();
+			std::list<Rectangle_Wrapper>::iterator next = colliding_model;
 			++next;
-			Collision_Data cd(*colliding_model, *next, (*colliding_model)->is_colliding_with_other(*(*next)));
+			Collision_Data cd(colliding_model->belongs_to, next->belongs_to, colliding_model->belongs_to->is_colliding_with_other(*next->belongs_to));
 			if(cd.collision_data)
 			{
 				std::list<Collision_Data>::iterator it = m_collisions.begin();
@@ -251,14 +211,53 @@ void Space_Splitter_2D::update()
 				if(it == m_collisions.end()) m_collisions.push_back(cd);
 			}
 		}
+		else if(it.is_leaf() && it->rectangles.size() > 2)
+		{
+			std::list<Rectangle_Wrapper>::const_iterator colliding_model = it->rectangles.begin();
+			while(colliding_model != it->rectangles.end())
+			{
+				std::list<Rectangle_Wrapper>::const_iterator next = colliding_model;
+				++next;
+				while(next != it->rectangles.end())
+				{
+					Collision_Data cd(colliding_model->belongs_to, next->belongs_to, colliding_model->belongs_to->is_colliding_with_other(*next->belongs_to));
+					if(cd.collision_data)
+					{
+						std::list<Collision_Data>::iterator it = m_collisions.begin();
+						while(it != m_collisions.end())
+						{
+							if(*it == cd) break;
+							++it;
+						}
+						if(it == m_collisions.end()) m_collisions.push_back(cd);
+					}
+					++next;
+				}
+				++colliding_model;
+			}
+
+//			std::list<Rectangle_Wrapper>::const_iterator next = colliding_model;
+//			++next;
+//			Collision_Data cd(colliding_model->belongs_to, next->belongs_to, colliding_model->belongs_to->is_colliding_with_other(*next->belongs_to));
+//			if(cd.collision_data)
+//			{
+//				std::list<Collision_Data>::iterator it = m_collisions.begin();
+//				while(it != m_collisions.end())
+//				{
+//					if(*it == cd) break;
+//					++it;
+//				}
+//				if(it == m_collisions.end()) m_collisions.push_back(cd);
+//			}
+		}
 		++it;
 	}
-	if(it->models.size() == 2)
+	if(it->rectangles.size() == 2)
 	{
-		std::list<const Object_2D*>::iterator colliding_model = it->models.begin();
-		std::list<const Object_2D*>::iterator next = colliding_model;
+		std::list<Rectangle_Wrapper>::iterator colliding_model = it->rectangles.begin();
+		std::list<Rectangle_Wrapper>::iterator next = colliding_model;
 		++next;
-		Collision_Data cd(*colliding_model, *next, (*colliding_model)->is_colliding_with_other(*(*next)));
+		Collision_Data cd(colliding_model->belongs_to, next->belongs_to, colliding_model->belongs_to->is_colliding_with_other(*next->belongs_to));
 		if(cd.collision_data)
 		{
 			std::list<Collision_Data>::iterator it = m_collisions.begin();
@@ -268,6 +267,31 @@ void Space_Splitter_2D::update()
 				++it;
 			}
 			if(it == m_collisions.end()) m_collisions.push_back(cd);
+		}
+	}
+	else if(it->rectangles.size() > 2)
+	{
+		std::list<Rectangle_Wrapper>::const_iterator colliding_model = it->rectangles.begin();
+		while(colliding_model != it->rectangles.end())
+		{
+			std::list<Rectangle_Wrapper>::const_iterator next = colliding_model;
+			++next;
+			while(next != it->rectangles.end())
+			{
+				Collision_Data cd(colliding_model->belongs_to, next->belongs_to, colliding_model->belongs_to->is_colliding_with_other(*next->belongs_to));
+				if(cd.collision_data)
+				{
+					std::list<Collision_Data>::iterator it = m_collisions.begin();
+					while(it != m_collisions.end())
+					{
+						if(*it == cd) break;
+						++it;
+					}
+					if(it == m_collisions.end()) m_collisions.push_back(cd);
+				}
+				++next;
+			}
+			++colliding_model;
 		}
 	}
 }

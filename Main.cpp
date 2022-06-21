@@ -287,7 +287,7 @@ int main()
 
 	LEti::Resource_Loader::load_object("flat_indicator_red", "Resources/Models/flat_indicator_red.mdl");
 	LEti::Resource_Loader::load_object("debug_frame", "Resources/Models/debug_frame.mdl");
-	LEti::init_frame("debug_frame");
+//	LEti::init_frame("debug_frame");
 //	LEti::Debug_Drawable_Frame frame;
 //	frame.init("debug_frame");
 //	frame.get_vertices()[0] = -50.0f;
@@ -324,13 +324,14 @@ int main()
 
 	bool flat_co_enabled = true;
 
+	LEti::Timer fps_timer;
+	unsigned int fps_counter = 0;
+
 	while (!LEti::Event_Controller::window_should_close())
 	{
 		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
 		LEti::Event_Controller::update();
-
-		fps_info_block.set_text((std::to_string((int)(1.0f / LEti::Event_Controller::get_dt()))).c_str());
 
 		if (LEti::Event_Controller::key_was_pressed(GLFW_KEY_TAB))
 			LEti::Camera::toggle_controll(LEti::Camera::get_controllable() ? false : true);
@@ -408,6 +409,15 @@ int main()
 		intersection_info_block.set_text(std::to_string(list.size()).c_str());
 		intersection_info_block.draw();
 
+		++fps_counter;
+		fps_timer.update();
+		if(!fps_timer.is_active())
+		{
+			fps_timer.start(1.0f);
+//			fps_info_block.set_text((std::to_string((int)(1.0f / LEti::Event_Controller::get_dt()))).c_str());
+			fps_info_block.set_text((std::to_string(fps_counter)).c_str());
+			fps_counter = 0;
+		}
 		fps_info_block.update();
 		fps_info_block.draw();
 
