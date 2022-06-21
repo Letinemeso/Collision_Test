@@ -199,6 +199,25 @@ void Space_Splitter_2D::update()
 		if(rb.top > it->top.value || it->top.inf) it->top = rb.top;
 		if(rb.bottom < it->bottom.value || it->bottom.inf) it->bottom = rb.bottom;
 
+		/*const Physical_Model_2D* pm = (Physical_Model_2D*)((*model_it)->get_physical_model());
+
+		for(unsigned int pol=0; pol<pm->get_polygons_count(); ++pol)
+		{
+			for(unsigned int vert=0; vert < 3; ++vert)
+			{
+				const glm::vec3& point = (*pm)[pol][vert];
+				sp_ind->set_pos(point.x, point.y, 0.0f);
+				sp_ind->draw();
+
+				if(point.x < it->left.value || it->left.inf) it->left = point.x;
+				if(point.x > it->right.value || it->right.inf) it->right = point.x;
+				if(point.y > it->top.value || it->top.inf) it->top = point.y;
+				if(point.y < it->bottom.value || it->bottom.inf) it->bottom = point.y;
+
+				m_models_points.push_back(Point(point, *model_it));
+			}
+		}*/
+
 		it->models.push_back(*model_it);
 
 		++model_it;
