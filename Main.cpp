@@ -435,12 +435,6 @@ int main()
 		flat_co_2.update();
 		flat_co_3.update();
 
-//		flat_co.draw();
-		flat_co_2.draw();
-		if(flat_co_enabled)
-			flat_co.draw();
-		flat_co_3.draw();
-
 		LEti::Space_Splitter_2D::update();
 
 
@@ -472,6 +466,11 @@ int main()
 			angle += LEti::Utility::DOUBLE_PI;
 		else if(angle > LEti::Utility::DOUBLE_PI)
 			angle -= LEti::Utility::DOUBLE_PI;
+
+		flat_co_2.draw();
+		if(flat_co_enabled)
+			flat_co.draw();
+		flat_co_3.draw();
 
 		intersection_info_block.set_text(std::to_string(list.size()).c_str());
 		intersection_info_block.draw();
