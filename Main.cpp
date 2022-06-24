@@ -461,7 +461,7 @@ int main()
 			else
 				angle = LEti::Utility::DOUBLE_PI - angle;
 
-			flat_co.move(diff.x, diff.y, 0.0f);
+//			flat_co.move(diff.x, diff.y, 0.0f);
 
 
 			++it;
