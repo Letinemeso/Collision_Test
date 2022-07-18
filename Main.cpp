@@ -324,6 +324,8 @@ int main()
 	fps_info_block.init("text_field");
 	fps_info_block.set_pos(1150, 770, 0);
 
+	flat_co.set_is_dynamic(true);
+	flat_co_2.set_is_dynamic(true);
 	LEti::Space_Splitter_2D::register_object(&flat_co);
 	LEti::Space_Splitter_2D::register_object(&flat_co_2);
 	LEti::Space_Splitter_2D::register_object(&flat_co_3);
@@ -445,7 +447,6 @@ int main()
 		auto it = list.begin();
 		while(it != list.end())
 		{
-//			std::cout << it->first << ' ' << it->second << "\n";
 			ind.set_pos(it->collision_data.closest_intersection_point.x, it->collision_data.closest_intersection_point.y, 0.0f);
 			ind.draw();
 
@@ -455,7 +456,10 @@ int main()
 			else
 				angle = LEti::Utility::DOUBLE_PI - angle;
 
-//			flat_co.move(diff.x, diff.y, 0.0f);
+			velocity.x = speed * cos(angle) * LEti::Event_Controller::get_dt() * (1.0f - it->collision_data.time_of_intersection_ratio);
+			velocity.y = speed * sin(angle) * LEti::Event_Controller::get_dt() * (1.0f - it->collision_data.time_of_intersection_ratio);
+
+			flat_co.move(velocity.x, velocity.y, 0.0f);
 
 
 			++it;
