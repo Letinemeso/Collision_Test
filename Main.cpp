@@ -282,7 +282,12 @@ int main()
 	LEti::Object_2D flat_co_3;
 
 	flat_co.init("flat_co_1");
-	flat_co.set_pos(50, 400, 0);
+	flat_co.set_pos(600, 400, 0);
+	flat_co.set_texture("white_texture");
+
+	LEti::Object_2D flat_co_foreshadow;
+	flat_co_foreshadow.init("flat_co_1");
+	flat_co_foreshadow.set_pos(50, 400, 0);
 
 	glm::vec3 velocity;
 	float angle =  0.0f /*LEti::Utility::QUARTER_PI*/ /* * 1.75f*/;
@@ -291,13 +296,16 @@ int main()
 	velocity.y = sin(angle);
 
 	flat_co_2.init("flat_co_2");
-	flat_co_2.set_pos(600, 400, 0);
-	flat_co_2.set_overall_scale(100.0f);
+	flat_co_2.set_pos(50, 400, 0);
+//	flat_co_2.set_overall_scale(100.0f);
+	flat_co_2.set_scale(1.0f, 5.0f, 1.0f);
 
 	flat_co_3.init("flat_co_3");
 //	flat_co_3.set_collision_possibility(false);
 //	flat_co_3.set_visible(false);
-	flat_co_3.move(1000, 300, 0);
+//	flat_co_3.move(1000, 300, 0);
+	flat_co_3.set_pos(1150, 400, 0);
+	flat_co_3.set_scale(1.0f, 800.0f, 1.0f);
 
 
 	LEti::Resource_Loader::load_object("flat_indicator_red", "Resources/Models/flat_indicator_red.mdl");
@@ -326,6 +334,7 @@ int main()
 
 	flat_co.set_is_dynamic(true);
 	flat_co_2.set_is_dynamic(true);
+	flat_co_3.set_is_dynamic(true);
 	LEti::Space_Splitter_2D::register_object(&flat_co);
 	LEti::Space_Splitter_2D::register_object(&flat_co_2);
 	LEti::Space_Splitter_2D::register_object(&flat_co_3);
@@ -338,6 +347,7 @@ int main()
 //	else
 //		intersection_info_block.set_text("Intersection not detected");
 
+	bool moving_down_kostyl = false;
 
 	bool flat_co_enabled = true;
 
@@ -370,6 +380,24 @@ int main()
 		{
 			flat_co_2.move(0.0f, (triangle_speed * DT), 0.0f);
 		}
+
+		if (LEti::Event_Controller::is_key_down(GLFW_KEY_F))
+		{
+			flat_co_3.move(-(triangle_speed * DT), 0.0f, 0.0f);
+		}
+		if (LEti::Event_Controller::is_key_down(GLFW_KEY_H))
+		{
+			flat_co_3.move((triangle_speed * DT), 0.0f, 0.0f);
+		}
+		if (LEti::Event_Controller::is_key_down(GLFW_KEY_G))
+		{
+			flat_co_3.move(0.0f, -(triangle_speed * DT), 0.0f);
+		}
+		if (LEti::Event_Controller::is_key_down(GLFW_KEY_T))
+		{
+			flat_co_3.move(0.0f, (triangle_speed * DT), 0.0f);
+		}
+
 		if (LEti::Event_Controller::key_was_pressed(GLFW_KEY_I))
 		{
 			speed += 50.0f;
@@ -391,12 +419,6 @@ int main()
 
 		if(LEti::Event_Controller::key_was_pressed(GLFW_KEY_C))
 		{
-//			flat_co_enabled = flat_co_enabled ? false : true;
-//			if(flat_co_enabled)
-//				LEti::Space_Splitter_2D::register_object(&flat_co);
-//			else
-//				LEti::Space_Splitter_2D::unregister_object(&flat_co);
-
 			flat_co.set_pos(0, 0, 0);
 			flat_co_2.set_pos(0, 0, 0);
 			flat_co_3.set_pos(0, 0, 0);
@@ -433,12 +455,14 @@ int main()
 		velocity.y = speed * sin(angle) * LEti::Event_Controller::get_dt();;
 		flat_co.move(velocity.x, velocity.y, 0.0f);
 
+		flat_co_3.move(0.0f, moving_down_kostyl ? -1.0f : 1.0f, 0.0f);
+		moving_down_kostyl = !moving_down_kostyl;
+
 		flat_co.update();
 		flat_co_2.update();
 		flat_co_3.update();
 
 		LEti::Space_Splitter_2D::update();
-
 
 //		frame.draw();
 
@@ -448,7 +472,7 @@ int main()
 		while(it != list.end())
 		{
 			ind.set_pos(it->collision_data.closest_intersection_point.x, it->collision_data.closest_intersection_point.y, 0.0f);
-			ind.draw();
+//			ind.draw();
 
 			glm::vec3 diff = it->first->get_pos() - it->second->get_pos();
 			if(fabs(diff.x) > fabs(diff.y))
@@ -456,14 +480,16 @@ int main()
 			else
 				angle = LEti::Utility::DOUBLE_PI - angle;
 
-			velocity.x = speed * cos(angle) * LEti::Event_Controller::get_dt() * (1.0f - it->collision_data.time_of_intersection_ratio);
-			velocity.y = speed * sin(angle) * LEti::Event_Controller::get_dt() * (1.0f - it->collision_data.time_of_intersection_ratio);
+			velocity.x = speed * cos(angle) * LEti::Event_Controller::get_dt() * (/*1.0f - */it->collision_data.time_of_intersection_ratio);
+			velocity.y = speed * sin(angle) * LEti::Event_Controller::get_dt() * (/*1.0f - */it->collision_data.time_of_intersection_ratio);
 
 			flat_co.move(velocity.x, velocity.y, 0.0f);
-
+			flat_co.update();
 
 			++it;
 		}
+//		if(list.size() == 0)
+//			ind.set_pos(0, 0, 0);
 //		std::cout << "\n";
 
 		if(angle < 0.0f)
@@ -474,7 +500,11 @@ int main()
 		flat_co_2.draw();
 		if(flat_co_enabled)
 			flat_co.draw();
+//		flat_co_foreshadow.set_pos(flat_co.get_pos().x + velocity.x, flat_co.get_pos().y + velocity.y, 0.0f);
+//		flat_co_foreshadow.draw();
 		flat_co_3.draw();
+
+		ind.draw();
 
 		intersection_info_block.set_text(std::to_string(list.size()).c_str());
 		intersection_info_block.draw();
