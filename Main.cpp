@@ -42,7 +42,7 @@ int main()
 
 	LEti::Camera::setup_orthographic_matrix();
 
-	LEti::Camera::set_fov_and_max_distance(LEti::Utility::HALF_PI, 50.0f);
+	LEti::Camera::set_fov_and_max_distance(LEti::Math::HALF_PI, 50.0f);
 	LEti::Camera::set_camera_data({ 0.0f, 2.0f, 2.0f }, { 0.0f, -2.0f, -1.0f });
 
 	LEti::Resource_Loader::init();
@@ -145,11 +145,11 @@ int main()
 		}
 		if (LEti::Event_Controller::is_key_down(GLFW_KEY_Q))
 		{
-			pyramid.rotate(LEti::Utility::QUARTER_PI * LEti::Event_Controller::get_dt());
+			pyramid.rotate(LEti::Math::QUARTER_PI * LEti::Event_Controller::get_dt());
 		}
 		if (LEti::Event_Controller::is_key_down(GLFW_KEY_E))
 		{
-			pyramid.rotate(- LEti::Utility::QUARTER_PI * LEti::Event_Controller::get_dt());
+			pyramid.rotate(- LEti::Math::QUARTER_PI * LEti::Event_Controller::get_dt());
 		}
 
 		fake_rotate = glm::rotate(pyramid.get_rotation_angle(), pyramid.get_rotation_axis());
@@ -258,7 +258,7 @@ int main()
 
 	LEti::Camera::setup_orthographic_matrix();
 
-	LEti::Camera::set_fov_and_max_distance(LEti::Utility::HALF_PI, 50.0f);
+	LEti::Camera::set_fov_and_max_distance(LEti::Math::HALF_PI, 50.0f);
 	LEti::Camera::set_camera_data({ 0.0f, 2.0f, 2.0f }, { 0.0f, -2.0f, -1.0f });
 
 	LEti::Resource_Loader::init();
@@ -290,7 +290,7 @@ int main()
 	flat_co_foreshadow.set_pos(50, 400, 0);
 
 	glm::vec3 velocity;
-	float angle =  0.0f /*LEti::Utility::QUARTER_PI*/ /* * 1.75f*/;
+	float angle =  0.0f /*LEti::Math::QUARTER_PI*/ /* * 1.75f*/;
 	float speed = 50.0f;
 	velocity.x = cos(angle);
 	velocity.y = sin(angle);
@@ -410,11 +410,11 @@ int main()
 		}
 		if (LEti::Event_Controller::is_key_down(GLFW_KEY_J))
 		{
-			angle += LEti::Utility::HALF_PI * LEti::Event_Controller::get_dt();
+			angle += LEti::Math::HALF_PI * LEti::Event_Controller::get_dt();
 		}
 		if (LEti::Event_Controller::is_key_down(GLFW_KEY_L))
 		{
-			angle -= LEti::Utility::HALF_PI * LEti::Event_Controller::get_dt();
+			angle -= LEti::Math::HALF_PI * LEti::Event_Controller::get_dt();
 		}
 
 		if(LEti::Event_Controller::key_was_pressed(GLFW_KEY_C))
@@ -427,29 +427,29 @@ int main()
 		if(flat_co.get_pos().y >= 800.0f)
 		{
 			flat_co.set_pos(flat_co.get_pos().x, 799.0f, 0.0f);
-			angle = LEti::Utility::DOUBLE_PI - angle;
+			angle = LEti::Math::DOUBLE_PI - angle;
 		}
 		else if(flat_co.get_pos().y <= 0.0f)
 		{
 			flat_co.set_pos(flat_co.get_pos().x, 1.0f, 0.0f);
-			angle = LEti::Utility::DOUBLE_PI - angle;
+			angle = LEti::Math::DOUBLE_PI - angle;
 		}
 
 		if(flat_co.get_pos().x >= 1200.0f)
 		{
 			flat_co.set_pos(1199.0f, flat_co.get_pos().y, 0.0f);
-			angle = LEti::Utility::DOUBLE_PI - angle + LEti::Utility::PI;
+			angle = LEti::Math::DOUBLE_PI - angle + LEti::Math::PI;
 		}
 		else if(flat_co.get_pos().x <= 0.0f)
 		{
 			flat_co.set_pos(1.0f, flat_co.get_pos().y, 0.0f);
-			angle = LEti::Utility::DOUBLE_PI - angle + LEti::Utility::PI;
+			angle = LEti::Math::DOUBLE_PI - angle + LEti::Math::PI;
 		}
 
 		if(angle < 0.0f)
-			angle += LEti::Utility::DOUBLE_PI;
-		else if(angle > LEti::Utility::DOUBLE_PI)
-			angle -= LEti::Utility::DOUBLE_PI;
+			angle += LEti::Math::DOUBLE_PI;
+		else if(angle > LEti::Math::DOUBLE_PI)
+			angle -= LEti::Math::DOUBLE_PI;
 
 		velocity.x = speed * cos(angle) * LEti::Event_Controller::get_dt();;
 		velocity.y = speed * sin(angle) * LEti::Event_Controller::get_dt();;
@@ -476,9 +476,9 @@ int main()
 
 			glm::vec3 diff = it->first->get_pos() - it->second->get_pos();
 			if(fabs(diff.x) > fabs(diff.y))
-				angle = LEti::Utility::DOUBLE_PI - angle + LEti::Utility::PI;
+				angle = LEti::Math::DOUBLE_PI - angle + LEti::Math::PI;
 			else
-				angle = LEti::Utility::DOUBLE_PI - angle;
+				angle = LEti::Math::DOUBLE_PI - angle;
 
 			velocity.x = speed * cos(angle) * LEti::Event_Controller::get_dt() * (/*1.0f - */it->collision_data.time_of_intersection_ratio);
 			velocity.y = speed * sin(angle) * LEti::Event_Controller::get_dt() * (/*1.0f - */it->collision_data.time_of_intersection_ratio);
@@ -493,9 +493,9 @@ int main()
 //		std::cout << "\n";
 
 		if(angle < 0.0f)
-			angle += LEti::Utility::DOUBLE_PI;
-		else if(angle > LEti::Utility::DOUBLE_PI)
-			angle -= LEti::Utility::DOUBLE_PI;
+			angle += LEti::Math::DOUBLE_PI;
+		else if(angle > LEti::Math::DOUBLE_PI)
+			angle -= LEti::Math::DOUBLE_PI;
 
 		flat_co_2.draw();
 		if(flat_co_enabled)
