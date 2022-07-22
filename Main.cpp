@@ -181,9 +181,9 @@ int main()
 
 //		cube.set_visible(false);
 //		std::string intersection_message;
-//		if(id.type == LEti::Physical_Model_Interface::Intersection_Data::Intersection_Type::inside)
+//		if(id.type == LEti::Physical_Model_Interface::Intersection_Data::Type::inside)
 //			intersection_message += "PM is fully inside";
-//		else if(id.type == LEti::Physical_Model_Interface::Intersection_Data::Intersection_Type::partly_outside)
+//		else if(id.type == LEti::Physical_Model_Interface::Intersection_Data::Type::partly_outside)
 //		{
 //			intersection_message += "intersection at ";
 //			intersection_message += std::to_string(id.closest_intersection_point.x);
@@ -332,9 +332,13 @@ int main()
 	fps_info_block.init("text_field");
 	fps_info_block.set_pos(1150, 770, 0);
 
-	flat_co.set_is_dynamic(true);
-	flat_co_2.set_is_dynamic(true);
-	flat_co_3.set_is_dynamic(true);
+	flat_co.update();
+	flat_co_2.update();
+	flat_co_3.update();
+
+	flat_co.set_dynamic(true);
+	flat_co_2.set_dynamic(true);
+	flat_co_3.set_dynamic(true);
 	LEti::Space_Splitter_2D::register_object(&flat_co);
 	LEti::Space_Splitter_2D::register_object(&flat_co_2);
 	LEti::Space_Splitter_2D::register_object(&flat_co_3);
@@ -347,12 +351,14 @@ int main()
 //	else
 //		intersection_info_block.set_text("Intersection not detected");
 
-	bool moving_down_kostyl = false;
+//	bool moving_down_kostyl = false;
 
 	bool flat_co_enabled = true;
 
 	LEti::Timer fps_timer;
 	unsigned int fps_counter = 0;
+
+
 
 	while (!LEti::Event_Controller::window_should_close())
 	{
@@ -455,23 +461,24 @@ int main()
 		velocity.y = speed * sin(angle) * LEti::Event_Controller::get_dt();;
 		flat_co.move(velocity.x, velocity.y, 0.0f);
 
-		flat_co_3.move(0.0f, moving_down_kostyl ? -1.0f : 1.0f, 0.0f);
-		moving_down_kostyl = !moving_down_kostyl;
+//		flat_co_3.move(0.0f, moving_down_kostyl ? -1.0f : 1.0f, 0.0f);
+//		moving_down_kostyl = !moving_down_kostyl;
 
 		flat_co.update();
 		flat_co_2.update();
 		flat_co_3.update();
 
+
 		LEti::Space_Splitter_2D::update();
 
 //		frame.draw();
 
-		auto list = LEti::Space_Splitter_2D::get_collisions();
+		std::list<LEti::Space_Splitter_2D::Collision_Data> list = LEti::Space_Splitter_2D::get_collisions();
 
 		auto it = list.begin();
 		while(it != list.end())
 		{
-			ind.set_pos(it->collision_data.closest_intersection_point.x, it->collision_data.closest_intersection_point.y, 0.0f);
+			ind.set_pos(it->collision_data.point.x, it->collision_data.point.y, 0.0f);
 //			ind.draw();
 
 			glm::vec3 diff = it->first->get_pos() - it->second->get_pos();
