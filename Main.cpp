@@ -358,7 +358,8 @@ int main()
 	LEti::Timer fps_timer;
 	unsigned int fps_counter = 0;
 
-
+	LEti::Debug_Drawable_Frame frame;
+	frame.init("debug_frame");
 
 	while (!LEti::Event_Controller::window_should_close())
 	{
@@ -468,7 +469,6 @@ int main()
 		flat_co_2.update();
 		flat_co_3.update();
 
-
 		LEti::Space_Splitter_2D::update();
 
 //		frame.draw();
@@ -512,6 +512,46 @@ int main()
 		flat_co_3.draw();
 
 		ind.draw();
+
+		frame.clear_points().clear_sequence();
+		const auto pm = ((const LEti::Object_2D&)flat_co).get_physical_model();
+		unsigned int counter = 0;
+		for(unsigned int i=0; i<pm->get_polygons_count(); ++i)
+		{
+			for(unsigned int j=0; j<3; ++j)
+			{
+				frame.set_point(counter, (*pm)[i][j]).set_sequence_element(counter, counter);
+				++counter;
+			}
+		}
+		frame.update();
+		frame.draw();
+		frame.clear_points().clear_sequence();
+		const auto pm_2 = ((const LEti::Object_2D&)flat_co_2).get_physical_model();
+		counter = 0;
+		for(unsigned int i=0; i<pm_2->get_polygons_count(); ++i)
+		{
+			for(unsigned int j=0; j<3; ++j)
+			{
+				frame.set_point(counter, (*pm_2)[i][j]).set_sequence_element(counter, counter);
+				++counter;
+			}
+		}
+		frame.update();
+		frame.draw();
+		frame.clear_points().clear_sequence();
+		const auto pm_3 = ((const LEti::Object_2D&)flat_co_3).get_physical_model();
+		counter = 0;
+		for(unsigned int i=0; i<pm_3->get_polygons_count(); ++i)
+		{
+			for(unsigned int j=0; j<3; ++j)
+			{
+				frame.set_point(counter, (*pm_3)[i][j]).set_sequence_element(counter, counter);
+				++counter;
+			}
+		}
+		frame.update();
+		frame.draw();
 
 		intersection_info_block.set_text(std::to_string(list.size()).c_str());
 		intersection_info_block.draw();
