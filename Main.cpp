@@ -305,7 +305,7 @@ int main()
 //	flat_co_3.set_visible(false);
 //	flat_co_3.move(1000, 300, 0);
 	flat_co_3.set_pos(1150, 400, 0);
-	flat_co_3.set_scale(1.0f, 800.0f, 1.0f);
+	flat_co_3.set_scale(20.0f, 400.0f, 1.0f);
 
 
 	LEti::Resource_Loader::load_object("flat_indicator_red", "Resources/Models/flat_indicator_red.mdl");
@@ -482,13 +482,13 @@ int main()
 //			ind.draw();
 
 			glm::vec3 diff = it->first->get_pos() - it->second->get_pos();
-			if(fabs(diff.x) > fabs(diff.y))
+//			if(fabs(diff.x) > fabs(diff.y))
 				angle = LEti::Math::DOUBLE_PI - angle + LEti::Math::PI;
-			else
-				angle = LEti::Math::DOUBLE_PI - angle;
+//			else
+//				angle = LEti::Math::DOUBLE_PI - angle;
 
-			velocity.x = speed * cos(angle) * LEti::Event_Controller::get_dt() * (/*1.0f - */it->collision_data.time_of_intersection_ratio);
-			velocity.y = speed * sin(angle) * LEti::Event_Controller::get_dt() * (/*1.0f - */it->collision_data.time_of_intersection_ratio);
+			velocity.x = speed * cos(angle) * LEti::Event_Controller::get_dt() * (1.0f - it->collision_data.time_of_intersection_ratio);
+			velocity.y = speed * sin(angle) * LEti::Event_Controller::get_dt() * (1.0f - it->collision_data.time_of_intersection_ratio);
 
 			flat_co.move(velocity.x, velocity.y, 0.0f);
 			flat_co.update();
