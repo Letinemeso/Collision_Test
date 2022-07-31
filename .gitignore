@@ -6,3 +6,7 @@ Build/
 *.pro
 *.pro.user
 *.gch
+Makefile*
+.qmake*
+object_script*
+
