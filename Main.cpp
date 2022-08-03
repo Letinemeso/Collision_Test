@@ -12,6 +12,7 @@
 #include "Message_Translator.h"
 
 #include "Space_Splitter_2D.h"
+#include "Space_Splitter_2D_SPH.h"
 
 #include "Debug_Drawable_Frame.h"
 
@@ -75,6 +76,8 @@ int main()
 
 	LEti::Camera::set_fov_and_max_distance(LEti::Math::HALF_PI, 50.0f);
 	LEti::Camera::set_camera_data({ 0.0f, 2.0f, 2.0f }, { 0.0f, -2.0f, -1.0f });
+
+	LEti::Space_Splitter_2D_SPH::set_precision(10);
 
 	LEti::Resource_Loader::init();
 
@@ -163,9 +166,9 @@ int main()
 	flat_co.set_dynamic(true);
 	flat_co_2.set_dynamic(true);
 	flat_co_3.set_dynamic(true);
-	LEti::Space_Splitter_2D::register_object(&flat_co);
-	LEti::Space_Splitter_2D::register_object(&flat_co_2);
-	LEti::Space_Splitter_2D::register_object(&flat_co_3);
+	LEti::Space_Splitter_2D_SPH::register_object(&flat_co);
+	LEti::Space_Splitter_2D_SPH::register_object(&flat_co_2);
+	LEti::Space_Splitter_2D_SPH::register_object(&flat_co_3);
 
 //	float triangle_speed = 100.0f;
 
@@ -255,9 +258,9 @@ int main()
 		flat_co_2.update();
 		flat_co_3.update();
 
-		LEti::Space_Splitter_2D::update();
+		LEti::Space_Splitter_2D_SPH::update();
 
-		std::list<LEti::Space_Splitter_2D::Collision_Data> list = LEti::Space_Splitter_2D::get_collisions();
+		std::list<LEti::Space_Splitter_2D_SPH::Collision_Data> list = LEti::Space_Splitter_2D_SPH::get_collisions();
 
 		auto it = list.begin();
 		while(it != list.end())
