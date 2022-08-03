@@ -174,11 +174,8 @@ int main()
 	LEti::Space_Splitter_2D::register_object(&flat_co_2);
 	LEti::Space_Splitter_2D::register_object(&flat_co_3);
 
-//	float triangle_speed = 100.0f;
-
 	bool flat_co_enabled = true;
 
-//	LEti::Timer fps_timer;
 	unsigned int fps_counter = 0;
 
 	LEti::Debug_Drawable_Frame frame;
@@ -308,6 +305,25 @@ int main()
 			s.update_with_additional_ratio(it->collision_data.time_of_intersection_ratio);
 
 			++it;
+		}
+
+		if(LEti::Event_Controller::mouse_button_was_pressed(GLFW_MOUSE_BUTTON_1))
+		{
+			glm::vec3 cpos;
+			cpos.z = 0.0f;
+			cpos.x = LEti::Event_Controller::get_cursor_position().x;
+			cpos.y = LEti::Event_Controller::get_cursor_position().y;
+			auto plist = LEti::Space_Splitter_2D::get_objects_encircling_point(cpos);
+			if(plist.size() == 0)
+			{
+				std::cout << "list is empty\n\n";
+			}
+			else
+			{
+				for(const auto& obj : plist)
+					std::cout << obj << "\n";
+				std::cout << "\n";
+			}
 		}
 
 		if(flat_co_enabled)
