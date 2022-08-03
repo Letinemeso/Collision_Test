@@ -12,7 +12,8 @@
 #include "Message_Translator.h"
 
 #include "Space_Splitter_2D.h"
-#include "Space_Splitter_2D_SPH.h"
+
+#include "Timer.h"
 
 #include "Debug_Drawable_Frame.h"
 
@@ -77,7 +78,7 @@ int main()
 	LEti::Camera::set_fov_and_max_distance(LEti::Math::HALF_PI, 50.0f);
 	LEti::Camera::set_camera_data({ 0.0f, 2.0f, 2.0f }, { 0.0f, -2.0f, -1.0f });
 
-	LEti::Space_Splitter_2D_SPH::set_precision(10);
+	LEti::Space_Splitter_2D::set_precision(10);
 
 	LEti::Resource_Loader::init();
 
@@ -148,6 +149,8 @@ int main()
 	LEti::Object_2D ind;
 	ind.init("ind");
 
+	LEti::Timer fps_timer;
+
 	LEti::Resource_Loader::load_object("text_field", "Resources/Models/text_field.mdl");
 	LEti::Text_Field intersection_info_block;
 	intersection_info_block.init("text_field");
@@ -167,15 +170,15 @@ int main()
 	flat_co.set_dynamic(true);
 	flat_co_2.set_dynamic(true);
 	flat_co_3.set_dynamic(true);
-	LEti::Space_Splitter_2D_SPH::register_object(&flat_co);
-	LEti::Space_Splitter_2D_SPH::register_object(&flat_co_2);
-	LEti::Space_Splitter_2D_SPH::register_object(&flat_co_3);
+	LEti::Space_Splitter_2D::register_object(&flat_co);
+	LEti::Space_Splitter_2D::register_object(&flat_co_2);
+	LEti::Space_Splitter_2D::register_object(&flat_co_3);
 
 //	float triangle_speed = 100.0f;
 
 	bool flat_co_enabled = true;
 
-	LEti::Timer fps_timer;
+//	LEti::Timer fps_timer;
 	unsigned int fps_counter = 0;
 
 	LEti::Debug_Drawable_Frame frame;
@@ -276,9 +279,9 @@ int main()
 		flat_co_2.update();
 		flat_co_3.update();
 
-		LEti::Space_Splitter_2D_SPH::update();
+		LEti::Space_Splitter_2D::update();
 
-		std::list<LEti::Space_Splitter_2D_SPH::Collision_Data> list = LEti::Space_Splitter_2D_SPH::get_collisions();
+		std::list<LEti::Space_Splitter_2D::Collision_Data> list = LEti::Space_Splitter_2D::get_collisions();
 
 		auto it = list.begin();
 		while(it != list.end())
