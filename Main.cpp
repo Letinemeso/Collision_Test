@@ -157,7 +157,8 @@ int main()
 
 	LEti::Text_Field fps_info_block;
 	fps_info_block.init("text_field");
-	fps_info_block.set_pos(1150, 770, 0);
+//	fps_info_block.set_pos(1150, 770, 0);
+	fps_info_block.set_pos(10, 770, 0);
 
 	flat_co.update();
 	flat_co_2.update();
@@ -198,13 +199,19 @@ int main()
 		{
 			flat_co.m_speed += 50.0f;
 			flat_co_2.m_speed += 50.0f;
-//			flat_co_3.m_speed += 50.0f;
+			flat_co_3.m_speed += 50.0f;
 		}
 		if (LEti::Event_Controller::key_was_pressed(GLFW_KEY_K))
 		{
 			flat_co.m_speed -= 50.0f;
 			if(flat_co.m_speed < 0.0f)
 				flat_co.m_speed = 0.0f;
+			flat_co_2.m_speed -= 50.0f;
+			if(flat_co_2.m_speed < 0.0f)
+				flat_co_2.m_speed = 0.0f;
+			flat_co_3.m_speed -= 50.0f;
+			if(flat_co_3.m_speed < 0.0f)
+				flat_co_3.m_speed = 0.0f;
 		}
 		if (LEti::Event_Controller::is_key_down(GLFW_KEY_J))
 		{
@@ -220,6 +227,17 @@ int main()
 			flat_co.set_pos(0, 0, 0);
 			flat_co_2.set_pos(0, 0, 0);
 			flat_co_3.set_pos(0, 0, 0);
+		}
+
+		if(LEti::Event_Controller::is_key_down(GLFW_KEY_LEFT))
+		{
+			for(auto& co : objects_map)
+				co.second->rotate(LEti::Math::HALF_PI * DT);
+		}
+		if(LEti::Event_Controller::is_key_down(GLFW_KEY_RIGHT))
+		{
+			for(auto& co : objects_map)
+				co.second->rotate(-(LEti::Math::HALF_PI * DT));
 		}
 
 		if(LEti::Event_Controller::key_was_pressed(GLFW_KEY_R))
