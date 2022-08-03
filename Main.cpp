@@ -26,6 +26,34 @@ struct On_Button_Pressed_Msg
 	On_Button_Pressed_Msg(unsigned int _btn) : btn(_btn) { }
 };
 
+class Moving_Object : public LEti::Object_2D
+{
+public:
+	float m_speed = 0.0f;
+	float m_angle = 0.0f;
+	float m_mass = 1.0f;
+
+public:
+	void update() override
+	{
+		glm::vec3 trajectory{0.0f, 0.0f, 0.0f};
+		trajectory.x = m_speed * cos(m_angle) * LEti::Event_Controller::get_dt();
+		trajectory.y = m_speed * sin(m_angle) * LEti::Event_Controller::get_dt();
+		move(trajectory.x, trajectory.y, 0.0f);
+		LEti::Object_2D::update();
+	}
+
+	void update_with_additional_ratio(float _ratio)
+	{
+		glm::vec3 trajectory{0.0f, 0.0f, 0.0f};
+		trajectory.x = m_speed * cos(m_angle) * LEti::Event_Controller::get_dt()/* * _ratio*/;
+		trajectory.y = m_speed * sin(m_angle) * LEti::Event_Controller::get_dt()/* * _ratio*/;
+		move(trajectory.x, trajectory.y, 0.0f);
+		LEti::Object_2D::update();
+	}
+
+};
+
 int main()
 {
 	LEti::Event_Controller::init_and_create_window(1200, 800, "Collision Test");
@@ -52,67 +80,66 @@ int main()
 
 	LEti::Resource_Loader::load_object("textures", "Resources/Textures/textures.mdl");
 
+
+
 	
 
 	///////////////// 2d collision test
 
-//	LEti::Resource_Loader::load_object("flat_co_1", "Resources/Models/flat_cos/flat_co_1.mdl");
 	LEti::Resource_Loader::load_object("flat_co_1", "Resources/Models/quad.mdl");
-	LEti::Object_2D flat_co;
+	Moving_Object flat_co;
+	flat_co.m_speed = 200.0f;
+	flat_co.m_angle = LEti::Math::PI;
 
-//	LEti::Resource_Loader::load_object("flat_co_2", "Resources/Models/flat_cos/flat_co_2.mdl");
 	LEti::Resource_Loader::load_object("flat_co_2", "Resources/Models/quad.mdl");
-	LEti::Object_2D flat_co_2;
-//	flat_co_2.move(300, 300, 0);
+	Moving_Object flat_co_2;
 
 	LEti::Resource_Loader::load_object("flat_co_3", "Resources/Models/quad.mdl");
-	LEti::Object_2D flat_co_3;
+	Moving_Object flat_co_3;
 
 	flat_co.init("flat_co_1");
-	flat_co.set_pos(600, 400, 0);
+	flat_co.set_pos(800, 400, 0);
 	flat_co.set_texture("white_texture");
 
 	LEti::Object_2D flat_co_foreshadow;
 	flat_co_foreshadow.init("flat_co_1");
 	flat_co_foreshadow.set_pos(50, 400, 0);
 
-	glm::vec3 velocity;
-	float angle =  0.0f /*LEti::Math::QUARTER_PI*/ /* * 1.75f*/;
-	float speed = 200.0f;
-//	float speed = 9000.0f;
-	velocity.x = cos(angle);
-	velocity.y = sin(angle);
-
 	flat_co_2.init("flat_co_2");
-//	flat_co_2.set_pos(50, 400, 0);
-//	flat_co_2.set_overall_scale(100.0f);
-//	flat_co_2.set_scale(20.0f, 20.0f, 1.0f);
-
-	flat_co_2.set_scale(5.0f, 70.0f, 1.0f);
-	flat_co_2.set_pos(400, 400, 0);
+	flat_co_2.set_scale(20.0f, 20.0f, 1.0f);
+	flat_co_2.set_pos(400, 600, 0);
+	flat_co_2.m_speed = 0.0f;
+	flat_co_2.m_angle = 2.53f;
 
 	flat_co_3.init("flat_co_3");
-//	flat_co_3.set_collision_possibility(false);
-//	flat_co_3.set_visible(false);
-//	flat_co_3.move(1000, 300, 0);
-//	flat_co_3.set_pos(1150, 400, 0);
-//	flat_co_3.set_scale(50.0f, 50.0f, 1.0f);
+	flat_co_3.set_scale(50.0f, 50.0f, 1.0f);
+	flat_co_3.set_pos(400, 400, 0);
+	flat_co_3.m_speed = 200.0f;
+	flat_co_3.m_angle = 0.0f;
 
-	flat_co_3.set_pos(50, 400, 0);
-	flat_co_3.set_scale(5.0f, 100.0f, 1.0f);
+	auto reset_func = [&flat_co, &flat_co_2, &flat_co_3]()
+	{
+		flat_co.set_pos(800, 400, 0);
+		flat_co.m_angle = 0.1f;
+		flat_co.m_speed = 200.0f;
 
+		flat_co_2.set_pos(800, 400, 0);
+		flat_co_2.m_angle = 1.34f;
+		flat_co_2.m_speed = 200.0f;
+
+		flat_co_3.set_pos(400, 400, 0);
+		flat_co_3.m_angle = 3.4f;
+		flat_co_3.m_speed = 200.0f;
+	};
+	reset_func();
+
+	std::map<const LEti::Object_2D*, Moving_Object*> objects_map;
+	objects_map.emplace(&flat_co, &flat_co);
+	objects_map.emplace(&flat_co_2, &flat_co_2);
+	objects_map.emplace(&flat_co_3, &flat_co_3);
 
 	LEti::Resource_Loader::load_object("flat_indicator_red", "Resources/Models/flat_indicator_red.mdl");
 	LEti::Resource_Loader::load_object("debug_frame", "Resources/Models/debug_frame.mdl");
-//	LEti::init_frame("debug_frame");
-//	LEti::Debug_Drawable_Frame frame;
-//	frame.init("debug_frame");
-//	frame.get_vertices()[0] = -50.0f;
-
-//	frame.set_point(0, {0.0f, 500.0f, 0.0f}).set_point(1, {500.0f, 0.0f, 0.0f}).set_point(2, {0.0f, 0.0f, 0.0f}).set_point(3, {500, 500, 0}).set_point(3, {700, 250, 0});
-//	frame.set_sequence_element(0, 0).set_sequence_element(1, 1).set_sequence_element(2, 2).set_sequence_element(3, 3).set_sequence_element(4, 4);
-//	frame.update();
-
 
 	LEti::Resource_Loader::load_object("ind", "Resources/Models/intersection_point_indicator.mdl");
 	LEti::Object_2D ind;
@@ -140,15 +167,7 @@ int main()
 	LEti::Space_Splitter_2D::register_object(&flat_co_2);
 	LEti::Space_Splitter_2D::register_object(&flat_co_3);
 
-	float triangle_speed = 100.0f;
-
-//	bool intersection_detected = false;
-//	if (intersection_detected)
-//		intersection_info_block.set_text("Intersection detected");
-//	else
-//		intersection_info_block.set_text("Intersection not detected");
-
-//	bool moving_down_kostyl = false;
+//	float triangle_speed = 100.0f;
 
 	bool flat_co_enabled = true;
 
@@ -172,57 +191,25 @@ int main()
 		flat_co_2.update_previous_state();
 		flat_co_3.update_previous_state();
 
-		if (LEti::Event_Controller::is_key_down(GLFW_KEY_LEFT))
-		{
-			flat_co_2.move(-(triangle_speed * DT), 0.0f, 0.0f);
-		}
-		if (LEti::Event_Controller::is_key_down(GLFW_KEY_RIGHT))
-		{
-			flat_co_2.move((triangle_speed * DT), 0.0f, 0.0f);
-		}
-		if (LEti::Event_Controller::is_key_down(GLFW_KEY_DOWN))
-		{
-			flat_co_2.move(0.0f, -(triangle_speed * DT), 0.0f);
-		}
-		if (LEti::Event_Controller::is_key_down(GLFW_KEY_UP))
-		{
-			flat_co_2.move(0.0f, (triangle_speed * DT), 0.0f);
-		}
-
-		if (LEti::Event_Controller::is_key_down(GLFW_KEY_A))
-		{
-			flat_co_3.move(-(triangle_speed * DT), 0.0f, 0.0f);
-		}
-		if (LEti::Event_Controller::is_key_down(GLFW_KEY_D))
-		{
-			flat_co_3.move((triangle_speed * DT), 0.0f, 0.0f);
-		}
-		if (LEti::Event_Controller::is_key_down(GLFW_KEY_S))
-		{
-			flat_co_3.move(0.0f, -(triangle_speed * DT), 0.0f);
-		}
-		if (LEti::Event_Controller::is_key_down(GLFW_KEY_W))
-		{
-			flat_co_3.move(0.0f, (triangle_speed * DT), 0.0f);
-		}
-
 		if (LEti::Event_Controller::key_was_pressed(GLFW_KEY_I))
 		{
-			speed += 50.0f;
+			flat_co.m_speed += 50.0f;
+			flat_co_2.m_speed += 50.0f;
+//			flat_co_3.m_speed += 50.0f;
 		}
 		if (LEti::Event_Controller::key_was_pressed(GLFW_KEY_K))
 		{
-			speed -= 50.0f;
-			if(speed < 0.0f)
-				speed = 0.0f;
+			flat_co.m_speed -= 50.0f;
+			if(flat_co.m_speed < 0.0f)
+				flat_co.m_speed = 0.0f;
 		}
 		if (LEti::Event_Controller::is_key_down(GLFW_KEY_J))
 		{
-			angle += LEti::Math::HALF_PI * LEti::Event_Controller::get_dt();
+			flat_co.m_angle += LEti::Math::HALF_PI * LEti::Event_Controller::get_dt();
 		}
 		if (LEti::Event_Controller::is_key_down(GLFW_KEY_L))
 		{
-			angle -= LEti::Math::HALF_PI * LEti::Event_Controller::get_dt();
+			flat_co.m_angle -= LEti::Math::HALF_PI * LEti::Event_Controller::get_dt();
 		}
 
 		if(LEti::Event_Controller::key_was_pressed(GLFW_KEY_C))
@@ -232,39 +219,37 @@ int main()
 			flat_co_3.set_pos(0, 0, 0);
 		}
 
-		if(flat_co.get_pos().y >= 800.0f)
+		if(LEti::Event_Controller::key_was_pressed(GLFW_KEY_R))
 		{
-			flat_co.set_pos(flat_co.get_pos().x, 799.0f, 0.0f);
-			angle = LEti::Math::DOUBLE_PI - angle;
-		}
-		else if(flat_co.get_pos().y <= 0.0f)
-		{
-			flat_co.set_pos(flat_co.get_pos().x, 1.0f, 0.0f);
-			angle = LEti::Math::DOUBLE_PI - angle;
+			reset_func();
 		}
 
-		if(flat_co.get_pos().x >= 1200.0f)
+		for(auto& co : objects_map)
 		{
-			flat_co.set_pos(1199.0f, flat_co.get_pos().y, 0.0f);
-			angle = LEti::Math::DOUBLE_PI - angle + LEti::Math::PI;
+			Moving_Object& cco = *co.second;
+			if(cco.get_pos().y >= 800.0f)
+			{
+				cco.set_pos(cco.get_pos().x, 799.0f, 0.0f);
+				cco.m_angle = LEti::Math::DOUBLE_PI - cco.m_angle;
+			}
+			else if(cco.get_pos().y <= 0.0f)
+			{
+				cco.set_pos(cco.get_pos().x, 1.0f, 0.0f);
+				cco.m_angle = LEti::Math::DOUBLE_PI - cco.m_angle;
+			}
+
+			if(cco.get_pos().x >= 1200.0f)
+			{
+				cco.set_pos(1199.0f, cco.get_pos().y, 0.0f);
+				cco.m_angle = LEti::Math::DOUBLE_PI - cco.m_angle + LEti::Math::PI;
+			}
+			else if(cco.get_pos().x <= 0.0f)
+			{
+				cco.set_pos(1.0f, cco.get_pos().y, 0.0f);
+				cco.m_angle = LEti::Math::DOUBLE_PI - cco.m_angle + LEti::Math::PI;
+			}
 		}
-		else if(flat_co.get_pos().x <= 0.0f)
-		{
-			flat_co.set_pos(1.0f, flat_co.get_pos().y, 0.0f);
-			angle = LEti::Math::DOUBLE_PI - angle + LEti::Math::PI;
-		}
 
-		if(angle < 0.0f)
-			angle += LEti::Math::DOUBLE_PI;
-		else if(angle > LEti::Math::DOUBLE_PI)
-			angle -= LEti::Math::DOUBLE_PI;
-
-		velocity.x = speed * cos(angle) * LEti::Event_Controller::get_dt();;
-		velocity.y = speed * sin(angle) * LEti::Event_Controller::get_dt();;
-		flat_co.move(velocity.x, velocity.y, 0.0f);
-
-//		flat_co_3.move(0.0f, moving_down_kostyl ? -1.0f : 1.0f, 0.0f);
-//		moving_down_kostyl = !moving_down_kostyl;
 
 		flat_co.update();
 		flat_co_2.update();
@@ -272,50 +257,41 @@ int main()
 
 		LEti::Space_Splitter_2D::update();
 
-//		frame.draw();
-
 		std::list<LEti::Space_Splitter_2D::Collision_Data> list = LEti::Space_Splitter_2D::get_collisions();
 
 		auto it = list.begin();
 		while(it != list.end())
 		{
 			ind.set_pos(it->collision_data.point.x, it->collision_data.point.y, 0.0f);
-//			ind.draw();
+			ind.draw();
 
-			glm::vec3 diff = it->first->get_pos() - it->second->get_pos();
-//			if(fabs(diff.x) > fabs(diff.y))
-				angle = LEti::Math::DOUBLE_PI - angle + LEti::Math::PI;
-//			else
-//				angle = LEti::Math::DOUBLE_PI - angle;
+			Moving_Object& f = *(objects_map.at(it->first));
+			Moving_Object& s = *(objects_map.at(it->second));
 
-			velocity.x = speed * cos(angle) * LEti::Event_Controller::get_dt() * (1.0f - it->collision_data.time_of_intersection_ratio);
-			velocity.y = speed * sin(angle) * LEti::Event_Controller::get_dt() * (1.0f - it->collision_data.time_of_intersection_ratio);
+			glm::vec3 diff = f.get_pos() - s.get_pos();
+			if(fabs(diff.x) > fabs(diff.y))
+			{
+				f.m_angle = LEti::Math::DOUBLE_PI - f.m_angle + LEti::Math::PI;
+				s.m_angle = LEti::Math::DOUBLE_PI - s.m_angle + LEti::Math::PI;
+			}
+			else
+			{
+				f.m_angle = LEti::Math::DOUBLE_PI - f.m_angle;
+				s.m_angle = LEti::Math::DOUBLE_PI - s.m_angle;
+			}
 
-			flat_co.move(velocity.x, velocity.y, 0.0f);
-			flat_co.update();
-
-//			glm::vec3 controlled_co_diff = (flat_co_3.get_pos() - flat_co_3.get_pos_prev()) * -1.0f * (1.0f - it->collision_data.time_of_intersection_ratio) * 50.0f;
-//			flat_co_3.move(controlled_co_diff.x, controlled_co_diff.y, controlled_co_diff.z);
+			f.update_with_additional_ratio(it->collision_data.time_of_intersection_ratio);
+			s.update_with_additional_ratio(it->collision_data.time_of_intersection_ratio);
 
 			++it;
 		}
-//		if(list.size() == 0)
-//			ind.set_pos(0, 0, 0);
-//		std::cout << "\n";
 
-		if(angle < 0.0f)
-			angle += LEti::Math::DOUBLE_PI;
-		else if(angle > LEti::Math::DOUBLE_PI)
-			angle -= LEti::Math::DOUBLE_PI;
-
-		flat_co_2.draw();
 		if(flat_co_enabled)
 			flat_co.draw();
-//		flat_co_foreshadow.set_pos(flat_co.get_pos().x + velocity.x, flat_co.get_pos().y + velocity.y, 0.0f);
-//		flat_co_foreshadow.draw();
+		flat_co_2.draw();
 		flat_co_3.draw();
 
-		ind.draw();
+//		ind.draw();
 
 		frame.clear_points().clear_sequence();
 		const auto pm = ((const LEti::Object_2D&)flat_co).get_physical_model();
@@ -365,14 +341,10 @@ int main()
 		if(!fps_timer.is_active())
 		{
 			fps_timer.start(1.0f);
-//			fps_info_block.set_text((std::to_string((int)(1.0f / LEti::Event_Controller::get_dt()))).c_str());
 			fps_info_block.set_text((std::to_string(fps_counter)).c_str());
 			fps_counter = 0;
 		}
 		fps_info_block.draw();
-
-		tf_flat_co_speed.set_text((std::to_string(speed)).c_str());
-		tf_flat_co_speed.draw();
 
 		LEti::Event_Controller::swap_buffers();
 	}
