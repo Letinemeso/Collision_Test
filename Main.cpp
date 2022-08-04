@@ -84,7 +84,7 @@ int main()
 
 	LEti::Resource_Loader::load_object("textures", "Resources/Textures/textures.mdl");
 
-
+	LEti::Event_Controller::set_max_dt(60.0f / 1000.0f);
 
 	
 
@@ -127,8 +127,8 @@ int main()
 		flat_co.m_angle = 0.1f;
 		flat_co.m_speed = 200.0f;
 
-		flat_co_2.set_pos(800, 400, 0);
-		flat_co_2.m_angle = 1.34f;
+		flat_co_2.set_pos(1000, 600, 0);
+		flat_co_2.m_angle = 2.34f;
 		flat_co_2.m_speed = 200.0f;
 
 		flat_co_3.set_pos(400, 400, 0);
