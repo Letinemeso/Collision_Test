@@ -48,8 +48,8 @@ public:
 	void update_with_additional_ratio(float _ratio)
 	{
 		glm::vec3 trajectory{0.0f, 0.0f, 0.0f};
-		trajectory.x = m_speed * cos(m_angle) * LEti::Event_Controller::get_dt()/* * _ratio*/;
-		trajectory.y = m_speed * sin(m_angle) * LEti::Event_Controller::get_dt()/* * _ratio*/;
+		trajectory.x = m_speed * cos(m_angle) * LEti::Event_Controller::get_dt() * (1.0f - _ratio);
+		trajectory.y = m_speed * sin(m_angle) * LEti::Event_Controller::get_dt() * (1.0f - _ratio);
 		move(trajectory.x, trajectory.y, 0.0f);
 		LEti::Object_2D::update();
 	}
@@ -123,16 +123,19 @@ int main()
 
 	auto reset_func = [&flat_co, &flat_co_2, &flat_co_3]()
 	{
-		flat_co.set_pos(800, 400, 0);
-		flat_co.m_angle = 0.1f;
+//		flat_co.set_pos(800, 400, 0);
+//		flat_co.m_angle = 0.1f;
+//		flat_co.m_speed = 200.0f;
+		flat_co.set_pos(400, 400, 0);
+		flat_co.m_angle = /*LEti::Math::HALF_PI + LEti::Math::PI*/ 0.0f;
 		flat_co.m_speed = 200.0f;
 
 		flat_co_2.set_pos(1000, 600, 0);
 		flat_co_2.m_angle = 2.34f;
 		flat_co_2.m_speed = 200.0f;
 
-		flat_co_3.set_pos(400, 400, 0);
-		flat_co_3.m_angle = 3.4f;
+		flat_co_3.set_pos(800, 400, 0);
+		flat_co_3.m_angle = LEti::Math::PI/* + 0.44f*/;
 		flat_co_3.m_speed = 200.0f;
 	};
 	reset_func();
@@ -171,7 +174,7 @@ int main()
 	flat_co_2.set_dynamic(true);
 	flat_co_3.set_dynamic(true);
 	LEti::Space_Splitter_2D::register_object(&flat_co);
-	LEti::Space_Splitter_2D::register_object(&flat_co_2);
+//	LEti::Space_Splitter_2D::register_object(&flat_co_2);
 	LEti::Space_Splitter_2D::register_object(&flat_co_3);
 
 	bool flat_co_enabled = true;
@@ -180,6 +183,8 @@ int main()
 
 	LEti::Debug_Drawable_Frame frame;
 	frame.init("debug_frame");
+
+	bool intersection_on_prev_frame = false;
 
 	while (!LEti::Window_Controller::window_should_close())
 	{
@@ -198,19 +203,19 @@ int main()
 
 		if (LEti::Event_Controller::key_was_pressed(GLFW_KEY_I))
 		{
-			flat_co.m_speed += 50.0f;
-			flat_co_2.m_speed += 50.0f;
-			flat_co_3.m_speed += 50.0f;
+			flat_co.m_speed += 100.0f;
+			flat_co_2.m_speed += 100.0f;
+			flat_co_3.m_speed += 100.0f;
 		}
 		if (LEti::Event_Controller::key_was_pressed(GLFW_KEY_K))
 		{
-			flat_co.m_speed -= 50.0f;
+			flat_co.m_speed -= 100.0f;
 			if(flat_co.m_speed < 0.0f)
 				flat_co.m_speed = 0.0f;
-			flat_co_2.m_speed -= 50.0f;
+			flat_co_2.m_speed -= 100.0f;
 			if(flat_co_2.m_speed < 0.0f)
 				flat_co_2.m_speed = 0.0f;
-			flat_co_3.m_speed -= 50.0f;
+			flat_co_3.m_speed -= 100.0f;
 			if(flat_co_3.m_speed < 0.0f)
 				flat_co_3.m_speed = 0.0f;
 		}
@@ -281,14 +286,23 @@ int main()
 
 		std::list<LEti::Space_Splitter_2D::Collision_Data> list = LEti::Space_Splitter_2D::get_collisions();
 
+		if(list.size() == 0)
+			intersection_on_prev_frame = false;
+
 		auto it = list.begin();
 		while(it != list.end())
 		{
+			if(intersection_on_prev_frame)
+				std::cout << "error!\n";
+			std::cout << it->collision_data.time_of_intersection_ratio << "\n";
+
 			ind.set_pos(it->collision_data.point.x, it->collision_data.point.y, 0.0f);
 			ind.draw();
 
 			Moving_Object& f = *(objects_map.at(it->first));
 			Moving_Object& s = *(objects_map.at(it->second));
+
+			std::cout << "before:\n\tfirst angle: " << f.m_angle << "\n\tsecond angle: " << s.m_angle << "\n";
 
 			glm::vec3 diff = f.get_pos() - s.get_pos();
 			if(fabs(diff.x) > fabs(diff.y))
@@ -302,11 +316,21 @@ int main()
 				s.m_angle = LEti::Math::DOUBLE_PI - s.m_angle;
 			}
 
+//			f.update_with_additional_ratio(0.0f);
+//			s.update_with_additional_ratio(0.0f);
 			f.update_with_additional_ratio(it->collision_data.time_of_intersection_ratio);
 			s.update_with_additional_ratio(it->collision_data.time_of_intersection_ratio);
 
+			std::cout << "after:\n\tfirst angle: " << f.m_angle << "\n\tsecond angle: " << s.m_angle << "\n\n";
+
+			auto idk = f.get_physical_model()->is_intersecting_with_another_model(*s.get_physical_model());
+			if(idk)
+				std::cout << "models still intersect!\n\n";
+
 			++it;
 		}
+		if(list.size() != 0)
+			intersection_on_prev_frame = true;
 
 		if(LEti::Event_Controller::mouse_button_was_pressed(GLFW_MOUSE_BUTTON_1))
 		{
