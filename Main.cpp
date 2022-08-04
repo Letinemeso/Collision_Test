@@ -58,7 +58,7 @@ public:
 
 int main()
 {
-	LEti::Event_Controller::init_and_create_window(1200, 800, "Collision Test");
+	LEti::Window_Controller::create_window(1200, 800, "Collision Test");
 
 	glEnable(GL_BLEND);
 	glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
@@ -181,9 +181,10 @@ int main()
 	LEti::Debug_Drawable_Frame frame;
 	frame.init("debug_frame");
 
-	while (!LEti::Event_Controller::window_should_close())
+	while (!LEti::Window_Controller::window_should_close())
 	{
 		LEti::Event_Controller::update();
+		LEti::Window_Controller::update();
 
 		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
@@ -311,8 +312,8 @@ int main()
 		{
 			glm::vec3 cpos;
 			cpos.z = 0.0f;
-			cpos.x = LEti::Event_Controller::get_cursor_position().x;
-			cpos.y = LEti::Event_Controller::get_cursor_position().y;
+			cpos.x = LEti::Window_Controller::get_cursor_position().x;
+			cpos.y = LEti::Window_Controller::get_cursor_position().y;
 			auto plist = LEti::Space_Splitter_2D::get_objects_encircling_point(cpos);
 			if(plist.size() == 0)
 			{
@@ -386,7 +387,7 @@ int main()
 		}
 		fps_info_block.draw();
 
-		LEti::Event_Controller::swap_buffers();
+		LEti::Window_Controller::swap_buffers();
 	}
 
 	return 0;
