@@ -127,7 +127,7 @@ int main()
 //		flat_co.m_angle = 0.1f;
 //		flat_co.m_speed = 200.0f;
 		flat_co.set_pos(400, 400, 0);
-		flat_co.m_angle = /*LEti::Math::HALF_PI + LEti::Math::PI*/ 0.0f;
+		flat_co.m_angle = LEti::Math::HALF_PI + LEti::Math::PI/* 0.0f*/;
 		flat_co.m_speed = 200.0f;
 
 		flat_co_2.set_pos(1000, 600, 0);
@@ -135,7 +135,7 @@ int main()
 		flat_co_2.m_speed = 200.0f;
 
 		flat_co_3.set_pos(800, 400, 0);
-		flat_co_3.m_angle = LEti::Math::PI/* + 0.44f*/;
+		flat_co_3.m_angle = LEti::Math::PI + 0.44f;
 		flat_co_3.m_speed = 200.0f;
 	};
 	reset_func();
@@ -174,7 +174,7 @@ int main()
 	flat_co_2.set_dynamic(true);
 	flat_co_3.set_dynamic(true);
 	LEti::Space_Splitter_2D::register_object(&flat_co);
-//	LEti::Space_Splitter_2D::register_object(&flat_co_2);
+	LEti::Space_Splitter_2D::register_object(&flat_co_2);
 	LEti::Space_Splitter_2D::register_object(&flat_co_3);
 
 	bool flat_co_enabled = true;
