@@ -12,6 +12,8 @@
 #include "Message_Translator.h"
 
 #include "Space_Splitter_2D.h"
+#include "Physics/Space_Hasher_2D.h"
+#include "Physics/Default_Narrow_CD.h"
 
 #include "Timer.h"
 
@@ -78,7 +80,11 @@ int main()
 	LEti::Camera::set_fov_and_max_distance(LEti::Math::HALF_PI, 50.0f);
 	LEti::Camera::set_camera_data({ 0.0f, 2.0f, 2.0f }, { 0.0f, -2.0f, -1.0f });
 
-	LEti::Space_Splitter_2D::set_precision(10);
+	LEti::Space_Splitter_2D::set_broad_phase<LEti::Space_Hasher_2D>();
+	LEti::Space_Splitter_2D::set_narrow_phase<LEti::Default_Narrow_CD>();
+//	LEti::Space_Splitter_2D::set_precision(10);
+	LEti::Space_Splitter_2D::get_broad_phase()->set_precision(10);
+	LEti::Space_Splitter_2D::get_narrow_phase()->set_precision(10);
 
 	LEti::Resource_Loader::init();
 
@@ -170,12 +176,16 @@ int main()
 	flat_co_2.update();
 	flat_co_3.update();
 
+	glm::vec3 cursor_position;
+
 	flat_co.set_dynamic(true);
 	flat_co_2.set_dynamic(true);
 	flat_co_3.set_dynamic(true);
 	LEti::Space_Splitter_2D::register_object(&flat_co);
 	LEti::Space_Splitter_2D::register_object(&flat_co_2);
 	LEti::Space_Splitter_2D::register_object(&flat_co_3);
+
+//	LEti::Space_Splitter_2D::register_point(&cursor_position);
 
 	bool flat_co_enabled = true;
 
@@ -282,9 +292,29 @@ int main()
 		flat_co_2.update();
 		flat_co_3.update();
 
+		if(LEti::Event_Controller::mouse_button_was_pressed(GLFW_MOUSE_BUTTON_1))
+		{
+			cursor_position.z = 0.0f;
+			cursor_position.x = LEti::Window_Controller::get_cursor_position().x;
+			cursor_position.y = LEti::Window_Controller::get_cursor_position().y;
+//			auto plist = LEti::Space_Splitter_2D::get_objects_encircling_point(cpos);
+			LEti::Space_Splitter_2D::register_point(&cursor_position);
+
+//			if(plist.size() == 0)
+//			{
+//				std::cout << "list is empty\n\n";
+//			}
+//			else
+//			{
+//				for(const auto& obj : plist)
+//					std::cout << obj << "\n";
+//				std::cout << "\n";
+//			}
+		}
+
 		LEti::Space_Splitter_2D::update();
 
-		std::list<LEti::Space_Splitter_2D::Collision_Data> list = LEti::Space_Splitter_2D::get_collisions();
+		const LEti::Default_Narrow_CD::Collision_Data_List__Models& list = LEti::Space_Splitter_2D::get_collisions__models();
 
 		if(list.size() == 0)
 			intersection_on_prev_frame = false;
@@ -305,16 +335,18 @@ int main()
 			std::cout << "before:\n\tfirst angle: " << f.m_angle << "\n\tsecond angle: " << s.m_angle << "\n";
 
 			glm::vec3 diff = f.get_pos() - s.get_pos();
-			if(fabs(diff.x) > fabs(diff.y))
-			{
-				f.m_angle = LEti::Math::DOUBLE_PI - f.m_angle + LEti::Math::PI;
-				s.m_angle = LEti::Math::DOUBLE_PI - s.m_angle + LEti::Math::PI;
-			}
-			else
-			{
-				f.m_angle = LEti::Math::DOUBLE_PI - f.m_angle;
-				s.m_angle = LEti::Math::DOUBLE_PI - s.m_angle;
-			}
+//			if(fabs(diff.x) > fabs(diff.y))
+//			{
+//				f.m_angle = LEti::Math::DOUBLE_PI - f.m_angle + LEti::Math::PI;
+//				s.m_angle = LEti::Math::DOUBLE_PI - s.m_angle + LEti::Math::PI;
+//			}
+//			else
+//			{
+//				f.m_angle = LEti::Math::DOUBLE_PI - f.m_angle;
+//				s.m_angle = LEti::Math::DOUBLE_PI - s.m_angle;
+//			}
+			f.m_angle += LEti::Math::PI;
+			s.m_angle += LEti::Math::PI;
 
 //			f.update_with_additional_ratio(0.0f);
 //			s.update_with_additional_ratio(0.0f);
@@ -334,11 +366,9 @@ int main()
 
 		if(LEti::Event_Controller::mouse_button_was_pressed(GLFW_MOUSE_BUTTON_1))
 		{
-			glm::vec3 cpos;
-			cpos.z = 0.0f;
-			cpos.x = LEti::Window_Controller::get_cursor_position().x;
-			cpos.y = LEti::Window_Controller::get_cursor_position().y;
-			auto plist = LEti::Space_Splitter_2D::get_objects_encircling_point(cpos);
+			LEti::Space_Splitter_2D::unregister_point(&cursor_position);
+			auto plist = LEti::Space_Splitter_2D::get_collisions__points();
+
 			if(plist.size() == 0)
 			{
 				std::cout << "list is empty\n\n";
@@ -346,10 +376,11 @@ int main()
 			else
 			{
 				for(const auto& obj : plist)
-					std::cout << obj << "\n";
+					std::cout << obj.object << "\n";
 				std::cout << "\n";
 			}
 		}
+
 
 		if(flat_co_enabled)
 			flat_co.draw();
