@@ -35,15 +35,19 @@ class Moving_Object : public LEti::Object_2D
 public:
 	float m_speed = 0.0f;
 	float m_angle = 0.0f;
+	float m_rotation_delta = /*LEti::Math::QUARTER_PI*/ 0.0f;
 	float m_mass = 1.0f;
 
 public:
 	void update() override
 	{
 		glm::vec3 trajectory{0.0f, 0.0f, 0.0f};
-		trajectory.x = m_speed * cos(m_angle) * LEti::Event_Controller::get_dt();
-		trajectory.y = m_speed * sin(m_angle) * LEti::Event_Controller::get_dt();
+		trajectory.x = m_speed * cos(m_angle) * DT;
+		trajectory.y = m_speed * sin(m_angle) * DT;
 		move(trajectory.x, trajectory.y, 0.0f);
+
+		rotate(m_rotation_delta * DT);
+
 		LEti::Object_2D::update();
 	}
 
@@ -53,6 +57,9 @@ public:
 		trajectory.x = m_speed * cos(m_angle) * LEti::Event_Controller::get_dt() * (1.0f - _ratio);
 		trajectory.y = m_speed * sin(m_angle) * LEti::Event_Controller::get_dt() * (1.0f - _ratio);
 		move(trajectory.x, trajectory.y, 0.0f);
+
+		rotate(m_rotation_delta * DT * (1.0f - _ratio));
+
 		LEti::Object_2D::update();
 	}
 
@@ -84,7 +91,7 @@ int main()
 	LEti::Space_Splitter_2D::set_narrow_phase<LEti::Default_Narrow_CD>();
 //	LEti::Space_Splitter_2D::set_precision(10);
 	LEti::Space_Splitter_2D::get_broad_phase()->set_precision(10);
-	LEti::Space_Splitter_2D::get_narrow_phase()->set_precision(10);
+	LEti::Space_Splitter_2D::get_narrow_phase()->set_precision(100);
 
 	LEti::Resource_Loader::init();
 
@@ -129,9 +136,6 @@ int main()
 
 	auto reset_func = [&flat_co, &flat_co_2, &flat_co_3]()
 	{
-//		flat_co.set_pos(800, 400, 0);
-//		flat_co.m_angle = 0.1f;
-//		flat_co.m_speed = 200.0f;
 		flat_co.set_pos(400, 400, 0);
 		flat_co.m_angle = LEti::Math::HALF_PI + LEti::Math::PI/* 0.0f*/;
 		flat_co.m_speed = 200.0f;
@@ -143,6 +147,18 @@ int main()
 		flat_co_3.set_pos(800, 400, 0);
 		flat_co_3.m_angle = LEti::Math::PI + 0.44f;
 		flat_co_3.m_speed = 200.0f;
+
+//		flat_co.set_pos(200, 400, 0);
+//		flat_co.m_angle = /*LEti::Math::HALF_PI + LEti::Math::PI*/ 0.0f;
+//		flat_co.m_speed = 200.0f;
+
+//		flat_co_2.set_pos(800, 700, 0);
+//		flat_co_2.m_angle = /*LEti::Math::PI*/ 0 /*2.34f*/;
+//		flat_co_2.m_speed = 200.0f;
+
+//		flat_co_3.set_pos(600, 400, 0);
+//		flat_co_3.m_angle = LEti::Math::PI /*+ 0.44f*/;
+//		flat_co_3.m_speed = 0.0f;
 	};
 	reset_func();
 
@@ -347,6 +363,9 @@ int main()
 //			}
 			f.m_angle += LEti::Math::PI;
 			s.m_angle += LEti::Math::PI;
+
+			f.m_rotation_delta *= -1.0f;
+			s.m_rotation_delta *= -1.0f;
 
 //			f.update_with_additional_ratio(0.0f);
 //			s.update_with_additional_ratio(0.0f);
