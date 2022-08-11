@@ -20,6 +20,9 @@
 #include "Debug_Drawable_Frame.h"
 
 
+#include <chrono>
+#include <thread>
+
 
 #define DT LEti::Event_Controller::get_dt()
 
@@ -135,9 +138,13 @@ int main()
 	flat_co_3.m_speed = 200.0f;
 	flat_co_3.m_angle = 0.0f;
 
+	int delay = 0;
+
 	float co_spd= 150.0f;
-	auto reset_func = [&flat_co, &flat_co_2, &flat_co_3]()
+	auto reset_func = [&]()
 	{
+		delay = 0;
+
 //		flat_co.set_pos(400, 400, 0);
 //		flat_co.m_angle = LEti::Math::HALF_PI + LEti::Math::PI/* 0.0f*/;
 //		flat_co.m_speed = 200.0f;
@@ -154,17 +161,17 @@ int main()
 		flat_co.m_angle = /*LEti::Math::HALF_PI + LEti::Math::PI*/ 0.0f;
 		flat_co.m_speed = 0.0f;
 
-		flat_co.set_overall_scale(300.0f);
+//		flat_co.set_overall_scale(300.0f);
 
 		flat_co_2.set_pos(800, 700, 0);
 		flat_co_2.m_angle = /*LEti::Math::PI*/ 0 /*2.34f*/;
 		flat_co_2.m_speed = 0.0f;
 
-		flat_co_3.set_pos(1050, 400, 0);
+		flat_co_3.set_pos(1000, 400, 0);
 		flat_co_3.m_angle = LEti::Math::PI /*+ 0.44f*/;
 		flat_co_3.m_speed = 0.0f;
 
-		flat_co_3.set_overall_scale(200.0f);
+//		flat_co_3.set_overall_scale(200.0f);
 	};
 	reset_func();
 
@@ -291,6 +298,16 @@ int main()
 		{
 			reset_func();
 		}
+		if(LEti::Event_Controller::key_was_pressed(GLFW_KEY_EQUAL))
+		{
+			delay += 100;
+		}
+		if(LEti::Event_Controller::key_was_pressed(GLFW_KEY_MINUS))
+		{
+			delay -= 100;
+			if(delay < 0) delay = 0;
+		}
+
 
 		for(auto& co : objects_map)
 		{
@@ -343,7 +360,7 @@ int main()
 //			}
 		}
 
-		auto draw_frames_relative_to_other = [&frame, &frame_red](const LEti::Object_2D& _obj, const LEti::Object_2D& _other)->void
+		auto draw_frames_relative_to_other = [&frame, &frame_red](const LEti::Object_2D& _moving_1, const LEti::Object_2D& _moving_2)->void
 		{
 			auto draw_frame = [](LEti::Debug_Drawable_Frame& _frame, const LEti::Physical_Model_2D::Imprint& _pm)->void
 			{
@@ -364,21 +381,56 @@ int main()
 
 //				frame.clear_points().clear_sequence();
 
-			LEti::Physical_Model_2D::Imprint pm = *_obj.get_physical_model_prev_state();
-
-			draw_frame(frame_red, pm);
-
-			glm::mat4x4 diff_pos = _obj.get_translation_matrix_for_time_ratio(1.0f) * _other.get_translation_matrix_diff_inversed_for_time_ratio(1.0f);
-			glm::mat4x4 diff_rotation = _obj.get_rotation_matrix_for_time_ratio(1.0f) * _other.get_rotation_matrix_diff_inversed_for_time_ratio(1.0f);
-			glm::mat4x4 diff_scale = _obj.get_scale_matrix_for_time_ratio(1.0f) * _other.get_scale_matrix_diff_inversed_for_time_ratio(1.0f);
-			pm.update(diff_pos, diff_rotation, diff_scale);
+			LEti::Physical_Model_2D::Imprint pm = *_moving_1.get_physical_model_prev_state();
 
 			draw_frame(frame, pm);
 
-			draw_frame(frame, *_other.get_physical_model_prev_state());
+//			glm::vec3 diff_dist = (_moving_1.get_pos() - _moving_2.get_pos());
+//			glm::mat4x4 diff_dist_matrix{
+//				1.0f, 0.0f, 0.0f, 0.0f,
+//				0.0f, 1.0f, 0.0f, 0.0f,
+//				0.0f, 0.0f, 1.0f, 0.0f,
+//				diff_dist.x, diff_dist.y, 0.0f, 1.0f
+//			};
+//			glm::mat4x4 diff_pos = _moving_2.get_translation_matrix_for_time_ratio(1.0f) * diff_dist_matrix / _moving_2.get_translation_matrix_diff_inversed_for_time_ratio(1.0f);
+//			glm::mat4x4 diff_rotation = _moving_1.get_rotation_matrix_for_time_ratio(1.0f) * _moving_2.get_rotation_matrix_diff_inversed_for_time_ratio(1.0f);
+//			glm::mat4x4 diff_scale = _moving_1.get_scale_matrix_for_time_ratio(1.0f) * _moving_2.get_scale_matrix_diff_inversed_for_time_ratio(1.0f);
+
+
+			glm::mat4x4 fake_movement_matrix{
+				1.0f, 0.0f, 0.0f, 0.0f,
+				0.0f, 1.0f, 0.0f, 0.0f,
+				0.0f, 0.0f, 1.0f, 0.0f,
+				600.0f, 400.0f, 0.0f, 1.0f
+			};
+			glm::mat4x4 fake_default_matrix{
+				1.0f, 0.0f, 0.0f, 0.0f,
+				0.0f, 1.0f, 0.0f, 0.0f,
+				0.0f, 0.0f, 1.0f, 0.0f,
+				0.0f, 0.0f, 0.0f, 1.0f
+			};
+
+			glm::mat4x4 diff_pos = fake_movement_matrix * _moving_2.get_rotation_matrix_for_time_ratio(1.0f) * (_moving_2.get_translation_matrix_for_time_ratio(1.0f) / _moving_1.get_translation_matrix_for_time_ratio(1.0f));
+			glm::mat4x4 diff_rotation = fake_default_matrix / _moving_1.get_rotation_matrix_for_time_ratio(1.0f);
+			glm::mat4x4 diff_scale = _moving_1.get_scale_matrix_for_time_ratio(1.0f)/* * _moving_2.get_scale_matrix_diff_inversed_for_time_ratio(1.0f)*/;
+
+			LEti::Physical_Model_2D::Imprint initial_second_pm = *_moving_2.get_physical_model_prev_state();
+			initial_second_pm.update(fake_movement_matrix, fake_default_matrix, _moving_2.get_scale_matrix_for_time_ratio(1.0f));
+
+
+			draw_frame(frame_red, initial_second_pm);
+
+
+
+			pm.update(diff_pos, diff_rotation, diff_scale);
+
+			draw_frame(frame_red, pm);
+
+			draw_frame(frame, *_moving_2.get_physical_model_prev_state());
 
 		};
 		draw_frames_relative_to_other(flat_co, flat_co_3);
+//		draw_frames_relative_to_other(flat_co_3, flat_co);
 //		LEti::Window_Controller::swap_buffers();
 
 
@@ -460,6 +512,8 @@ int main()
 			fps_counter = 0;
 		}
 		fps_info_block.draw();
+
+		std::this_thread::sleep_for(std::chrono::milliseconds(delay));
 
 		LEti::Window_Controller::swap_buffers();
 	}
