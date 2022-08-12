@@ -39,7 +39,7 @@ public:
 	float m_speed = 0.0f;
 	float m_angle = 0.0f;
 	float m_rotation_delta = /*LEti::Math::HALF_PI*/ LEti::Math::QUARTER_PI /*0.0f*/;
-//	float m_rotation_delta = LEti::Math::HALF_PI  /*0.0f*/;
+//	float m_rotation_delta = 0.0f;
 	float m_mass = 1.0f;
 
 public:
@@ -145,33 +145,47 @@ int main()
 	{
 		delay = 0;
 
-//		flat_co.set_pos(400, 400, 0);
-//		flat_co.m_angle = LEti::Math::HALF_PI + LEti::Math::PI/* 0.0f*/;
-//		flat_co.m_speed = 200.0f;
+		flat_co.set_pos(400, 400, 0);
+		flat_co.m_angle = LEti::Math::HALF_PI + LEti::Math::PI/* 0.0f*/;
+		flat_co.m_speed = 200.0f;
 
-//		flat_co_2.set_pos(1000, 600, 0);
-//		flat_co_2.m_angle = 2.34f;
-//		flat_co_2.m_speed = 200.0f;
+		flat_co_2.set_pos(1000, 600, 0);
+		flat_co_2.m_angle = 2.34f;
+		flat_co_2.m_speed = 200.0f;
 
-//		flat_co_3.set_pos(800, 400, 0);
-//		flat_co_3.m_angle = LEti::Math::PI + 0.44f;
-//		flat_co_3.m_speed = 200.0f;
+		flat_co_3.set_pos(800, 400, 0);
+		flat_co_3.m_angle = LEti::Math::PI + 0.44f;
+		flat_co_3.m_speed = 200.0f;
 
-		flat_co.set_pos(200, 400, 0);
-		flat_co.m_angle = /*LEti::Math::HALF_PI + LEti::Math::PI*/ 0.0f;
-		flat_co.m_speed = 0.0f;
 
-//		flat_co.set_overall_scale(300.0f);
+//		flat_co.set_pos(200, 400, 0);
+//		flat_co.m_angle = /*LEti::Math::HALF_PI + LEti::Math::PI*/ 0.0f;
+//		flat_co.m_speed = 0.0f;
 
-		flat_co_2.set_pos(800, 700, 0);
-		flat_co_2.m_angle = /*LEti::Math::PI*/ 0 /*2.34f*/;
-		flat_co_2.m_speed = 0.0f;
+//		flat_co.set_rotation_angle(LEti::Math::QUARTER_PI);
 
-		flat_co_3.set_pos(1000, 400, 0);
-		flat_co_3.m_angle = LEti::Math::PI /*+ 0.44f*/;
-		flat_co_3.m_speed = 0.0f;
+//		flat_co_2.set_pos(800, 700, 0);
+//		flat_co_2.m_angle = /*LEti::Math::PI*/ 0 /*2.34f*/;
+//		flat_co_2.m_speed = 0.0f;
 
-//		flat_co_3.set_overall_scale(200.0f);
+//		flat_co_3.set_pos(1000, 400, 0);
+//		flat_co_3.m_angle = LEti::Math::PI /*+ 0.44f*/;
+//		flat_co_3.m_speed = 0.0f;
+
+
+//		flat_co.set_pos(200, 400, 0);
+//		flat_co.m_angle = /*LEti::Math::HALF_PI + LEti::Math::PI*/ 0.0f;
+//		flat_co.m_speed = 0.0f;
+
+//		flat_co.set_rotation_angle(LEti::Math::QUARTER_PI);
+
+//		flat_co_3.set_pos(800, 700, 0);
+//		flat_co_3.m_angle = /*LEti::Math::PI*/ 0 /*2.34f*/;
+//		flat_co_3.m_speed = 0.0f;
+
+//		flat_co_2.set_pos(1000, 400, 0);
+//		flat_co_2.m_angle = LEti::Math::PI /*+ 0.44f*/;
+//		flat_co_2.m_speed = 0.0f;
 	};
 	reset_func();
 
@@ -212,7 +226,7 @@ int main()
 	flat_co_2.set_dynamic(true);
 	flat_co_3.set_dynamic(true);
 	LEti::Space_Splitter_2D::register_object(&flat_co);
-//	LEti::Space_Splitter_2D::register_object(&flat_co_2);
+	LEti::Space_Splitter_2D::register_object(&flat_co_2);
 	LEti::Space_Splitter_2D::register_object(&flat_co_3);
 
 //	LEti::Space_Splitter_2D::register_point(&cursor_position);
@@ -385,17 +399,6 @@ int main()
 
 			draw_frame(frame, pm);
 
-//			glm::vec3 diff_dist = (_moving_1.get_pos() - _moving_2.get_pos());
-//			glm::mat4x4 diff_dist_matrix{
-//				1.0f, 0.0f, 0.0f, 0.0f,
-//				0.0f, 1.0f, 0.0f, 0.0f,
-//				0.0f, 0.0f, 1.0f, 0.0f,
-//				diff_dist.x, diff_dist.y, 0.0f, 1.0f
-//			};
-//			glm::mat4x4 diff_pos = _moving_2.get_translation_matrix_for_time_ratio(1.0f) * diff_dist_matrix / _moving_2.get_translation_matrix_diff_inversed_for_time_ratio(1.0f);
-//			glm::mat4x4 diff_rotation = _moving_1.get_rotation_matrix_for_time_ratio(1.0f) * _moving_2.get_rotation_matrix_diff_inversed_for_time_ratio(1.0f);
-//			glm::mat4x4 diff_scale = _moving_1.get_scale_matrix_for_time_ratio(1.0f) * _moving_2.get_scale_matrix_diff_inversed_for_time_ratio(1.0f);
-
 
 			glm::mat4x4 fake_movement_matrix{
 				1.0f, 0.0f, 0.0f, 0.0f,
@@ -409,21 +412,46 @@ int main()
 				0.0f, 0.0f, 1.0f, 0.0f,
 				0.0f, 0.0f, 0.0f, 1.0f
 			};
+			glm::mat4x4 fake_scale_matrix{
+				30.0f, 0.0f, 0.0f, 0.0f,
+				0.0f, 30.0f, 0.0f, 0.0f,
+				0.0f, 0.0f, 1.0f, 0.0f,
+				0.0f, 0.0f, 0.0f, 1.0f
+			};
 
-			glm::mat4x4 diff_pos = fake_movement_matrix * _moving_2.get_rotation_matrix_for_time_ratio(1.0f) * (_moving_2.get_translation_matrix_for_time_ratio(1.0f) / _moving_1.get_translation_matrix_for_time_ratio(1.0f));
-			glm::mat4x4 diff_rotation = fake_default_matrix / _moving_1.get_rotation_matrix_for_time_ratio(1.0f);
-			glm::mat4x4 diff_scale = _moving_1.get_scale_matrix_for_time_ratio(1.0f)/* * _moving_2.get_scale_matrix_diff_inversed_for_time_ratio(1.0f)*/;
+//			glm::mat4x4
+
+			glm::vec3 pos_diff_vector_prev = _moving_2.get_pos_prev() - _moving_1.get_pos_prev();
+			pos_diff_vector_prev = _moving_2.get_rotation_matrix_inversed_for_time_ratio(0.0f) * glm::vec4(pos_diff_vector_prev, 1.0f);
+
+			glm::mat4x4 diff_pos_prev = fake_default_matrix;
+			diff_pos_prev *= fake_movement_matrix;
+			diff_pos_prev[3][0] += pos_diff_vector_prev[0];
+			diff_pos_prev[3][1] += pos_diff_vector_prev[1];
+			glm::mat4x4 diff_rotation_prev = _moving_1.get_rotation_matrix_for_time_ratio(0.0f) / _moving_2.get_rotation_matrix_for_time_ratio(0.0f);
+			glm::mat4x4 diff_scale_prev = _moving_1.get_scale_matrix_for_time_ratio(0.0f);
+
+
+			glm::vec3 pos_diff_vector = _moving_2.get_pos() - _moving_1.get_pos();
+			pos_diff_vector = _moving_2.get_rotation_matrix_inversed_for_time_ratio(1.0f) * glm::vec4(pos_diff_vector, 1.0f);
+
+			glm::mat4x4 diff_pos = fake_default_matrix;
+			diff_pos *= fake_movement_matrix;
+			diff_pos[3][0] += pos_diff_vector[0];
+			diff_pos[3][1] += pos_diff_vector[1];
+			glm::mat4x4 diff_rotation = _moving_1.get_rotation_matrix_for_time_ratio(1.0f) / _moving_2.get_rotation_matrix_for_time_ratio(1.0f);
+			glm::mat4x4 diff_scale = _moving_1.get_scale_matrix_for_time_ratio(1.0f) * (_moving_2.get_scale_matrix_for_time_ratio(1.0f) / _moving_2.get_scale_matrix_for_time_ratio(0.0f));
 
 			LEti::Physical_Model_2D::Imprint initial_second_pm = *_moving_2.get_physical_model_prev_state();
-			initial_second_pm.update(fake_movement_matrix, fake_default_matrix, _moving_2.get_scale_matrix_for_time_ratio(1.0f));
+			initial_second_pm.update(fake_movement_matrix, fake_default_matrix, _moving_2.get_scale_matrix_for_time_ratio(0.0f));
 
 
 			draw_frame(frame_red, initial_second_pm);
 
-
+			pm.update(diff_pos_prev, diff_rotation_prev, diff_scale_prev);
+			draw_frame(frame_red, pm);
 
 			pm.update(diff_pos, diff_rotation, diff_scale);
-
 			draw_frame(frame_red, pm);
 
 			draw_frame(frame, *_moving_2.get_physical_model_prev_state());
@@ -493,11 +521,11 @@ int main()
 			}
 		}
 
-		if(!intersection_on_prev_frame)
+//		if(!intersection_on_prev_frame)
 		{
-//			flat_co.draw();
-//			flat_co_2.draw();
-//			flat_co_3.draw();
+			flat_co.draw();
+			flat_co_2.draw();
+			flat_co_3.draw();
 		}
 
 		intersection_info_block.set_text(std::to_string(list.size()).c_str());
