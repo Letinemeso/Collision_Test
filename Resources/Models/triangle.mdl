@@ -1,0 +1,8 @@
+|coords| <float> [9] "1""1""0" "-1""1""0" "-1""-1""0"
+|physical_model_data| <float> [9] "1""1""0" "-1""1""0" "-1""-1""0"
+|texture_name| <string> [1] "red_indicator"
+|texture_coords| <float> [6] "0""1" "0""0" "1""0"
+|position| <float> [3] "0""0""0"
+|scale| <float> [3] "25""25""1"
+|rotation_axis| <float> [3] "0""0""1"
+|rotation_angle| <float> [1] "0"

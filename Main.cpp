@@ -38,8 +38,8 @@ class Moving_Object : public LEti::Object_2D
 public:
 	float m_speed = 0.0f;
 	float m_angle = 0.0f;
-	float m_rotation_delta = /*LEti::Math::HALF_PI*/ LEti::Math::QUARTER_PI /*0.0f*/;
-//	float m_rotation_delta = 0.0f;
+//	float m_rotation_delta = /*LEti::Math::HALF_PI*/ LEti::Math::QUARTER_PI /*0.0f*/;
+	float m_rotation_delta = 0.0f;
 	float m_mass = 1.0f;
 
 public:
@@ -145,32 +145,33 @@ int main()
 	{
 		delay = 0;
 
-		flat_co.set_pos(400, 400, 0);
-		flat_co.m_angle = LEti::Math::HALF_PI + LEti::Math::PI/* 0.0f*/;
-		flat_co.m_speed = 200.0f;
+//		flat_co.set_pos(400, 400, 0);
+//		flat_co.m_angle = LEti::Math::HALF_PI + LEti::Math::PI/* 0.0f*/;
+//		flat_co.m_speed = 200.0f;
 
-		flat_co_2.set_pos(1000, 600, 0);
-		flat_co_2.m_angle = 2.34f;
-		flat_co_2.m_speed = 200.0f;
+//		flat_co_2.set_pos(1000, 600, 0);
+//		flat_co_2.m_angle = 2.34f;
+//		flat_co_2.m_speed = 200.0f;
 
-		flat_co_3.set_pos(800, 400, 0);
-		flat_co_3.m_angle = LEti::Math::PI + 0.44f;
-		flat_co_3.m_speed = 200.0f;
+//		flat_co_3.set_pos(800, 400, 0);
+//		flat_co_3.m_angle = LEti::Math::PI + 0.44f;
+//		flat_co_3.m_speed = 200.0f;
 
 
-//		flat_co.set_pos(200, 400, 0);
-//		flat_co.m_angle = /*LEti::Math::HALF_PI + LEti::Math::PI*/ 0.0f;
-//		flat_co.m_speed = 0.0f;
+		flat_co.set_pos(200, 400, 0);
+		flat_co.m_angle = /*LEti::Math::HALF_PI + LEti::Math::PI*/ 0.0f;
+		flat_co.m_speed = 0.0f;
+		flat_co.set_overall_scale(100);
+		flat_co.set_rotation_angle(LEti::Math::QUARTER_PI * 1.12f);
 
-//		flat_co.set_rotation_angle(LEti::Math::QUARTER_PI);
+		flat_co_2.set_pos(800, 700, 0);
+		flat_co_2.m_angle = /*LEti::Math::PI*/ 0 /*2.34f*/;
+		flat_co_2.m_speed = 0.0f;
 
-//		flat_co_2.set_pos(800, 700, 0);
-//		flat_co_2.m_angle = /*LEti::Math::PI*/ 0 /*2.34f*/;
-//		flat_co_2.m_speed = 0.0f;
-
-//		flat_co_3.set_pos(1000, 400, 0);
-//		flat_co_3.m_angle = LEti::Math::PI /*+ 0.44f*/;
-//		flat_co_3.m_speed = 0.0f;
+		flat_co_3.set_pos(1000, 400, 0);
+		flat_co_3.m_angle = LEti::Math::PI /*+ 0.44f*/;
+		flat_co_3.m_speed = 0.0f;
+		flat_co.set_overall_scale(150);
 
 
 //		flat_co.set_pos(200, 400, 0);
@@ -291,23 +292,6 @@ int main()
 			flat_co_3.set_pos(0, 0, 0);
 		}
 
-		if(LEti::Event_Controller::is_key_down(GLFW_KEY_LEFT))
-		{
-			flat_co.move(-(co_spd * DT), 0.0f, 0.0f);
-		}
-		if(LEti::Event_Controller::is_key_down(GLFW_KEY_RIGHT))
-		{
-			flat_co.move( (co_spd * DT), 0.0f, 0.0f);
-		}
-		if(LEti::Event_Controller::is_key_down(GLFW_KEY_UP))
-		{
-			flat_co.move(0.0f,  (co_spd * DT), 0.0f);
-		}
-		if(LEti::Event_Controller::is_key_down(GLFW_KEY_DOWN))
-		{
-			flat_co.move(0.0f, -(co_spd * DT), 0.0f);
-		}
-
 		if(LEti::Event_Controller::key_was_pressed(GLFW_KEY_R))
 		{
 			reset_func();
@@ -322,6 +306,54 @@ int main()
 			if(delay < 0) delay = 0;
 		}
 
+		if(LEti::Event_Controller::is_key_down(GLFW_KEY_A))
+		{
+			flat_co.move(-(co_spd * DT), 0.0f, 0.0f);
+		}
+		if(LEti::Event_Controller::is_key_down(GLFW_KEY_D))
+		{
+			flat_co.move( (co_spd * DT), 0.0f, 0.0f);
+		}
+		if(LEti::Event_Controller::is_key_down(GLFW_KEY_W))
+		{
+			flat_co.move(0.0f,  (co_spd * DT), 0.0f);
+		}
+		if(LEti::Event_Controller::is_key_down(GLFW_KEY_S))
+		{
+			flat_co.move(0.0f, -(co_spd * DT), 0.0f);
+		}
+		if(LEti::Event_Controller::is_key_down(GLFW_KEY_Q))
+		{
+			for(auto& co : objects_map)
+			{
+				Moving_Object& cco = *co.second;
+				if(cco.m_rotation_delta < 0.0f)
+				{
+					cco.m_rotation_delta += LEti::Math::PI * DT;
+					if(cco.m_rotation_delta > 0.0f) cco.m_rotation_delta = 0.0f;
+				}
+				else
+				{
+					cco.m_rotation_delta -= LEti::Math::PI * DT;
+					if(cco.m_rotation_delta < 0.0f) cco.m_rotation_delta = 0.0f;
+				}
+			}
+		}
+		if(LEti::Event_Controller::is_key_down(GLFW_KEY_E))
+		{
+			for(auto& co : objects_map)
+			{
+				Moving_Object& cco = *co.second;
+				if(cco.m_rotation_delta < 0.0f)
+				{
+					cco.m_rotation_delta -= LEti::Math::PI* DT;
+				}
+				else
+				{
+					cco.m_rotation_delta += LEti::Math::PI * DT;
+				}
+			}
+		}
 
 		for(auto& co : objects_map)
 		{
@@ -421,7 +453,7 @@ int main()
 
 //			glm::mat4x4
 
-			glm::vec3 pos_diff_vector_prev = _moving_2.get_pos_prev() - _moving_1.get_pos_prev();
+			glm::vec3 pos_diff_vector_prev = _moving_1.get_pos_prev() - _moving_2.get_pos_prev();
 			pos_diff_vector_prev = _moving_2.get_rotation_matrix_inversed_for_time_ratio(0.0f) * glm::vec4(pos_diff_vector_prev, 1.0f);
 
 			glm::mat4x4 diff_pos_prev = fake_default_matrix;
@@ -432,7 +464,7 @@ int main()
 			glm::mat4x4 diff_scale_prev = _moving_1.get_scale_matrix_for_time_ratio(0.0f);
 
 
-			glm::vec3 pos_diff_vector = _moving_2.get_pos() - _moving_1.get_pos();
+			glm::vec3 pos_diff_vector = _moving_1.get_pos() - _moving_2.get_pos();
 			pos_diff_vector = _moving_2.get_rotation_matrix_inversed_for_time_ratio(1.0f) * glm::vec4(pos_diff_vector, 1.0f);
 
 			glm::mat4x4 diff_pos = fake_default_matrix;
@@ -449,7 +481,7 @@ int main()
 			draw_frame(frame_red, initial_second_pm);
 
 			pm.update(diff_pos_prev, diff_rotation_prev, diff_scale_prev);
-			draw_frame(frame_red, pm);
+			draw_frame(frame, pm);
 
 			pm.update(diff_pos, diff_rotation, diff_scale);
 			draw_frame(frame_red, pm);
@@ -484,8 +516,10 @@ int main()
 			f.m_angle += LEti::Math::PI;
 			s.m_angle += LEti::Math::PI;
 
-			f.m_rotation_delta *= -1.0f;
-			s.m_rotation_delta *= -1.0f;
+			f.m_rotation_delta = -f.m_rotation_delta;
+			s.m_rotation_delta = -s.m_rotation_delta;
+//			f.m_rotation_delta += LEti::Math::PI;
+//			s.m_rotation_delta += LEti::Math::PI;
 
 //			f.update_with_additional_ratio(0.0f);
 //			s.update_with_additional_ratio(0.0f);
