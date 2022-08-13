@@ -107,32 +107,31 @@ int main()
 
 	///////////////// 2d collision test
 
-	LEti::Resource_Loader::load_object("flat_co_1", "Resources/Models/quad.mdl");
+//	LEti::Resource_Loader::load_object("flat_co_model", "Resources/Models/quad.mdl");
+	LEti::Resource_Loader::load_object("flat_co_model", "Resources/Models/triangle.mdl");
 	Moving_Object flat_co;
 	flat_co.m_speed = 200.0f;
 	flat_co.m_angle = LEti::Math::PI;
 
-	LEti::Resource_Loader::load_object("flat_co_2", "Resources/Models/quad.mdl");
 	Moving_Object flat_co_2;
 
-	LEti::Resource_Loader::load_object("flat_co_3", "Resources/Models/quad.mdl");
 	Moving_Object flat_co_3;
 
-	flat_co.init("flat_co_1");
+	flat_co.init("flat_co_model");
 	flat_co.set_pos(800, 400, 0);
 	flat_co.set_texture("white_texture");
 
 	LEti::Object_2D flat_co_foreshadow;
-	flat_co_foreshadow.init("flat_co_1");
+	flat_co_foreshadow.init("flat_co_model");
 	flat_co_foreshadow.set_pos(50, 400, 0);
 
-	flat_co_2.init("flat_co_2");
+	flat_co_2.init("flat_co_model");
 	flat_co_2.set_scale(20.0f, 20.0f, 1.0f);
 	flat_co_2.set_pos(400, 600, 0);
 	flat_co_2.m_speed = 0.0f;
 	flat_co_2.m_angle = 2.53f;
 
-	flat_co_3.init("flat_co_3");
+	flat_co_3.init("flat_co_model");
 	flat_co_3.set_scale(50.0f, 50.0f, 1.0f);
 	flat_co_3.set_pos(400, 400, 0);
 	flat_co_3.m_speed = 200.0f;
@@ -145,33 +144,33 @@ int main()
 	{
 		delay = 0;
 
-//		flat_co.set_pos(400, 400, 0);
-//		flat_co.m_angle = LEti::Math::HALF_PI + LEti::Math::PI/* 0.0f*/;
-//		flat_co.m_speed = 200.0f;
+		flat_co.set_pos(400, 400, 0);
+		flat_co.m_angle = LEti::Math::HALF_PI + LEti::Math::PI/* 0.0f*/;
+		flat_co.m_speed = 200.0f;
 
-//		flat_co_2.set_pos(1000, 600, 0);
-//		flat_co_2.m_angle = 2.34f;
-//		flat_co_2.m_speed = 200.0f;
+		flat_co_2.set_pos(1000, 600, 0);
+		flat_co_2.m_angle = 2.34f;
+		flat_co_2.m_speed = 200.0f;
 
-//		flat_co_3.set_pos(800, 400, 0);
-//		flat_co_3.m_angle = LEti::Math::PI + 0.44f;
-//		flat_co_3.m_speed = 200.0f;
+		flat_co_3.set_pos(800, 400, 0);
+		flat_co_3.m_angle = LEti::Math::PI + 0.44f;
+		flat_co_3.m_speed = 200.0f;
 
 
-		flat_co.set_pos(200, 400, 0);
-		flat_co.m_angle = /*LEti::Math::HALF_PI + LEti::Math::PI*/ 0.0f;
-		flat_co.m_speed = 0.0f;
-		flat_co.set_overall_scale(100);
-		flat_co.set_rotation_angle(LEti::Math::QUARTER_PI * 1.12f);
+//		flat_co.set_pos(200, 400, 0);
+//		flat_co.m_angle = /*LEti::Math::HALF_PI + LEti::Math::PI*/ 0.0f;
+//		flat_co.m_speed = 0.0f;
+//		flat_co.set_overall_scale(100);
+//		flat_co.set_rotation_angle(LEti::Math::QUARTER_PI * 1.12f);
 
-		flat_co_2.set_pos(800, 700, 0);
-		flat_co_2.m_angle = /*LEti::Math::PI*/ 0 /*2.34f*/;
-		flat_co_2.m_speed = 0.0f;
+//		flat_co_2.set_pos(800, 700, 0);
+//		flat_co_2.m_angle = /*LEti::Math::PI*/ 0 /*2.34f*/;
+//		flat_co_2.m_speed = 0.0f;
 
-		flat_co_3.set_pos(1000, 400, 0);
-		flat_co_3.m_angle = LEti::Math::PI /*+ 0.44f*/;
-		flat_co_3.m_speed = 0.0f;
-		flat_co.set_overall_scale(150);
+//		flat_co_3.set_pos(1000, 400, 0);
+//		flat_co_3.m_angle = LEti::Math::PI /*+ 0.44f*/;
+//		flat_co_3.m_speed = 0.0f;
+//		flat_co.set_overall_scale(150);
 
 
 //		flat_co.set_pos(200, 400, 0);
@@ -405,26 +404,24 @@ int main()
 //				std::cout << "\n";
 //			}
 		}
-
-		auto draw_frames_relative_to_other = [&frame, &frame_red](const LEti::Object_2D& _moving_1, const LEti::Object_2D& _moving_2)->void
+		auto draw_frame = [](LEti::Debug_Drawable_Frame& _frame, const LEti::Physical_Model_2D::Imprint& _pm)->void
 		{
-			auto draw_frame = [](LEti::Debug_Drawable_Frame& _frame, const LEti::Physical_Model_2D::Imprint& _pm)->void
+			_frame.clear_points().clear_sequence();
+
+			unsigned int counter = 0;
+			for(unsigned int i=0; i<_pm.get_polygons_count(); ++i)
 			{
-				_frame.clear_points().clear_sequence();
-
-				unsigned int counter = 0;
-				for(unsigned int i=0; i<_pm.get_polygons_count(); ++i)
+				for(unsigned int j=0; j<3; ++j)
 				{
-					for(unsigned int j=0; j<3; ++j)
-					{
-						_frame.set_point(counter, _pm[i][j]).set_sequence_element(counter, counter);
-						++counter;
-					}
+					_frame.set_point(counter, _pm[i][j]).set_sequence_element(counter, counter);
+					++counter;
 				}
-				_frame.update();
-				_frame.draw();
-			};
-
+			}
+			_frame.update();
+			_frame.draw();
+		};
+		auto draw_frames_relative_to_other = [&](const LEti::Object_2D& _moving_1, const LEti::Object_2D& _moving_2)->void
+		{
 //				frame.clear_points().clear_sequence();
 
 			LEti::Physical_Model_2D::Imprint pm = *_moving_1.get_physical_model_prev_state();
@@ -489,7 +486,7 @@ int main()
 			draw_frame(frame, *_moving_2.get_physical_model_prev_state());
 
 		};
-		draw_frames_relative_to_other(flat_co, flat_co_3);
+//		draw_frames_relative_to_other(flat_co, flat_co_3);
 //		draw_frames_relative_to_other(flat_co_3, flat_co);
 //		LEti::Window_Controller::swap_buffers();
 
@@ -560,6 +557,9 @@ int main()
 			flat_co.draw();
 			flat_co_2.draw();
 			flat_co_3.draw();
+//			draw_frame(frame, flat_co.get_physical_model()->create_imprint());
+//			draw_frame(frame, flat_co_2.get_physical_model()->create_imprint());
+//			draw_frame(frame, flat_co_3.get_physical_model()->create_imprint());
 		}
 
 		intersection_info_block.set_text(std::to_string(list.size()).c_str());
