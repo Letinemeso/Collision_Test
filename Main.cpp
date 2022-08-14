@@ -6,14 +6,15 @@
 #include "Object.h"
 #include "Text_Field.h"
 
-#include "Physical_Model_3D.h"
-#include "Physical_Model_2D.h"
+#include "Physics/Physical_Model_3D.h"
+#include "Physics/Physical_Model_2D.h"
 
 #include "Message_Translator.h"
 
-#include "Space_Splitter_2D.h"
+#include "Physics/Space_Splitter_2D.h"
 #include "Physics/Space_Hasher_2D.h"
 #include "Physics/Default_Narrow_CD.h"
+#include "Physics/Default_Narrowest_CD.h"
 
 #include "Timer.h"
 
@@ -93,6 +94,7 @@ int main()
 
 	LEti::Space_Splitter_2D::set_broad_phase<LEti::Space_Hasher_2D>();
 	LEti::Space_Splitter_2D::set_narrow_phase<LEti::Default_Narrow_CD>();
+	LEti::Space_Splitter_2D::set_narrowest_phase<LEti::Default_Narrowest_CD>();
 //	LEti::Space_Splitter_2D::set_precision(10);
 	LEti::Space_Splitter_2D::get_broad_phase()->set_precision(10);
 	LEti::Space_Splitter_2D::get_narrow_phase()->set_precision(100);
@@ -523,7 +525,7 @@ int main()
 			f.update_with_additional_ratio(it->collision_data.time_of_intersection_ratio);
 			s.update_with_additional_ratio(it->collision_data.time_of_intersection_ratio);
 
-			auto idk = f.get_physical_model()->is_intersecting_with_another_model(*s.get_physical_model());
+//			auto idk = f.get_physical_model()->is_intersecting_with_another_model(*s.get_physical_model());
 //			if(idk)
 //			{
 //				LEti::Window_Controller::swap_buffers();
