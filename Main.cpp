@@ -113,6 +113,21 @@ int main()
 
 //	LEti::Resource_Loader::load_object("flat_co_model", "Resources/Models/quad.mdl");
 	LEti::Resource_Loader::load_object("flat_co_model", "Resources/Models/triangle.mdl");
+
+
+//	while(true)
+//	{
+//		TEST::Object_2D* test = new TEST::Object_2D;
+//		test->init("flat_co_model");
+//		test->remove_physics_module();
+//		test->create_physics_module();
+//		test->physics_module();
+//		test->remove_physics_module();
+//		test->remove_draw_module();
+//		test->
+//		delete test;
+//	}
+
 	Moving_Object flat_co;
 	flat_co.m_speed = 200.0f;
 	flat_co.m_angle = LEti::Math::PI;
@@ -140,6 +155,8 @@ int main()
 	flat_co_3.set_pos({400, 400, 0});
 	flat_co_3.m_speed = 200.0f;
 	flat_co_3.m_angle = 0.0f;
+
+//	flat_co.remove_draw_module();
 
 	int delay = 0;
 
