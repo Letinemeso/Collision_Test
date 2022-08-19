@@ -3,8 +3,8 @@
 #include "Camera.h"
 #include "Resource_Loader.h"
 
-#include "Object.h"
-#include "Text_Field.h"
+//#include "Object.h"
+#include "Object_System/Text_Field.h"
 
 #include <include/Object_System/Object_2D.h>
 
@@ -20,7 +20,7 @@
 
 #include "Timer.h"
 
-#include "Debug_Drawable_Frame.h"
+#include "Object_System/Debug_Drawable_Frame.h"
 
 
 #include <chrono>
@@ -36,7 +36,7 @@ struct On_Button_Pressed_Msg
 	On_Button_Pressed_Msg(unsigned int _btn) : btn(_btn) { }
 };
 
-class Moving_Object : public TEST::Object_2D
+class Moving_Object : public LEti::Object_2D
 {
 public:
 	float m_speed = 0.0f;
@@ -55,7 +55,7 @@ public:
 
 //		rotate(m_rotation_delta * DT);
 
-//		TEST::Object_2D::update();
+//		LEti::Object_2D::update();
 //	}
 
 	void update(float _ratio = 1.0f) override
@@ -67,7 +67,7 @@ public:
 
 		rotate(m_rotation_delta * DT * (_ratio));
 
-		TEST::Object_2D::update();
+		LEti::Object_2D::update();
 	}
 
 };
@@ -117,7 +117,7 @@ int main()
 
 //	while(true)
 //	{
-//		TEST::Object_2D* test = new TEST::Object_2D;
+//		LEti::Object_2D* test = new LEti::Object_2D;
 //		test->init("flat_co_model");
 //		test->remove_physics_module();
 //		test->create_physics_module();
@@ -140,9 +140,9 @@ int main()
 	flat_co.set_pos({800, 400, 0});
 	flat_co.draw_module()->set_texture("white_texture");
 
-	LEti::Object_2D flat_co_foreshadow;
-	flat_co_foreshadow.init("flat_co_model");
-	flat_co_foreshadow.set_pos(50, 400, 0);
+//	LEti::Object_2D flat_co_foreshadow;
+//	flat_co_foreshadow.init("flat_co_model");
+//	flat_co_foreshadow.set_pos(50, 400, 0);
 
 	flat_co_2.init("flat_co_model");
 	flat_co_2.set_scale({20.0f, 20.0f, 1.0f});
@@ -210,7 +210,7 @@ int main()
 	};
 	reset_func();
 
-	std::map<const TEST::Object_2D*, Moving_Object*> objects_map;
+	std::map<const LEti::Object_2D*, Moving_Object*> objects_map;
 	objects_map.emplace(&flat_co, &flat_co);
 	objects_map.emplace(&flat_co_2, &flat_co_2);
 	objects_map.emplace(&flat_co_3, &flat_co_3);
@@ -220,22 +220,22 @@ int main()
 	LEti::Resource_Loader::load_object("debug_frame_red", "Resources/Models/debug_frame_red.mdl");
 
 	LEti::Resource_Loader::load_object("ind", "Resources/Models/intersection_point_indicator.mdl");
-	LEti::Object_2D ind;
-	ind.init("ind");
+//	LEti::Object_2D ind;
+//	ind.init("ind");
 
 	LEti::Timer fps_timer;
 
 	LEti::Resource_Loader::load_object("text_field", "Resources/Models/text_field.mdl");
-	LEti::Text_Field intersection_info_block;
-	intersection_info_block.init("text_field");
-	LEti::Text_Field tf_flat_co_speed;
-	tf_flat_co_speed.init("text_field");
-	tf_flat_co_speed.set_pos(0, 760, 0);
+//	LEti::Text_Field intersection_info_block;
+//	intersection_info_block.init("text_field");
+//	LEti::Text_Field tf_flat_co_speed;
+//	tf_flat_co_speed.init("text_field");
+//	tf_flat_co_speed.set_pos(0, 760, 0);
 
 	LEti::Text_Field fps_info_block;
 	fps_info_block.init("text_field");
 //	fps_info_block.set_pos(1150, 770, 0);
-	fps_info_block.set_pos(10, 770, 0);
+	fps_info_block.set_pos({10, 770, 0});
 
 	flat_co.update();
 	flat_co_2.update();
@@ -425,6 +425,7 @@ int main()
 //				std::cout << "\n";
 //			}
 		}
+
 		auto draw_frame = [](LEti::Debug_Drawable_Frame& _frame, const LEti::Physical_Model_2D::Imprint& _pm)->void
 		{
 			_frame.clear_points().clear_sequence();
@@ -441,7 +442,7 @@ int main()
 			_frame.update();
 			_frame.draw();
 		};
-		auto draw_frames_relative_to_other = [&](const TEST::Object_2D& _moving_1, const TEST::Object_2D& _moving_2)->void
+		auto draw_frames_relative_to_other = [&](const LEti::Object_2D& _moving_1, const LEti::Object_2D& _moving_2)->void
 		{
 //				frame.clear_points().clear_sequence();
 
@@ -508,6 +509,7 @@ int main()
 
 		};
 		draw_frames_relative_to_other(flat_co, flat_co_3);
+
 //		draw_frames_relative_to_other(flat_co_3, flat_co);
 //		LEti::Window_Controller::swap_buffers();
 
@@ -525,8 +527,8 @@ int main()
 		auto it = list.begin();
 		while(it != list.end())
 		{
-			ind.set_pos(it->collision_data.point.x, it->collision_data.point.y, 0.0f);
-			ind.draw();
+//			ind.set_pos(it->collision_data.point.x, it->collision_data.point.y, 0.0f);
+//			ind.draw();
 
 			Moving_Object& f = *(objects_map.at(it->first));
 			Moving_Object& s = *(objects_map.at(it->second));
@@ -580,13 +582,13 @@ int main()
 			flat_co.draw();
 			flat_co_2.draw();
 			flat_co_3.draw();
-			draw_frame(frame, flat_co.physics_module()->get_physical_model()->create_imprint());
-			draw_frame(frame, flat_co_2.physics_module()->get_physical_model()->create_imprint());
-			draw_frame(frame, flat_co_3.physics_module()->get_physical_model()->create_imprint());
+//			draw_frame(frame, flat_co.physics_module()->get_physical_model()->create_imprint());
+//			draw_frame(frame, flat_co_2.physics_module()->get_physical_model()->create_imprint());
+//			draw_frame(frame, flat_co_3.physics_module()->get_physical_model()->create_imprint());
 		}
 
-		intersection_info_block.set_text(std::to_string(list.size()).c_str());
-		intersection_info_block.draw();
+//		intersection_info_block.set_text(std::to_string(list.size()).c_str());
+//		intersection_info_block.draw();
 
 		++fps_counter;
 		fps_timer.update();
