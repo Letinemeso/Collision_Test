@@ -190,10 +190,12 @@ int main()
 		flat_co.set_pos({200, 400, 0});
 //		flat_co.angle = /*LEti::Math::HALF_PI + LEti::Math::PI*/ 0.0f;
 //		flat_co.speed = 100.0f;
-		flat_co.impulse_strength = 100;
+		flat_co.impulse_strength = 150;
 		flat_co.impulse_direction = {1.0f, 0.0f, 0.0f};
 		flat_co.set_scale(50);
-		flat_co.set_rotation_angle(LEti::Math::QUARTER_PI / 2.0f);
+//		flat_co.set_rotation_angle(LEti::Math::QUARTER_PI / 2.0f);
+		flat_co.set_rotation_angle(LEti::Math::HALF_PI / 2.0f);
+//		flat_co.set_rotation_angle(0.0f);
 		flat_co.set_rotation_axis({0.0f, 0.0f, 1.0f});
 		flat_co.rotation_delta = 0.0f;
 
@@ -265,7 +267,7 @@ int main()
 	flat_co_2.physics_module()->set_is_dynamic(true);
 	flat_co_3.physics_module()->set_is_dynamic(true);
 	LEti::Space_Splitter_2D::register_object(&flat_co);
-	LEti::Space_Splitter_2D::register_object(&flat_co_2);
+//	LEti::Space_Splitter_2D::register_object(&flat_co_2);
 	LEti::Space_Splitter_2D::register_object(&flat_co_3);
 
 //	LEti::Space_Splitter_2D::register_point(&cursor_position);
@@ -362,34 +364,52 @@ int main()
 		}
 		if(LEti::Event_Controller::is_key_down(GLFW_KEY_Q))
 		{
-			for(auto& co : objects_map)
+//			for(auto& co : objects_map)
+//			{
+//				Moving_Object& cco = *co.second;
+//				if(cco.rotation_delta < 0.0f)
+//				{
+//					cco.rotation_delta += LEti::Math::PI * DT;
+//					if(cco.rotation_delta > 0.0f) cco.rotation_delta = 0.0f;
+//				}
+//				else
+//				{
+//					cco.rotation_delta -= LEti::Math::PI * DT;
+//					if(cco.rotation_delta < 0.0f) cco.rotation_delta = 0.0f;
+//				}
+//			}
+			if(flat_co.rotation_delta < 0.0f)
 			{
-				Moving_Object& cco = *co.second;
-				if(cco.rotation_delta < 0.0f)
-				{
-					cco.rotation_delta += LEti::Math::PI * DT;
-					if(cco.rotation_delta > 0.0f) cco.rotation_delta = 0.0f;
-				}
-				else
-				{
-					cco.rotation_delta -= LEti::Math::PI * DT;
-					if(cco.rotation_delta < 0.0f) cco.rotation_delta = 0.0f;
-				}
+				flat_co.rotation_delta += LEti::Math::PI * DT;
+				if(flat_co.rotation_delta > 0.0f) flat_co.rotation_delta = 0.0f;
+			}
+			else
+			{
+				flat_co.rotation_delta -= LEti::Math::PI * DT;
+				if(flat_co.rotation_delta < 0.0f) flat_co.rotation_delta = 0.0f;
 			}
 		}
 		if(LEti::Event_Controller::is_key_down(GLFW_KEY_E))
 		{
-			for(auto& co : objects_map)
+//			for(auto& co : objects_map)
+//			{
+//				Moving_Object& cco = *co.second;
+//				if(cco.rotation_delta < 0.0f)
+//				{
+//					cco.rotation_delta -= LEti::Math::PI* DT;
+//				}
+//				else
+//				{
+//					cco.rotation_delta += LEti::Math::PI * DT;
+//				}
+//			}
+			if(flat_co.rotation_delta < 0.0f)
 			{
-				Moving_Object& cco = *co.second;
-				if(cco.rotation_delta < 0.0f)
-				{
-					cco.rotation_delta -= LEti::Math::PI* DT;
-				}
-				else
-				{
-					cco.rotation_delta += LEti::Math::PI * DT;
-				}
+				flat_co.rotation_delta -= LEti::Math::PI* DT;
+			}
+			else
+			{
+				flat_co.rotation_delta += LEti::Math::PI * DT;
 			}
 		}
 
@@ -584,11 +604,11 @@ int main()
 				float f_cos_between_vectors = LEti::Math::angle_cos_between_vectors(f_impulse_vector, f_vec_to_center_of_mass);
 				float f_new_rotation_angle = acos(f_cos_between_vectors);
 				glm::vec3 f_new_rotation_axis = LEti::Math::normalize(f_impulse_vector, f_vec_to_center_of_mass);
-//				f_new_rotation_axis.x = f_impulse_vector.y * f_vec_to_center_of_mass.z - f_impulse_vector.z * f_vec_to_center_of_mass.y;
-//				f_new_rotation_axis.y = -(f_impulse_vector.x * f_vec_to_center_of_mass.z - f_impulse_vector.z * f_vec_to_center_of_mass.x);
-//				f_new_rotation_axis.z = f_impulse_vector.x * f_vec_to_center_of_mass.y - f_impulse_vector.y * f_vec_to_center_of_mass.x;
 				LEti::Math::shrink_vector_to_1(f_new_rotation_axis);
 				f_new_rotation_angle *= f_new_rotation_axis.z;
+
+				f_impulse_vector.x *= fabs(cos(f_new_rotation_angle));
+				f_impulse_vector.y *= fabs(sin(f_new_rotation_angle));
 
 				return { f_impulse_vector, f_new_rotation_angle };
 			};
@@ -598,16 +618,23 @@ int main()
 			auto s_new_rotation_data = get_new_rotation_data_for_model(s, f);
 
 			glm::vec3 fmv = f_new_rotation_data.first;
+			fmv /= DT;
 			float fmvl = LEti::Math::vector_length(fmv);
 			glm::vec3 smv = s_new_rotation_data.first;
+			smv /= DT;
 			float smvl = LEti::Math::vector_length(smv);
 
 			f.rotation_delta = f_new_rotation_data.second;
 
 			s.rotation_delta = s_new_rotation_data.second;
 
-			f.impulse_strength *= fmvl;
-			s.impulse_strength *= smvl;
+
+			std::cout << "impulses strength before collision:\t" << f.impulse_strength + s.impulse_strength << "\n";
+
+			f.impulse_strength = fmvl;
+			s.impulse_strength = smvl;
+
+			std::cout << "impulses strength after collision:\t" << f.impulse_strength + s.impulse_strength << "\n";
 
 			LEti::Math::shrink_vector_to_1(fmv);
 			LEti::Math::shrink_vector_to_1(smv);
@@ -648,6 +675,11 @@ int main()
 			movement_vec -= it->collision_data.point;
 			vec_to_center_of_mass = s.physics_module()->get_physical_model()->center_of_mass() - it->collision_data.point;
 			s.rotation_delta += -acos(LEti::Math::angle_cos_between_vectors(movement_vec, vec_to_center_of_mass));*/
+
+			f.revert_to_previous_state();
+			f.update(it->collision_data.time_of_intersection_ratio);
+			s.revert_to_previous_state();
+			s.update(it->collision_data.time_of_intersection_ratio);
 
 			f.update(1.0f - it->collision_data.time_of_intersection_ratio);
 			s.update(1.0f - it->collision_data.time_of_intersection_ratio);
