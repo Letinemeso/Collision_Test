@@ -39,26 +39,12 @@ struct On_Button_Pressed_Msg
 class Moving_Object : public LEti::Object_2D
 {
 public:
-//	float speed = 0.0f;
-//	float angle = 0.0f;
 	float impulse_strength = 0.0f;
 	glm::vec3 impulse_direction{1.0f, 0.0f, 0.0f};
 	float rotation_delta = 0.0f;
 	float mass = 1.0f;
 
 public:
-//	void update(float _ratio = 1.0f) override
-//	{
-//		glm::vec3 trajectory{0.0f, 0.0f, 0.0f};
-//		trajectory.x = speed * cos(angle) * DT;
-//		trajectory.y = speed * sin(angle) * DT;
-//		move(trajectory);
-
-//		rotate(rotation_delta * DT);
-
-//		LEti::Object_2D::update();
-//	}
-
 	void rotate_impulse(float _angle)
 	{
 		glm::mat4x4 rm = glm::rotate(_angle, glm::vec3(0.0f, 0.0f, 1.0f));
@@ -68,8 +54,6 @@ public:
 	void update(float _ratio = 1.0f) override
 	{
 		glm::vec3 trajectory{0.0f, 0.0f, 0.0f};
-//		trajectory.x = speed * cos(angle) * LEti::Event_Controller::get_dt() * (_ratio);
-//		trajectory.y = speed * sin(angle) * LEti::Event_Controller::get_dt() * (_ratio);
 		trajectory.x = impulse_direction.x * impulse_strength * LEti::Event_Controller::get_dt() * (_ratio);
 		trajectory.y = impulse_direction.y * impulse_strength * LEti::Event_Controller::get_dt() * (_ratio);
 		move(trajectory);
@@ -173,6 +157,13 @@ int main()
 	auto reset_func = [&]()
 	{
 		delay = 0;
+
+		flat_co.update_previous_state();
+		flat_co_2.update_previous_state();
+		flat_co_3.update_previous_state();
+		flat_co.update(0.0f);
+		flat_co_2.update(0.0f);
+		flat_co_3.update(0.0f);
 
 //		flat_co.set_pos({400, 400, 0});
 //		flat_co.angle = LEti::Math::HALF_PI + LEti::Math::PI/* 0.0f*/;
@@ -580,35 +571,46 @@ int main()
 //			f.rotation_delta = -f.rotation_delta;
 //			s.rotation_delta = -s.rotation_delta;
 
-			const LEti::Default_Physics_Module_2D& f_pm = *f.physics_module();
-			const LEti::Default_Physics_Module_2D& s_pm = *s.physics_module();
-
 			auto get_new_rotation_data_for_model = [&it](const LEti::Object_2D& f, const LEti::Object_2D& s)->/*float*/ std::pair<glm::vec3, float>
 			{
-				const LEti::Default_Physics_Module_2D& f_pm = *f.physics_module();
-				const LEti::Default_Physics_Module_2D& s_pm = *s.physics_module();
+				auto get_particle_impulse = [](const LEti::Object_2D& _obj, const glm::vec3& _particle)->glm::vec3
+				{
+					glm::vec3 movement_impulse = _obj.physics_module()->get_physical_model()->center_of_mass() - _obj.physics_module()->get_physical_model_prev_state()->center_of_mass();
 
-				glm::vec3 f_movement_impulse_vector{0.0f, 0.0f, 0.0f};
-				f_movement_impulse_vector += s_pm.get_physical_model()->center_of_mass() - s_pm.get_physical_model_prev_state()->center_of_mass();
+					glm::mat4x4 inversed_rotation_matrix = _obj.get_rotation_matrix_for_time_ratio(0.0f) / _obj.get_rotation_matrix_for_time_ratio(1.0f);
+					glm::vec3 center_to_particle_vec = _particle - _obj.physics_module()->get_physical_model()->center_of_mass();
+					glm::vec3 center_to_particle_vec_prev = inversed_rotation_matrix * glm::vec4(center_to_particle_vec, 1.0f);
 
-				glm::vec3 f_rotation_impulse_vector{0.0f, 0.0f, 0.0f};
-				glm::mat4x4 s_inversed_rotation_matrix = s.get_rotation_matrix_for_time_ratio(0.0f) / s.get_rotation_matrix_for_time_ratio(1.0f);
-				glm::vec3 f_center_to_point = it->collision_data.point - s_pm.get_physical_model()->center_of_mass();
-				glm::vec3 f_center_to_point_prev = s_inversed_rotation_matrix * glm::vec4(f_center_to_point, 1.0f);
-				f_rotation_impulse_vector = f_center_to_point - f_center_to_point_prev;
+					glm::vec3 rotation_impulse = center_to_particle_vec - center_to_particle_vec_prev;
 
-				glm::vec3 f_impulse_vector = f_movement_impulse_vector + f_rotation_impulse_vector;
+					return movement_impulse + rotation_impulse;
+				};
 
-				glm::vec3 f_vec_to_center_of_mass = f_pm.get_physical_model()->center_of_mass() - it->collision_data.point;
+				auto get_new_rotation_angle = [](const LEti::Object_2D& _for, const glm::vec3& _particle, const glm::vec3& _impulse)->float
+				{
+					glm::vec3 particle_to_center_vec = _for.physics_module()->get_physical_model()->center_of_mass() - _particle;
+					float angle = acos(LEti::Math::angle_cos_between_vectors(_impulse, particle_to_center_vec));
+					glm::vec3 axis = LEti::Math::normalize(_impulse, particle_to_center_vec);
+					LEti::Math::shrink_vector_to_1(axis);
+					angle *= axis.z;
+					return angle;
+				};
 
-				float f_cos_between_vectors = LEti::Math::angle_cos_between_vectors(f_impulse_vector, f_vec_to_center_of_mass);
-				float f_new_rotation_angle = acos(f_cos_between_vectors);
-				glm::vec3 f_new_rotation_axis = LEti::Math::normalize(f_impulse_vector, f_vec_to_center_of_mass);
-				LEti::Math::shrink_vector_to_1(f_new_rotation_axis);
-				f_new_rotation_angle *= f_new_rotation_axis.z;
+//				auto get_friction_vector = [](const glm::vec3& _impulse_start, const glm::vec3& _impulse_end, const LEti::Physical_Model_2D::Imprint& _pm)->glm::vec3
+//				{
+//					glm::vec3
+//					float smallest_length
+//				};
 
-				f_impulse_vector.x *= fabs(cos(f_new_rotation_angle));
-				f_impulse_vector.y *= fabs(sin(f_new_rotation_angle));
+				glm::vec3 f_impulse_vector = get_particle_impulse(f, it->collision_data.point);
+				glm::vec3 s_impulse_vector = get_particle_impulse(s, it->collision_data.point);
+
+				float f_new_rotation_angle = get_new_rotation_angle(f, it->collision_data.point, s_impulse_vector);
+
+//				s_impulse_vector.x *= fabs(cos(f_new_rotation_angle));
+//				s_impulse_vector.y *= fabs(sin(f_new_rotation_angle));
+
+				f_impulse_vector += s_impulse_vector;
 
 				return { f_impulse_vector, f_new_rotation_angle };
 			};
@@ -624,17 +626,20 @@ int main()
 			smv /= DT;
 			float smvl = LEti::Math::vector_length(smv);
 
-			f.rotation_delta = f_new_rotation_data.second;
 
+			f.revert_to_previous_state();
+			f.update(it->collision_data.time_of_intersection_ratio);
+			s.revert_to_previous_state();
+			s.update(it->collision_data.time_of_intersection_ratio);
+
+
+			f.rotation_delta = f_new_rotation_data.second;
 			s.rotation_delta = s_new_rotation_data.second;
 
-
-			std::cout << "impulses strength before collision:\t" << f.impulse_strength + s.impulse_strength << "\n";
-
+//			std::cout << "impulses strength before collision:\t" << f.impulse_strength + s.impulse_strength << "\n";
 			f.impulse_strength = fmvl;
 			s.impulse_strength = smvl;
-
-			std::cout << "impulses strength after collision:\t" << f.impulse_strength + s.impulse_strength << "\n";
+//			std::cout << "impulses strength after collision:\t" << f.impulse_strength + s.impulse_strength << "\n";
 
 			LEti::Math::shrink_vector_to_1(fmv);
 			LEti::Math::shrink_vector_to_1(smv);
@@ -676,10 +681,6 @@ int main()
 			vec_to_center_of_mass = s.physics_module()->get_physical_model()->center_of_mass() - it->collision_data.point;
 			s.rotation_delta += -acos(LEti::Math::angle_cos_between_vectors(movement_vec, vec_to_center_of_mass));*/
 
-			f.revert_to_previous_state();
-			f.update(it->collision_data.time_of_intersection_ratio);
-			s.revert_to_previous_state();
-			s.update(it->collision_data.time_of_intersection_ratio);
 
 			f.update(1.0f - it->collision_data.time_of_intersection_ratio);
 			s.update(1.0f - it->collision_data.time_of_intersection_ratio);
