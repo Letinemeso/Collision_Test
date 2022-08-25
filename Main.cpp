@@ -92,7 +92,7 @@ int main()
 	LEti::Space_Splitter_2D::set_narrowest_phase<LEti::Default_Narrowest_CD>();
 //	LEti::Space_Splitter_2D::set_precision(10);
 	LEti::Space_Splitter_2D::get_broad_phase()->set_precision(10);
-	LEti::Space_Splitter_2D::get_narrow_phase()->set_precision(100);
+	LEti::Space_Splitter_2D::get_narrow_phase()->set_precision(10);
 
 	LEti::Resource_Loader::init();
 
@@ -185,7 +185,7 @@ int main()
 		flat_co.impulse_direction = {1.0f, 0.0f, 0.0f};
 		flat_co.set_scale(50);
 //		flat_co.set_rotation_angle(LEti::Math::QUARTER_PI / 2.0f);
-		flat_co.set_rotation_angle(LEti::Math::HALF_PI / 2.0f);
+		flat_co.set_rotation_angle(LEti::Math::PI + LEti::Math::HALF_PI + LEti::Math::QUARTER_PI);
 //		flat_co.set_rotation_angle(0.0f);
 		flat_co.set_rotation_axis({0.0f, 0.0f, 1.0f});
 		flat_co.rotation_delta = 0.0f;
@@ -571,7 +571,7 @@ int main()
 //			f.rotation_delta = -f.rotation_delta;
 //			s.rotation_delta = -s.rotation_delta;
 
-			auto get_new_rotation_data_for_model = [&it](const LEti::Object_2D& f, const LEti::Object_2D& s)->/*float*/ std::pair<glm::vec3, float>
+			auto get_new_rotation_data_for_model = [](const LEti::Object_2D& f, const LEti::Object_2D& s, const glm::vec3& _s_normal, const glm::vec3& _collision_point)->/*float*/ std::pair<glm::vec3, float>
 			{
 				auto get_particle_impulse = [](const LEti::Object_2D& _obj, const glm::vec3& _particle)->glm::vec3
 				{
@@ -602,22 +602,25 @@ int main()
 //					float smallest_length
 //				};
 
-				glm::vec3 f_impulse_vector = get_particle_impulse(f, it->collision_data.point);
-				glm::vec3 s_impulse_vector = get_particle_impulse(s, it->collision_data.point);
+				glm::vec3 f_impulse_vector = get_particle_impulse(f, _collision_point);
+				glm::vec3 s_impulse_vector = get_particle_impulse(s, _collision_point);
 
-				float f_new_rotation_angle = get_new_rotation_angle(f, it->collision_data.point, s_impulse_vector);
+				float f_new_rotation_angle = get_new_rotation_angle(f, _collision_point, s_impulse_vector);
 
-//				s_impulse_vector.x *= fabs(cos(f_new_rotation_angle));
-//				s_impulse_vector.y *= fabs(sin(f_new_rotation_angle));
-
-				f_impulse_vector += s_impulse_vector;
-
-				return { f_impulse_vector, f_new_rotation_angle };
+				return { f_impulse_vector + s_impulse_vector + _s_normal, f_new_rotation_angle };
 			};
 
+			if(LEti::Math::vector_length(it->collision_data.first_normal) > 1.00001f)
+			{
+				std::cout << "ass\n";
+			}
+			if(LEti::Math::vector_length(it->collision_data.second_normal) > 1.00001f)
+			{
+				std::cout << "ass\n";
+			}
 
-			auto f_new_rotation_data = get_new_rotation_data_for_model(f, s);
-			auto s_new_rotation_data = get_new_rotation_data_for_model(s, f);
+			auto f_new_rotation_data = get_new_rotation_data_for_model(f, s, it->collision_data.second_normal, it->collision_data.point);
+			auto s_new_rotation_data = get_new_rotation_data_for_model(s, f, it->collision_data.first_normal, it->collision_data.point);
 
 			glm::vec3 fmv = f_new_rotation_data.first;
 			fmv /= DT;
@@ -626,6 +629,25 @@ int main()
 			smv /= DT;
 			float smvl = LEti::Math::vector_length(smv);
 
+
+			auto get_particle_impulse_strength = [](const LEti::Object_2D& _obj, const glm::vec3& _particle)->float
+			{
+				glm::vec3 movement_impulse = _obj.physics_module()->get_physical_model()->center_of_mass() - _obj.physics_module()->get_physical_model_prev_state()->center_of_mass();
+
+				glm::mat4x4 inversed_rotation_matrix = _obj.get_rotation_matrix_for_time_ratio(0.0f) / _obj.get_rotation_matrix_for_time_ratio(1.0f);
+				glm::vec3 center_to_particle_vec = _particle - _obj.physics_module()->get_physical_model()->center_of_mass();
+				glm::vec3 center_to_particle_vec_prev = inversed_rotation_matrix * glm::vec4(center_to_particle_vec, 1.0f);
+
+				glm::vec3 rotation_impulse = center_to_particle_vec - center_to_particle_vec_prev;
+
+				return LEti::Math::vector_length(movement_impulse + rotation_impulse);
+			};
+
+			float f_imp_str_before = get_particle_impulse_strength(f, (*f.physics_module()->get_physical_model())[0][0]);
+			float s_imp_str_before = get_particle_impulse_strength(s, (*s.physics_module()->get_physical_model())[0][0]);
+			std::cout << "impulses sum before:\n  first: " << f_imp_str_before << "\tsecond: " << s_imp_str_before << "\n\tsummary: ";
+			float imp_sum_before = f_imp_str_before + s_imp_str_before;
+			std::cout << imp_sum_before << "\n";
 
 			f.revert_to_previous_state();
 			f.update(it->collision_data.time_of_intersection_ratio);
@@ -647,43 +669,14 @@ int main()
 			f.impulse_direction = fmv;
 			s.impulse_direction = smv;
 
-//			s.speed = smvl;
-
-//			float temp = f.angle;
-//			f.angle = s.angle;
-//			s.angle = temp;
-
-//			float temp = f.speed;
-//			f.speed = s.speed * (s.mass / f.mass);
-//			s.speed = temp * (f.mass / s.mass);
-//			f.speed = s.speed * f_to_s_impulse_ratio;
-//			s.speed = temp * s_to_f_impulse_ratio;
-
-			/*float temp = f.angle;
-			f.angle = s.angle;
-			s.angle = temp;
-
-			temp = f.speed;
-			f.speed = s.speed * (s.mass / f.mass);
-			s.speed = temp * (f.mass / s.mass);
-
-			glm::vec3 movement_vec{0.0f, 0.0f, 0.0f};
-			movement_vec.x = f.speed * cos(f.angle);
-			movement_vec.y = f.speed * sin(f.angle);
-			movement_vec -= it->collision_data.point;
-			glm::vec3 vec_to_center_of_mass = f.physics_module()->get_physical_model()->center_of_mass() - it->collision_data.point;
-			f.rotation_delta += acos(LEti::Math::angle_cos_between_vectors(movement_vec, vec_to_center_of_mass));
-
-			movement_vec = {0.0f, 0.0f, 0.0f};
-			movement_vec.x = s.speed * cos(s.angle);
-			movement_vec.y = s.speed * sin(s.angle);
-			movement_vec -= it->collision_data.point;
-			vec_to_center_of_mass = s.physics_module()->get_physical_model()->center_of_mass() - it->collision_data.point;
-			s.rotation_delta += -acos(LEti::Math::angle_cos_between_vectors(movement_vec, vec_to_center_of_mass));*/
-
-
 			f.update(1.0f - it->collision_data.time_of_intersection_ratio);
 			s.update(1.0f - it->collision_data.time_of_intersection_ratio);
+
+			float f_imp_str_after = get_particle_impulse_strength(f, (*f.physics_module()->get_physical_model())[0][0]) / (it->collision_data.time_of_intersection_ratio);
+			float s_imp_str_after = get_particle_impulse_strength(s, (*s.physics_module()->get_physical_model())[0][0]) / (it->collision_data.time_of_intersection_ratio);
+			std::cout << "impulses sum before:\n  first: " << f_imp_str_after << "\tsecond: " << s_imp_str_after << "\n\tsummary: ";
+			float imp_sum_after = f_imp_str_after + s_imp_str_after;
+			std::cout << imp_sum_after << "\n\n";
 
 			++it;
 		}
