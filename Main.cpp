@@ -184,8 +184,8 @@ int main()
 		flat_co.impulse_strength = 150;
 		flat_co.impulse_direction = {1.0f, 0.0f, 0.0f};
 		flat_co.set_scale(50);
-//		flat_co.set_rotation_angle(LEti::Math::QUARTER_PI / 2.0f);
-		flat_co.set_rotation_angle(LEti::Math::PI + LEti::Math::HALF_PI + LEti::Math::QUARTER_PI);
+		flat_co.set_rotation_angle(LEti::Math::QUARTER_PI);
+//		flat_co.set_rotation_angle(LEti::Math::PI + LEti::Math::HALF_PI + LEti::Math::QUARTER_PI);
 //		flat_co.set_rotation_angle(0.0f);
 		flat_co.set_rotation_axis({0.0f, 0.0f, 1.0f});
 		flat_co.rotation_delta = 0.0f;
@@ -201,6 +201,7 @@ int main()
 		flat_co_3.impulse_direction = {-1.0f, 0.0f, 0.0f};
 		flat_co_3.set_scale(50);
 		flat_co_3.set_rotation_angle(0.0f);
+//		flat_co_3.set_rotation_angle(LEti::Math::QUARTER_PI);
 		flat_co_3.set_rotation_axis({0.0f, 0.0f, 1.0f});
 		flat_co_3.rotation_delta = 0.0f;
 
@@ -607,17 +608,14 @@ int main()
 
 				float f_new_rotation_angle = get_new_rotation_angle(f, _collision_point, s_impulse_vector);
 
-				return { f_impulse_vector + s_impulse_vector + _s_normal, f_new_rotation_angle };
-			};
+				s_impulse_vector.x *= cos(f_new_rotation_angle);
+				s_impulse_vector.y *= sin(f_new_rotation_angle);
 
-			if(LEti::Math::vector_length(it->collision_data.first_normal) > 1.00001f)
-			{
-				std::cout << "ass\n";
-			}
-			if(LEti::Math::vector_length(it->collision_data.second_normal) > 1.00001f)
-			{
-				std::cout << "ass\n";
-			}
+				glm::vec3 s_normal_scaled = _s_normal;
+				LEti::Math::extend_vector_to_length(s_normal_scaled, LEti::Math::vector_length(f_impulse_vector));
+
+				return { f_impulse_vector + s_impulse_vector + s_normal_scaled, f_new_rotation_angle };
+			};
 
 			auto f_new_rotation_data = get_new_rotation_data_for_model(f, s, it->collision_data.second_normal, it->collision_data.point);
 			auto s_new_rotation_data = get_new_rotation_data_for_model(s, f, it->collision_data.first_normal, it->collision_data.point);
