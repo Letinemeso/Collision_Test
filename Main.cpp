@@ -65,6 +65,43 @@ public:
 
 };
 
+class Grab
+{
+private:
+	Moving_Object* grabbed_object = nullptr;
+	glm::vec3 cursor_pos;
+
+public:
+	void update()
+	{
+		cursor_pos = {LEti::Window_Controller::get_cursor_position().x, LEti::Window_Controller::get_cursor_position().y, 0.0f};
+		if(grabbed_object)
+			grabbed_object->set_pos(cursor_pos);
+	}
+
+	void grab(Moving_Object* _obj)
+	{
+		grabbed_object = _obj;
+		grabbed_object->impulse_strength = 0.0f;
+		grabbed_object->set_pos(cursor_pos);
+	}
+
+	void release()
+	{
+		if(!grabbed_object) return;
+
+		glm::vec3 stride = grabbed_object->get_pos() - grabbed_object->get_pos_prev();
+
+		grabbed_object->impulse_strength = LEti::Math::vector_length(stride) / DT;
+
+		LEti::Math::shrink_vector_to_1(stride);
+		grabbed_object->impulse_direction = stride;
+
+		grabbed_object = nullptr;
+	}
+
+};
+
 int main()
 {
 	LEti::Window_Controller::create_window(1200, 800, "Collision Test");
@@ -158,69 +195,45 @@ int main()
 	{
 		delay = 0;
 
-		flat_co.update_previous_state();
-		flat_co_2.update_previous_state();
-		flat_co_3.update_previous_state();
-		flat_co.update(0.0f);
-		flat_co_2.update(0.0f);
-		flat_co_3.update(0.0f);
-
-//		flat_co.set_pos({400, 400, 0});
-//		flat_co.angle = LEti::Math::HALF_PI + LEti::Math::PI/* 0.0f*/;
-//		flat_co.speed = 200.0f;
-
-//		flat_co_2.set_pos({1000, 600, 0});
-//		flat_co_2.angle = 2.34f;
-//		flat_co_2.speed = 200.0f;
-
-//		flat_co_3.set_pos({800, 400, 0});
-//		flat_co_3.angle = LEti::Math::PI + 0.44f;
-//		flat_co_3.speed = 200.0f;
-
-
-		flat_co.set_pos({200, 400, 0});
-//		flat_co.angle = /*LEti::Math::HALF_PI + LEti::Math::PI*/ 0.0f;
-//		flat_co.speed = 100.0f;
-		flat_co.impulse_strength = 150;
-		flat_co.impulse_direction = {1.0f, 0.0f, 0.0f};
-		flat_co.set_scale(50);
-		flat_co.set_rotation_angle(LEti::Math::QUARTER_PI);
-//		flat_co.set_rotation_angle(LEti::Math::PI + LEti::Math::HALF_PI + LEti::Math::QUARTER_PI);
-//		flat_co.set_rotation_angle(0.0f);
-		flat_co.set_rotation_axis({0.0f, 0.0f, 1.0f});
-		flat_co.rotation_delta = 0.0f;
-
 		flat_co_2.set_pos({800, 700, 0});
-//		flat_co_2.angle = /*LEti::Math::PI*/ 0 /*2.34f*/;
-//		flat_co_2.speed = 0.0f;
 
-		flat_co_3.set_pos({600, 400, 0});
-//		flat_co_3.angle = LEti::Math::PI /*+ 0.44f*/;
-//		flat_co_3.speed = 50.0f;
-		flat_co_3.impulse_strength = 50.0f;
-		flat_co_3.impulse_direction = {-1.0f, 0.0f, 0.0f};
+
+
+		flat_co.set_pos({200, 200, 0});
+		flat_co_3.set_pos({300, 400, 0});
+
+		flat_co.impulse_strength = 150;
+		flat_co_3.impulse_strength = 0.0f;
+
+		flat_co.impulse_direction = {1.0f, 1.0f, 0.0f};
+		LEti::Math::shrink_vector_to_1(flat_co.impulse_direction);
+		flat_co_3.impulse_direction = {0.0f, -1.0f, 0.0f};
+		LEti::Math::shrink_vector_to_1(flat_co_3.impulse_direction);
+
+		flat_co.set_scale(50);
 		flat_co_3.set_scale(50);
+
+		flat_co.set_rotation_angle(LEti::Math::QUARTER_PI);
 		flat_co_3.set_rotation_angle(0.0f);
-//		flat_co_3.set_rotation_angle(LEti::Math::QUARTER_PI);
+
+		flat_co.set_rotation_axis({0.0f, 0.0f, 1.0f});
 		flat_co_3.set_rotation_axis({0.0f, 0.0f, 1.0f});
+
+		flat_co.rotation_delta = 0.0f;
 		flat_co_3.rotation_delta = 0.0f;
 
 
-//		flat_co.set_pos(200, 400, 0);
-//		flat_co.angle = /*LEti::Math::HALF_PI + LEti::Math::PI*/ 0.0f;
-//		flat_co.speed = 0.0f;
 
-//		flat_co.set_rotation_angle(LEti::Math::QUARTER_PI);
-
-//		flat_co_3.set_pos(800, 700, 0);
-//		flat_co_3.angle = /*LEti::Math::PI*/ 0 /*2.34f*/;
-//		flat_co_3.speed = 0.0f;
-
-//		flat_co_2.set_pos(1000, 400, 0);
-//		flat_co_2.angle = LEti::Math::PI /*+ 0.44f*/;
-//		flat_co_2.speed = 0.0f;
+		flat_co.update(0.0f);
+		flat_co_2.update(0.0f);
+		flat_co_3.update(0.0f);
+		flat_co.update_previous_state();
+		flat_co_2.update_previous_state();
+		flat_co_3.update_previous_state();
 	};
 	reset_func();
+
+	Grab grab;
 
 	std::map<const LEti::Object_2D*, Moving_Object*> objects_map;
 	objects_map.emplace(&flat_co, &flat_co);
@@ -435,6 +448,7 @@ int main()
 			}
 		}
 
+		grab.update();
 
 		flat_co.update();
 		flat_co_2.update();
@@ -489,7 +503,7 @@ int main()
 				1.0f, 0.0f, 0.0f, 0.0f,
 				0.0f, 1.0f, 0.0f, 0.0f,
 				0.0f, 0.0f, 1.0f, 0.0f,
-				600.0f, 400.0f, 0.0f, 1.0f
+				900.0f, 600.0f, 0.0f, 1.0f
 			};
 			glm::mat4x4 fake_default_matrix{
 				1.0f, 0.0f, 0.0f, 0.0f,
@@ -572,7 +586,7 @@ int main()
 //			f.rotation_delta = -f.rotation_delta;
 //			s.rotation_delta = -s.rotation_delta;
 
-			auto get_new_rotation_data_for_model = [](const LEti::Object_2D& f, const LEti::Object_2D& s, const glm::vec3& _s_normal, const glm::vec3& _collision_point)->/*float*/ std::pair<glm::vec3, float>
+			auto get_new_rotation_data_for_model = [](const LEti::Object_2D& f, const LEti::Object_2D& s, const glm::vec3& _s_normal, const glm::vec3& _particle)->/*float*/ std::pair<glm::vec3, float>
 			{
 				auto get_particle_impulse = [](const LEti::Object_2D& _obj, const glm::vec3& _particle)->glm::vec3
 				{
@@ -597,24 +611,49 @@ int main()
 					return angle;
 				};
 
-//				auto get_friction_vector = [](const glm::vec3& _impulse_start, const glm::vec3& _impulse_end, const LEti::Physical_Model_2D::Imprint& _pm)->glm::vec3
-//				{
-//					glm::vec3
-//					float smallest_length
-//				};
+				glm::vec3 f_impulse_vector = get_particle_impulse(f, _particle);
+				glm::vec3 s_impulse_vector = get_particle_impulse(s, _particle);
 
-				glm::vec3 f_impulse_vector = get_particle_impulse(f, _collision_point);
-				glm::vec3 s_impulse_vector = get_particle_impulse(s, _collision_point);
+//				float f_new_rotation_angle = get_new_rotation_angle(f, _particle, s_impulse_vector);
 
-				float f_new_rotation_angle = get_new_rotation_angle(f, _collision_point, s_impulse_vector);
+//				float f_impulse_ratio_angle = get_new_rotation_angle(f, _particle, f_impulse_vector);
+				glm::vec3 vec_center_to_particle = _particle - f.physics_module()->get_physical_model()->center_of_mass();
+//				float f_impulse_ratio_angle = acos(LEti::Math::angle_cos_between_vectors({1.0f, 0.0f, 0.0f}, vec_center_to_particle));
 
-				s_impulse_vector.x *= cos(f_new_rotation_angle);
-				s_impulse_vector.y *= sin(f_new_rotation_angle);
+				float s_normal_ratio = 0.0f;
+				if(!LEti::Math::floats_are_equal(LEti::Math::vector_length(f_impulse_vector), 0.0f))
+					s_normal_ratio = fabs(cos(get_new_rotation_angle(f, _particle, f_impulse_vector)));
+
+//				s_impulse_vector.x *= fabs(cos(f_impulse_ratio_angle));
+//				s_impulse_vector.y *= fabs(sin(f_impulse_ratio_angle));
 
 				glm::vec3 s_normal_scaled = _s_normal;
 				LEti::Math::extend_vector_to_length(s_normal_scaled, LEti::Math::vector_length(f_impulse_vector));
 
-				return { f_impulse_vector + s_impulse_vector + s_normal_scaled, f_new_rotation_angle };
+//				s_normal_scaled.x *= fabs(cos(f_impulse_ratio_angle));
+//				s_normal_scaled.y *= fabs(sin(f_impulse_ratio_angle));
+				s_normal_scaled *= s_normal_ratio;
+
+				glm::vec3 result_vector = f_impulse_vector + s_impulse_vector + s_normal_scaled;
+
+//				float f_new_rotation_angle = get_new_rotation_angle(f, _particle, result_vector);
+
+				glm::vec3 test = s_impulse_vector + s_normal_scaled - (f_impulse_vector);
+
+				float angle_cos_ctp_and_impulse = LEti::Math::angle_cos_between_vectors(vec_center_to_particle, test);
+				float angle_ctp_and_impulse = acos(angle_cos_ctp_and_impulse);
+				float force = LEti::Math::vector_length(test); // * mass
+				float torque = LEti::Math::vector_length(vec_center_to_particle) * force;
+				float angular_velocity = torque * DT;
+				glm::vec3 axis = LEti::Math::normalize(vec_center_to_particle, test);
+				LEti::Math::shrink_vector_to_1(axis);
+				float f_new_rotation_angle = angular_velocity * sin(angle_ctp_and_impulse) * axis.z;
+
+//				result_vector.x *= fabs(cos(f_new_rotation_angle));
+//				result_vector.y *= fabs(sin(f_new_rotation_angle));
+				result_vector *= fabs(cos(f_new_rotation_angle));
+
+				return {result_vector , f_new_rotation_angle };
 			};
 
 			auto f_new_rotation_data = get_new_rotation_data_for_model(f, s, it->collision_data.second_normal, it->collision_data.point);
@@ -684,16 +723,12 @@ int main()
 			LEti::Space_Splitter_2D::unregister_point(&cursor_position);
 			auto plist = LEti::Space_Splitter_2D::get_collisions__points();
 
-			if(plist.size() == 0)
-			{
-				std::cout << "list is empty\n\n";
-			}
-			else
-			{
-				for(const auto& obj : plist)
-					std::cout << obj.object << "\n";
-				std::cout << "\n";
-			}
+			if(plist.size() != 0)
+				 grab.grab(objects_map.at(plist.begin()->object));
+		}
+		if(LEti::Event_Controller::mouse_button_was_released(GLFW_MOUSE_BUTTON_1))
+		{
+			grab.release();
 		}
 
 		ind.draw();
