@@ -58,6 +58,7 @@ public:
 	{
 		glm::vec3 movement_impulse = physics_module()->get_physical_model()->center_of_mass() - physics_module()->get_physical_model_prev_state()->center_of_mass();
 		movement_impulse /= DT;
+		glm::vec3 movement_force = movement_impulse * mass;
 
 		glm::mat4x4 inversed_rotation_matrix = get_rotation_matrix_for_time_ratio(0.0f) / get_rotation_matrix_for_time_ratio(1.0f);
 		glm::vec3 center_to_particle_vec = _point - physics_module()->get_physical_model()->center_of_mass();
@@ -65,11 +66,16 @@ public:
 
 		glm::vec3 rotation_impulse = center_to_particle_vec - center_to_particle_vec_prev;
 
-		float radius = LEti::Math::vector_length(center_to_particle_vec);
-		float points_linear_velocity = LEti::Math::DOUBLE_PI * fabs(angular_velocity) * radius;
-		LEti::Math::extend_vector_to_length(rotation_impulse, points_linear_velocity);
+//		float radius = LEti::Math::vector_length(center_to_particle_vec);
+//		float linear_velocity_of_point = LEti::Math::DOUBLE_PI * fabs(angular_velocity) * radius;
+//		LEti::Math::extend_vector_to_length(rotation_impulse, linear_velocity_of_point);
+//		rotation_impulse *= DT;
 
-		return movement_impulse + rotation_impulse;
+		float real_moment_of_inertia = physics_module()->get_physical_model()->moment_of_inertia() * (mass / physics_module()->get_physical_model()->get_polygons_count());
+
+		rotation_impulse *= real_moment_of_inertia;
+
+		return /*movement_impulse*/ movement_force + rotation_impulse;
 	}
 
 	void apply_impulse(const glm::vec3& _impulse, const glm::vec3& _to_point)
