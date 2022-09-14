@@ -301,8 +301,13 @@ int main()
 		delay = 0;
 
 
+		//	TEST 2
+
 		flat_co.set_pos({700, 400, 0});
-		flat_co_3.set_pos({co3_init_x, co3_init_y, 0});
+		flat_co_3.set_pos({560, 330, 0});
+
+		//	~TEST 2
+
 		flat_co_2.set_pos({800, 700, 0});
 
 		flat_co.velocity = 0;
@@ -361,7 +366,12 @@ int main()
 
 		//	TEST 3
 
+//		flat_co.movement_direction = {1.0f, 0.0f, 0.0f};
+//		LEti::Math::shrink_vector_to_1(flat_co.movement_direction);
 //		flat_co.velocity = 100.0f;
+//		flat_co_3.movement_direction = {1.0f, 1.0f, 0.0f};
+//		LEti::Math::shrink_vector_to_1(flat_co_3.movement_direction);
+//		flat_co_3.velocity = 100.0f;
 
 		//	~TEST 3
 
