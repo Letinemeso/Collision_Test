@@ -75,18 +75,17 @@ public:
 
 	glm::vec3 get_attached_point_velocity(const glm::vec3& _point) const
 	{
-//		glm::vec3 movement_velocity = physics_module()->get_physical_model()->center_of_mass() - physics_module()->get_physical_model_prev_state()->center_of_mass();
 		glm::vec3 movement_velocity = movement_direction * velocity;
-//		movement_velocity /= DT;
 
-//		glm::mat4x4 inversed_rotation_matrix = get_rotation_matrix_for_time_ratio(0.0f) / get_rotation_matrix_for_time_ratio(1.0f);
-//		glm::vec3 center_to_particle_vec = _point - physics_module()->get_physical_model()->center_of_mass();
-//		glm::vec3 center_to_particle_vec_prev = inversed_rotation_matrix * glm::vec4(center_to_particle_vec, 1.0f);
+		glm::vec3 linear_velocity_from_angular = get_perp_radius(_point) * angular_velocity;
 
-//		glm::vec3 rotation_velocity = center_to_particle_vec - center_to_particle_vec_prev;
-//		rotation_velocity /= DT;
+		return movement_velocity + linear_velocity_from_angular;
+	}
 
-		return movement_velocity /*+ rotation_velocity*/;
+	glm::vec3 get_perp_radius(const glm::vec3& _to_point) const
+	{
+		glm::vec3 point_to_center_vec = _to_point - physics_module()->get_physical_model()->center_of_mass();
+		return LEti::Math::rotate_vector(point_to_center_vec, {0.0f , 0.0f, 1.0f}, LEti::Math::HALF_PI);
 	}
 
 	void apply_impulse(const glm::vec3& _impulse, const glm::vec3& _to_point)
@@ -778,7 +777,9 @@ int main()
 
 			float dot = LEti::Math::dot_product(v_ab, it->first_normal);
 			float j_divident = dot * -(1.0f + 1.0f);
-			float j_divider = ((1.0f / 1.0f) + (1.0f / 1.0f));
+			float j_divider = ((1.0f / 1.0f) + (1.0f / 1.0f)) +
+					(powf(LEti::Math::dot_product(f.get_perp_radius(it->point), it->first_normal), 2.0f) / f.physics_module()->get_physical_model()->moment_of_inertia()) +
+					(powf(LEti::Math::dot_product(s.get_perp_radius(it->point), it->first_normal), 2.0f) / s.physics_module()->get_physical_model()->moment_of_inertia());
 			float j = j_divident / j_divider;
 
 			glm::vec3 f_current_velocity = f.movement_direction * f.velocity;
@@ -798,6 +799,12 @@ int main()
 
 			s.movement_direction = s_current_velocity;
 			s.velocity = s_speed;
+
+			float f_add_av = LEti::Math::dot_product(f.get_perp_radius(it->point), it->second_normal * j) / f.physics_module()->get_physical_model()->moment_of_inertia();
+			f.angular_velocity -= f_add_av;
+
+			float s_add_av = LEti::Math::dot_product(s.get_perp_radius(it->point), it->first_normal * j) / s.physics_module()->get_physical_model()->moment_of_inertia();
+			s.angular_velocity -= s_add_av;
 
 //			glm::vec3 f_particle_impulse = f.get_impulse_of_attached_point(it->point);
 //			glm::vec3 s_particle_impulse = s.get_impulse_of_attached_point(it->point);
