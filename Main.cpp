@@ -66,16 +66,27 @@ public:
 
 		glm::vec3 rotation_impulse = center_to_particle_vec - center_to_particle_vec_prev;
 
-//		float radius = LEti::Math::vector_length(center_to_particle_vec);
-//		float linear_velocity_of_point = LEti::Math::DOUBLE_PI * fabs(angular_velocity) * radius;
-//		LEti::Math::extend_vector_to_length(rotation_impulse, linear_velocity_of_point);
-//		rotation_impulse *= DT;
-
 		float real_moment_of_inertia = physics_module()->get_physical_model()->moment_of_inertia() * (mass / physics_module()->get_physical_model()->get_polygons_count());
 
 		rotation_impulse *= real_moment_of_inertia;
 
 		return /*movement_impulse*/ movement_force + rotation_impulse;
+	}
+
+	glm::vec3 get_attached_point_velocity(const glm::vec3& _point) const
+	{
+//		glm::vec3 movement_velocity = physics_module()->get_physical_model()->center_of_mass() - physics_module()->get_physical_model_prev_state()->center_of_mass();
+		glm::vec3 movement_velocity = movement_direction * velocity;
+//		movement_velocity /= DT;
+
+//		glm::mat4x4 inversed_rotation_matrix = get_rotation_matrix_for_time_ratio(0.0f) / get_rotation_matrix_for_time_ratio(1.0f);
+//		glm::vec3 center_to_particle_vec = _point - physics_module()->get_physical_model()->center_of_mass();
+//		glm::vec3 center_to_particle_vec_prev = inversed_rotation_matrix * glm::vec4(center_to_particle_vec, 1.0f);
+
+//		glm::vec3 rotation_velocity = center_to_particle_vec - center_to_particle_vec_prev;
+//		rotation_velocity /= DT;
+
+		return movement_velocity /*+ rotation_velocity*/;
 	}
 
 	void apply_impulse(const glm::vec3& _impulse, const glm::vec3& _to_point)
@@ -744,72 +755,6 @@ int main()
 			s.revert_to_previous_state();
 			s.update(it->time_of_intersection_ratio);
 
-			auto get_new_rotation_data_for_model = [&it](const Moving_Object& f, const Moving_Object& s, const glm::vec3& _f_normal, const glm::vec3& _s_normal, const glm::vec3& _particle)->std::pair<glm::vec3, float>
-			{
-				auto get_new_rotation_angle = [](const LEti::Object_2D& _for, const glm::vec3& _particle, const glm::vec3& _impulse)->float
-				{
-					glm::vec3 particle_to_center_vec = _for.physics_module()->get_physical_model()->center_of_mass() - _particle;
-					float angle = acos(LEti::Math::angle_cos_between_vectors(_impulse, particle_to_center_vec));
-					glm::vec3 axis = LEti::Math::normalize(_impulse, particle_to_center_vec);
-					LEti::Math::shrink_vector_to_1(axis);
-					angle *= axis.z;
-					return angle;
-				};
-
-				glm::vec3 f_impulse_vector = f.get_impulse_of_attached_point(_particle);
-				glm::vec3 s_impulse_vector = s.get_impulse_of_attached_point(_particle);
-
-				glm::vec3 vec_f_particle_to_center = _particle - f.physics_module()->get_physical_model()->center_of_mass();
-				glm::vec3 vec_s_particle_to_center = _particle - s.physics_module()->get_physical_model()->center_of_mass();
-
-				float f_normal_angle_cos = LEti::Math::angle_cos_between_vectors({1.0f, 0.0f, 0.0f}, _f_normal);
-				float f_normal_angle_sin = sqrt(1 - (f_normal_angle_cos * f_normal_angle_cos));
-				s_impulse_vector.x *= fabs(f_normal_angle_cos);
-				s_impulse_vector.y *= fabs(f_normal_angle_sin);
-
-				float s_normal_ratio = 0.0f;
-				if(!LEti::Math::floats_are_equal(LEti::Math::vector_length(f_impulse_vector), 0.0f))
-					s_normal_ratio = fabs(cos(get_new_rotation_angle(f, _particle, f_impulse_vector)));
-
-				glm::vec3 s_normal_scaled = _s_normal;
-				LEti::Math::extend_vector_to_length(s_normal_scaled, LEti::Math::vector_length(f_impulse_vector));
-
-				s_normal_scaled *= s_normal_ratio;
-
-				glm::vec3 result_vector = f_impulse_vector + s_impulse_vector + s_normal_scaled;
-
-				glm::vec3 force_to_particle_vector = s_impulse_vector + s_normal_scaled - (f_impulse_vector);
-
-				float angle_cos_ctp_and_impulse = LEti::Math::angle_cos_between_vectors(vec_f_particle_to_center, force_to_particle_vector);		//ctp - center to particle
-				float angle_ctp_and_impulse = acos(angle_cos_ctp_and_impulse);
-				float force = LEti::Math::vector_length(force_to_particle_vector); // * mass
-				float torque = LEti::Math::vector_length(vec_f_particle_to_center) * force;
-				float angular_velocity = torque * (DT * (1 - it->time_of_intersection_ratio));
-				glm::vec3 axis = LEti::Math::normalize(vec_f_particle_to_center, force_to_particle_vector);
-//				LEti::Math::shrink_vector_to_1(axis);
-				float f_new_rotation_angle = angular_velocity * sin(angle_ctp_and_impulse) * (axis.z * (DT * (1 - it->time_of_intersection_ratio)));
-
-				result_vector *= fabs(cos(f_new_rotation_angle));
-
-				return {result_vector , f_new_rotation_angle };
-			};
-
-			auto new_rd_v2 = [](const Moving_Object& _impulse_from, const glm::vec3& _intersection_point, const glm::vec3& _normal)->std::pair<glm::vec3, float>
-			{
-				glm::vec3 impulse = _impulse_from.get_impulse_of_attached_point(_intersection_point);
-
-//				glm::vec3 reflected_normal = _normal/* * -1.0f*/;
-//				glm::vec3 result_vector = LEti::Math::vector_length(impulse) * reflected_normal;
-
-				glm::vec3 result_vector;
-				for(unsigned int i=0; i<3; ++i)
-					result_vector[i] = impulse[i] * fabs(_normal[i]);
-
-//				 result_vector = LEti::Math::vector_length(impulse) * reflected_normal;
-
-				return {result_vector , 0.0f };
-			};
-
 			auto project_onto_normal = [](const glm::vec3& _vec, const glm::vec3& _normal)->glm::vec3
 			{
 				glm::vec3 result = _normal * LEti::Math::vector_length(_vec);
@@ -827,15 +772,41 @@ int main()
 			// s_compensating_impulse.x
 			// s_compensating_impulse.y
 
+			glm::vec3 v_ap = f.get_attached_point_velocity(it->point);
+			glm::vec3 v_bp = s.get_attached_point_velocity(it->point);
+			glm::vec3 v_ab = v_ap - v_bp;
 
-			glm::vec3 f_particle_impulse = f.get_impulse_of_attached_point(it->point);
-			glm::vec3 s_particle_impulse = s.get_impulse_of_attached_point(it->point);
+			float dot = LEti::Math::dot_product(v_ab, it->first_normal);
+			float j_divident = dot * -(1.0f + 1.0f);
+			float j_divider = ((1.0f / 1.0f) + (1.0f / 1.0f));
+			float j = j_divident / j_divider;
 
-			glm::vec3 f_compensating_impulse = project_onto_normal(s_particle_impulse, -it->first_normal) + project_onto_normal(f_particle_impulse, it->second_normal);
-			glm::vec3 s_compensating_impulse = project_onto_normal(f_particle_impulse, -it->second_normal) + project_onto_normal(s_particle_impulse, it->first_normal);
+			glm::vec3 f_current_velocity = f.movement_direction * f.velocity;
+			f_current_velocity -= j * it->second_normal;
 
-			f.apply_impulse(f_compensating_impulse, it->point);
-			s.apply_impulse(s_compensating_impulse, it->point);
+			glm::vec3 s_current_velocity = s.movement_direction * s.velocity;
+			s_current_velocity -= j * it->first_normal;
+
+			float f_speed = LEti::Math::vector_length(f_current_velocity);
+			LEti::Math::shrink_vector_to_1(f_current_velocity);
+
+			float s_speed = LEti::Math::vector_length(s_current_velocity);
+			LEti::Math::shrink_vector_to_1(s_current_velocity);
+
+			f.movement_direction = f_current_velocity;
+			f.velocity = f_speed;
+
+			s.movement_direction = s_current_velocity;
+			s.velocity = s_speed;
+
+//			glm::vec3 f_particle_impulse = f.get_impulse_of_attached_point(it->point);
+//			glm::vec3 s_particle_impulse = s.get_impulse_of_attached_point(it->point);
+
+//			glm::vec3 f_compensating_impulse = project_onto_normal(s_particle_impulse, -it->first_normal) + project_onto_normal(f_particle_impulse, it->second_normal);
+//			glm::vec3 s_compensating_impulse = project_onto_normal(f_particle_impulse, -it->second_normal) + project_onto_normal(s_particle_impulse, it->first_normal);
+
+//			f.apply_impulse(f_compensating_impulse, it->point);
+//			s.apply_impulse(s_compensating_impulse, it->point);
 
 			//
 
