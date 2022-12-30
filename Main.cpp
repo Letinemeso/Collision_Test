@@ -53,24 +53,24 @@ public:
 //		movement_direction = rm * glm::vec4(movement_direction, 1.0f);
 //	}
 
-	glm::vec3 get_impulse_of_attached_point(const glm::vec3& _point) const
-	{
-		glm::vec3 movement_impulse = physics_module()->get_physical_model()->center_of_mass() - physics_module()->get_physical_model_prev_state()->center_of_mass();
-		movement_impulse /= DT;
-		glm::vec3 movement_force = movement_impulse * mass;
+//	glm::vec3 get_impulse_of_attached_point(const glm::vec3& _point) const
+//	{
+//		glm::vec3 movement_impulse = physics_module()->get_physical_model()->center_of_mass() - physics_module()->get_physical_model_prev_state()->center_of_mass();
+//		movement_impulse /= DT;
+//		glm::vec3 movement_force = movement_impulse * mass;
 
-		glm::mat4x4 inversed_rotation_matrix = get_rotation_matrix_for_time_ratio(0.0f) / get_rotation_matrix_for_time_ratio(1.0f);
-		glm::vec3 center_to_particle_vec = _point - physics_module()->get_physical_model()->center_of_mass();
-		glm::vec3 center_to_particle_vec_prev = inversed_rotation_matrix * glm::vec4(center_to_particle_vec, 1.0f);
+//		glm::mat4x4 inversed_rotation_matrix = get_rotation_matrix_for_time_ratio(0.0f) / get_rotation_matrix_for_time_ratio(1.0f);
+//		glm::vec3 center_to_particle_vec = _point - physics_module()->get_physical_model()->center_of_mass();
+//		glm::vec3 center_to_particle_vec_prev = inversed_rotation_matrix * glm::vec4(center_to_particle_vec, 1.0f);
 
-		glm::vec3 rotation_impulse = center_to_particle_vec - center_to_particle_vec_prev;
+//		glm::vec3 rotation_impulse = center_to_particle_vec - center_to_particle_vec_prev;
 
-		float real_moment_of_inertia = physics_module()->get_physical_model()->moment_of_inertia() * (mass / physics_module()->get_physical_model()->get_polygons_count());
+//		float real_moment_of_inertia = physics_module()->get_physical_model()->moment_of_inertia() * (mass / physics_module()->get_physical_model()->get_polygons_count());
 
-		rotation_impulse *= real_moment_of_inertia;
+//		rotation_impulse *= real_moment_of_inertia;
 
-		return /*movement_impulse*/ movement_force + rotation_impulse;
-	}
+//		return /*movement_impulse*/ movement_force + rotation_impulse;
+//	}
 
 //	glm::vec3 get_attached_point_velocity(const glm::vec3& _point) const
 //	{
@@ -180,8 +180,10 @@ public:
 		}
 		else if(type == Type::launch)
 		{
-//			glm::vec3 stride = (cursor_pos - launch_from);
+			glm::vec3 stride = (cursor_pos - launch_from);
 //			grabbed_object->apply_impulse(stride, launch_from);
+
+			grabbed_object->velocity = stride /*/ DT*/;
 		}
 
 		grabbed_object = nullptr;
@@ -326,7 +328,7 @@ int main()
 
 		flat_co.set_scale(50);
 		flat_co_3.set_scale(50);
-		flat_co_3.set_scale({25.0f, 75.0f, 1.0f});
+//		flat_co_3.set_scale({25.0f, 75.0f, 1.0f});
 //		flat_co_2.set_scale(50);
 
 		flat_co.set_rotation_angle(LEti::Math::QUARTER_PI);
@@ -730,6 +732,8 @@ int main()
 			Moving_Object& bodyA = *(objects_map.at(it->first));
 			Moving_Object& bodyB = *(objects_map.at(it->second));
 
+			std::cout << "Collision!\n\tFirst: " << bodyA.name << "\n\tSecond: " << bodyB.name << "\n\n";
+
 //			float dt_before_collision = DT * it->time_of_intersection_ratio;
 
 //			bodyA.revert_to_previous_state();
@@ -740,20 +744,56 @@ int main()
 			glm::vec3 normal = it->first_normal;
 			glm::vec3 contact = it->point;
 
-			glm::vec3 relativeVelocity = bodyB.velocity - bodyA.velocity;
-
-//			if(LEti::Math::dot_product(relativeVelocity, normal) > 0.0f)
-//			{
-//				++it;
-//				continue;
-//			}
-
 			float e = 1.0f;
 
-			float j = -(1.0f + e) * LEti::Math::dot_product(relativeVelocity, normal);
-			j /= 1/1 + 1/1;	//	inverse masses (kinda)
 
-			glm::vec3 impulse = -j * normal;
+
+
+
+
+
+
+			glm::vec3 ra = contact - bodyA.physics_module()->get_physical_model()->center_of_mass();
+			glm::vec3 rb = contact - bodyB.physics_module()->get_physical_model()->center_of_mass();
+
+			glm::vec3 raPerp = {-ra.y, ra.x, 0.0f};
+			glm::vec3 rbPerp = {-rb.y, rb.x, 0.0f};
+
+			//	angular linear velocity
+			glm::vec3 alvA = raPerp * bodyA.angular_velocity;
+			glm::vec3 alvB = rbPerp * bodyB.angular_velocity;
+
+			glm::vec3 relativeVelocity = (bodyB.velocity + alvB) - (bodyA.velocity + alvA);
+
+			float contactVelocityMag = LEti::Math::dot_product(relativeVelocity, normal);
+
+			float raPerpDotN = LEti::Math::dot_product(raPerp, normal);
+			float rbPerpDotN = LEti::Math::dot_product(rbPerp, normal);
+
+			float denom = 1/1 + 1/1 +
+					(raPerpDotN * raPerpDotN) / bodyA.physics_module()->get_physical_model()->moment_of_inertia() +
+					(rbPerpDotN * rbPerpDotN) / bodyB.physics_module()->get_physical_model()->moment_of_inertia();
+
+//			float denom = 1/1 + 1/1 +
+//					(raPerpDotN * raPerpDotN) / 416.66f +
+//					(rbPerpDotN * rbPerpDotN) / 416.66f;
+
+			float j = -(1.0f + e) * contactVelocityMag;
+			j /= denom;
+
+			glm::vec3 impulse = j * normal;
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 			float dt_before_collision = DT * it->time_of_intersection_ratio;
@@ -763,9 +803,13 @@ int main()
 			bodyB.revert_to_previous_state();
 			bodyB.update(it->time_of_intersection_ratio);
 
+			float avA = LEti::Math::cross_product(ra, impulse) / bodyA.physics_module()->get_physical_model()->moment_of_inertia();
+			float avB = LEti::Math::cross_product(rb, impulse) / bodyB.physics_module()->get_physical_model()->moment_of_inertia();
 
-			bodyA.velocity += impulse;
-			bodyB.velocity -= impulse;
+			bodyA.velocity -= impulse / 1.0f;
+			bodyA.angular_velocity -= avA;
+			bodyB.velocity += impulse / 1.0f;
+			bodyB.angular_velocity += avB;
 
 
 
