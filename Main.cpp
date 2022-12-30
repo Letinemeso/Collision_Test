@@ -41,18 +41,17 @@ struct On_Button_Pressed_Msg
 class Moving_Object : public LEti::Object_2D
 {
 public:
-	float velocity = 0.0f;
-	glm::vec3 movement_direction{1.0f, 0.0f, 0.0f};
+	glm::vec3 velocity;
 	float angular_velocity = 0.0f;
 	float mass = 1.0f;
 	std::string name;
 
 public:
-	void rotate_impulse(float _angle)
-	{
-		glm::mat4x4 rm = glm::rotate(_angle, glm::vec3(0.0f, 0.0f, 1.0f));
-		movement_direction = rm * glm::vec4(movement_direction, 1.0f);
-	}
+//	void rotate_impulse(float _angle)
+//	{
+//		glm::mat4x4 rm = glm::rotate(_angle, glm::vec3(0.0f, 0.0f, 1.0f));
+//		movement_direction = rm * glm::vec4(movement_direction, 1.0f);
+//	}
 
 	glm::vec3 get_impulse_of_attached_point(const glm::vec3& _point) const
 	{
@@ -73,14 +72,14 @@ public:
 		return /*movement_impulse*/ movement_force + rotation_impulse;
 	}
 
-	glm::vec3 get_attached_point_velocity(const glm::vec3& _point) const
-	{
-		glm::vec3 movement_velocity = movement_direction * velocity;
+//	glm::vec3 get_attached_point_velocity(const glm::vec3& _point) const
+//	{
+//		glm::vec3 movement_velocity = movement_direction * velocity;
 
-		glm::vec3 linear_velocity_from_angular = get_perp_radius(_point) * angular_velocity;
+//		glm::vec3 linear_velocity_from_angular = get_perp_radius(_point) * angular_velocity;
 
-		return movement_velocity + linear_velocity_from_angular;
-	}
+//		return movement_velocity + linear_velocity_from_angular;
+//	}
 
 	glm::vec3 get_perp_radius(const glm::vec3& _to_point) const
 	{
@@ -88,37 +87,34 @@ public:
 		return LEti::Math::rotate_vector(point_to_center_vec, {0.0f , 0.0f, 1.0f}, LEti::Math::HALF_PI);
 	}
 
-	void apply_impulse(const glm::vec3& _impulse, const glm::vec3& _to_point)
-	{
-		if(LEti::Math::floats_are_equal(DT, 0.0f)) return;
+//	void apply_impulse(const glm::vec3& _impulse, const glm::vec3& _to_point)
+//	{
+//		if(LEti::Math::floats_are_equal(DT, 0.0f)) return;
 
-		if(LEti::Math::floats_are_equal(LEti::Math::vector_length(_impulse), 0.0f))
-			return;
+//		if(LEti::Math::floats_are_equal(LEti::Math::vector_length(_impulse), 0.0f))
+//			return;
 
-		glm::vec3 prev_point_impulse = get_impulse_of_attached_point(_to_point);
-		glm::vec3 result_impulse = prev_point_impulse + _impulse;
+//		glm::vec3 prev_point_impulse = get_impulse_of_attached_point(_to_point);
+//		glm::vec3 result_impulse = prev_point_impulse + _impulse;
 
-		glm::vec3 point_to_center_vec = physics_module()->get_physical_model()->center_of_mass() - _to_point;
-		float movement_impulse_ratio = fabs(LEti::Math::angle_cos_between_vectors(point_to_center_vec, result_impulse));
+//		glm::vec3 point_to_center_vec = physics_module()->get_physical_model()->center_of_mass() - _to_point;
+//		float movement_impulse_ratio = fabs(LEti::Math::angle_cos_between_vectors(point_to_center_vec, result_impulse));
 
-		angular_velocity = LEti::Math::vector_length(result_impulse) / LEti::Math::vector_length(point_to_center_vec);
+//		angular_velocity = LEti::Math::vector_length(result_impulse) / LEti::Math::vector_length(point_to_center_vec);
 
-		if(LEti::Math::normalize(result_impulse, point_to_center_vec).z < 0.0f)
-			angular_velocity *= -1;
+//		if(LEti::Math::normalize(result_impulse, point_to_center_vec).z < 0.0f)
+//			angular_velocity *= -1;
 
-		angular_velocity *= 1.0f - movement_impulse_ratio;
+//		angular_velocity *= 1.0f - movement_impulse_ratio;
 
-		movement_direction = result_impulse * movement_impulse_ratio;
-		velocity = LEti::Math::vector_length(movement_direction);
-		LEti::Math::shrink_vector_to_1(movement_direction);
-	}
+//		movement_direction = result_impulse * movement_impulse_ratio;
+//		velocity = LEti::Math::vector_length(movement_direction);
+//		LEti::Math::shrink_vector_to_1(movement_direction);
+//	}
 
 	void update(float _ratio = 1.0f) override
 	{
-		glm::vec3 trajectory{0.0f, 0.0f, 0.0f};
-		trajectory.x = movement_direction.x * velocity * LEti::Event_Controller::get_dt() * (_ratio);
-		trajectory.y = movement_direction.y * velocity * LEti::Event_Controller::get_dt() * (_ratio);
-		move(trajectory);
+		move(velocity * DT * _ratio);
 
 		rotate(angular_velocity * DT * (_ratio));
 
@@ -150,7 +146,7 @@ public:
 	{
 		cursor_pos = {LEti::Window_Controller::get_cursor_position().x, LEti::Window_Controller::get_cursor_position().y, 0.0f};
 		if(!grabbed_object) return;
-		grabbed_object->velocity = 0.0f;
+		grabbed_object->velocity = {0.0f, 0.0f, 0.0f};
 
 		if(type == Type::drag)
 			grabbed_object->set_pos(cursor_pos);
@@ -162,7 +158,7 @@ public:
 		type = _type;
 		grabbed_object = _obj;
 
-		grabbed_object->velocity = 0.0f;
+		grabbed_object->velocity = {0.0f, 0.0f, 0.0f};
 		grabbed_object->angular_velocity = 0.0f;
 
 		if(_type == Type::drag)
@@ -180,15 +176,12 @@ public:
 		{
 			glm::vec3 stride = grabbed_object->get_pos() - grabbed_object->get_pos_prev();
 
-			grabbed_object->velocity = LEti::Math::vector_length(stride) / DT;
-
-			LEti::Math::shrink_vector_to_1(stride);
-			grabbed_object->movement_direction = stride;
+			grabbed_object->velocity = stride / DT;
 		}
 		else if(type == Type::launch)
 		{
-			glm::vec3 stride = (cursor_pos - launch_from);
-			grabbed_object->apply_impulse(stride, launch_from);
+//			glm::vec3 stride = (cursor_pos - launch_from);
+//			grabbed_object->apply_impulse(stride, launch_from);
 		}
 
 		grabbed_object = nullptr;
@@ -291,19 +284,19 @@ int main()
 //	float co3_init_y = 340;
 	float co3_init_y = 330;
 
-	auto print_info_func = [&]()
-	{
-		auto print_co_data = [](const Moving_Object& _obj)
-		{
-			std::cout << _obj.name << ":\n"
-					  << "\tnovement direction: " << _obj.movement_direction.x << "\t" << _obj.movement_direction.y << "\n"
-					  << "\tvelocity: " << _obj.velocity << "\n"
-					  << "\tangular velocity: " << _obj.angular_velocity << "\n\n";
-		};
+//	auto print_info_func = [&]()
+//	{
+//		auto print_co_data = [](const Moving_Object& _obj)
+//		{
+//			std::cout << _obj.name << ":\n"
+//					  << "\tnovement direction: " << _obj.movement_direction.x << "\t" << _obj.movement_direction.y << "\n"
+//					  << "\tvelocity: " << _obj.velocity << "\n"
+//					  << "\tangular velocity: " << _obj.angular_velocity << "\n\n";
+//		};
 
-		print_co_data(flat_co);
-		print_co_data(flat_co_3);
-	};
+//		print_co_data(flat_co);
+//		print_co_data(flat_co_3);
+//	};
 
 	float co_spd= 150.0f;
 	auto reset_func = [&]()
@@ -320,16 +313,16 @@ int main()
 
 		flat_co_2.set_pos({800, 700, 0});
 
-		flat_co.velocity = 0;
-		flat_co_3.velocity = 0;
-		flat_co_2.velocity = 0;
+		flat_co.velocity = {0.0f, 0.0f, 0.0f};
+		flat_co_3.velocity = {0.0f, 0.0f, 0.0f};
+		flat_co_2.velocity = {0.0f, 0.0f, 0.0f};
 
-		flat_co.movement_direction = {-3.0f, 0.0f, 0.0f};
-		LEti::Math::shrink_vector_to_1(flat_co.movement_direction);
-		flat_co_3.movement_direction = {3.0f, 0.0f, 0.0f};
-		LEti::Math::shrink_vector_to_1(flat_co_3.movement_direction);
-		flat_co_2.movement_direction = {3.0f, -1.0f, 0.0f};
-		LEti::Math::shrink_vector_to_1(flat_co_2.movement_direction);
+//		flat_co.movement_direction = {-3.0f, 0.0f, 0.0f};
+//		LEti::Math::shrink_vector_to_1(flat_co.movement_direction);
+//		flat_co_3.movement_direction = {3.0f, 0.0f, 0.0f};
+//		LEti::Math::shrink_vector_to_1(flat_co_3.movement_direction);
+//		flat_co_2.movement_direction = {3.0f, -1.0f, 0.0f};
+//		LEti::Math::shrink_vector_to_1(flat_co_2.movement_direction);
 
 		flat_co.set_scale(50);
 		flat_co_3.set_scale(50);
@@ -368,9 +361,9 @@ int main()
 
 		//	TEST 2
 
-		flat_co_3.movement_direction = {1.0f, 0.0f, 0.0f};
-		flat_co_3.velocity = 22.0f;
-		flat_co_3.angular_velocity = -LEti::Math::HALF_PI;
+//		flat_co_3.movement_direction = {1.0f, 0.0f, 0.0f};
+//		flat_co_3.velocity = 22.0f;
+//		flat_co_3.angular_velocity = -LEti::Math::HALF_PI;
 
 		//	~TEST 2
 
@@ -384,9 +377,6 @@ int main()
 //		flat_co_3.velocity = 100.0f;
 
 		//	~TEST 3
-
-		std::cout << "-----  after launch movement info  -----\n";
-		print_info_func();
 
 		//
 	};
@@ -434,7 +424,7 @@ int main()
 	flat_co_2.physics_module()->set_is_dynamic(true);
 	flat_co_3.physics_module()->set_is_dynamic(true);
 	LEti::Space_Splitter_2D::register_object(&flat_co);
-//	LEti::Space_Splitter_2D::register_object(&flat_co_2);
+	LEti::Space_Splitter_2D::register_object(&flat_co_2);
 	LEti::Space_Splitter_2D::register_object(&flat_co_3);
 
 //	LEti::Space_Splitter_2D::register_point(&cursor_position);
@@ -465,20 +455,16 @@ int main()
 		flat_co_2.update_previous_state();
 		flat_co_3.update_previous_state();
 
-		if (LEti::Event_Controller::key_was_pressed(GLFW_KEY_I))
-		{
-			print_info_func();
-		}
 		if (LEti::Event_Controller::key_was_pressed(GLFW_KEY_K))
 		{
 		}
 		if (LEti::Event_Controller::is_key_down(GLFW_KEY_J))
 		{
-			flat_co.rotate_impulse(LEti::Math::HALF_PI * LEti::Event_Controller::get_dt());
+//			flat_co.rotate_impulse(LEti::Math::HALF_PI * LEti::Event_Controller::get_dt());
 		}
 		if (LEti::Event_Controller::is_key_down(GLFW_KEY_L))
 		{
-			flat_co.rotate_impulse(-LEti::Math::HALF_PI * LEti::Event_Controller::get_dt());
+//			flat_co.rotate_impulse(-LEti::Math::HALF_PI * LEti::Event_Controller::get_dt());
 		}
 
 		if(LEti::Event_Controller::key_was_pressed(GLFW_KEY_C))
@@ -581,26 +567,26 @@ int main()
 			{
 				cco.set_pos({cco.get_pos().x, 799.0f, 0.0f});
 //				cco.angle = LEti::Math::DOUBLE_PI - cco.angle;
-				cco.movement_direction.y *= -1;
+				cco.velocity.y *= -1;
 			}
 			else if(cco.get_pos().y <= 0.0f)
 			{
 				cco.set_pos({cco.get_pos().x, 1.0f, 0.0f});
 //				cco.angle = LEti::Math::DOUBLE_PI - cco.angle;
-				cco.movement_direction.y *= -1;
+				cco.velocity.y *= -1;
 			}
 
 			if(cco.get_pos().x >= 1200.0f)
 			{
 				cco.set_pos({1199.0f, cco.get_pos().y, 0.0f});
 //				cco.angle = LEti::Math::DOUBLE_PI - cco.angle + LEti::Math::PI;
-				cco.movement_direction.x *= -1;
+				cco.velocity.x *= -1;
 			}
 			else if(cco.get_pos().x <= 0.0f)
 			{
 				cco.set_pos({1.0f, cco.get_pos().y, 0.0f});
 //				cco.angle = LEti::Math::DOUBLE_PI - cco.angle + LEti::Math::PI;
-				cco.movement_direction.x *= -1;
+				cco.velocity.x *= -1;
 			}
 		}
 
@@ -741,98 +727,51 @@ int main()
 				continue;
 			}
 
-			Moving_Object& f = *(objects_map.at(it->first));
-			Moving_Object& s = *(objects_map.at(it->second));
+			Moving_Object& bodyA = *(objects_map.at(it->first));
+			Moving_Object& bodyB = *(objects_map.at(it->second));
 
-			std::cout << "-----  before collision movement info  -----\n";
-			print_info_func();
+//			float dt_before_collision = DT * it->time_of_intersection_ratio;
+
+//			bodyA.revert_to_previous_state();
+//			bodyA.update(it->time_of_intersection_ratio);
+//			BodyB.revert_to_previous_state();
+//			BodyB.update(it->time_of_intersection_ratio);
+
+			glm::vec3 normal = it->first_normal;
+			glm::vec3 contact = it->point;
+
+			glm::vec3 relativeVelocity = bodyB.velocity - bodyA.velocity;
+
+//			if(LEti::Math::dot_product(relativeVelocity, normal) > 0.0f)
+//			{
+//				++it;
+//				continue;
+//			}
+
+			float e = 1.0f;
+
+			float j = -(1.0f + e) * LEti::Math::dot_product(relativeVelocity, normal);
+			j /= 1/1 + 1/1;	//	inverse masses (kinda)
+
+			glm::vec3 impulse = -j * normal;
+
 
 			float dt_before_collision = DT * it->time_of_intersection_ratio;
 
-			f.revert_to_previous_state();
-			f.update(it->time_of_intersection_ratio);
-			s.revert_to_previous_state();
-			s.update(it->time_of_intersection_ratio);
-
-			auto project_onto_normal = [](const glm::vec3& _vec, const glm::vec3& _normal)->glm::vec3
-			{
-				glm::vec3 result = _normal * LEti::Math::vector_length(_vec);
-				return result;
-			};
-
-			//	find new rotaion speed
-
-			// f_particle_impulse.x
-			// f_particle_impulse.y
-			// s_particle_impulse.x
-			// s_particle_impulse.y
-			// f_compensating_impulse.x
-			// f_compensating_impulse.y
-			// s_compensating_impulse.x
-			// s_compensating_impulse.y
-
-			glm::vec3 v_ap = f.get_attached_point_velocity(it->point);
-			glm::vec3 v_bp = s.get_attached_point_velocity(it->point);
-			glm::vec3 v_ab = v_ap - v_bp;
-
-			float dot = LEti::Math::dot_product(v_ab, it->first_normal);
-			float j_divident = dot * -(1.0f + 1.0f);
-			float j_divider = ((1.0f / 1.0f) + (1.0f / 1.0f)) +
-					(powf(LEti::Math::dot_product(f.get_perp_radius(it->point), it->first_normal), 2.0f) / f.physics_module()->get_physical_model()->moment_of_inertia()) +
-					(powf(LEti::Math::dot_product(s.get_perp_radius(it->point), it->first_normal), 2.0f) / s.physics_module()->get_physical_model()->moment_of_inertia());
-			float j = j_divident / j_divider;
-
-			glm::vec3 f_current_velocity = f.movement_direction * f.velocity;
-			f_current_velocity -= j * it->second_normal;
-
-			glm::vec3 s_current_velocity = s.movement_direction * s.velocity;
-			s_current_velocity -= j * it->first_normal;
-
-			float f_speed = LEti::Math::vector_length(f_current_velocity);
-			LEti::Math::shrink_vector_to_1(f_current_velocity);
-
-			float s_speed = LEti::Math::vector_length(s_current_velocity);
-			LEti::Math::shrink_vector_to_1(s_current_velocity);
-
-			f.movement_direction = f_current_velocity;
-			f.velocity = f_speed;
-
-			s.movement_direction = s_current_velocity;
-			s.velocity = s_speed;
-
-			float f_add_av = LEti::Math::dot_product(f.get_perp_radius(it->point), it->second_normal * j) / f.physics_module()->get_physical_model()->moment_of_inertia();
-			f.angular_velocity -= f_add_av;
-
-			float s_add_av = LEti::Math::dot_product(s.get_perp_radius(it->point), it->first_normal * j) / s.physics_module()->get_physical_model()->moment_of_inertia();
-			s.angular_velocity -= s_add_av;
-
-//			glm::vec3 f_particle_impulse = f.get_impulse_of_attached_point(it->point);
-//			glm::vec3 s_particle_impulse = s.get_impulse_of_attached_point(it->point);
-
-//			glm::vec3 f_compensating_impulse = project_onto_normal(s_particle_impulse, -it->first_normal) + project_onto_normal(f_particle_impulse, it->second_normal);
-//			glm::vec3 s_compensating_impulse = project_onto_normal(f_particle_impulse, -it->second_normal) + project_onto_normal(s_particle_impulse, it->first_normal);
-
-//			f.apply_impulse(f_compensating_impulse, it->point);
-//			s.apply_impulse(s_compensating_impulse, it->point);
-
-			//
-
-//			float f_imp_str_before = get_particle_velocity(f, (*f.physics_module()->get_physical_model())[0][0]) / it->time_of_intersection_ratio;
-//			float s_imp_str_before = get_particle_velocity(s, (*s.physics_module()->get_physical_model())[0][0]) / it->time_of_intersection_ratio;
-//			float imp_sum_before = f_imp_str_before + s_imp_str_before;
-//			std::cout << "before: " << imp_sum_before << "\n";
-
-//			f.update(1.0f - it->time_of_intersection_ratio);
-//			s.update(1.0f - it->time_of_intersection_ratio);
-
-//			float f_imp_str_after = get_particle_velocity(f, (*f.physics_module()->get_physical_model())[0][0])/* / (it->time_of_intersection_ratio)*/;
-//			float s_imp_str_after = get_particle_velocity(s, (*s.physics_module()->get_physical_model())[0][0])/* / (it->time_of_intersection_ratio)*/;
-//			float imp_sum_after = f_imp_str_after + s_imp_str_after;
-//			std::cout << "after:  " << imp_sum_after << "\n\n";
+			bodyA.revert_to_previous_state();
+			bodyA.update(it->time_of_intersection_ratio);
+			bodyB.revert_to_previous_state();
+			bodyB.update(it->time_of_intersection_ratio);
 
 
-			std::cout << "-----  after collision movement info  -----\n";
-			print_info_func();
+			bodyA.velocity += impulse;
+			bodyB.velocity -= impulse;
+
+
+
+			bodyA.update(1.0f - it->time_of_intersection_ratio);
+			bodyB.update(1.0f - it->time_of_intersection_ratio);
+
 
 			++it;
 		}
