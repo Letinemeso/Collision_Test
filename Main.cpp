@@ -328,7 +328,7 @@ int main()
 
 		flat_co.set_scale(50);
 		flat_co_3.set_scale(50);
-//		flat_co_3.set_scale({25.0f, 75.0f, 1.0f});
+		flat_co_3.set_scale({25.0f, 75.0f, 1.0f});
 //		flat_co_2.set_scale(50);
 
 		flat_co.set_rotation_angle(LEti::Math::QUARTER_PI);
@@ -803,8 +803,10 @@ int main()
 			bodyB.revert_to_previous_state();
 			bodyB.update(it->time_of_intersection_ratio);
 
-			float avA = LEti::Math::cross_product(ra, impulse) / bodyA.physics_module()->get_physical_model()->moment_of_inertia();
-			float avB = LEti::Math::cross_product(rb, impulse) / bodyB.physics_module()->get_physical_model()->moment_of_inertia();
+//			float avA = LEti::Math::cross_product(ra, impulse) / bodyA.physics_module()->get_physical_model()->moment_of_inertia();
+//			float avB = LEti::Math::cross_product(rb, impulse) / bodyB.physics_module()->get_physical_model()->moment_of_inertia();
+			float avA = LEti::Math::normalize(ra, impulse).z / bodyA.physics_module()->get_physical_model()->moment_of_inertia();
+			float avB = LEti::Math::normalize(rb, impulse).z / bodyB.physics_module()->get_physical_model()->moment_of_inertia();
 
 			bodyA.velocity -= impulse / 1.0f;
 			bodyA.angular_velocity -= avA;
