@@ -47,70 +47,11 @@ public:
 	std::string name;
 
 public:
-//	void rotate_impulse(float _angle)
-//	{
-//		glm::mat4x4 rm = glm::rotate(_angle, glm::vec3(0.0f, 0.0f, 1.0f));
-//		movement_direction = rm * glm::vec4(movement_direction, 1.0f);
-//	}
-
-//	glm::vec3 get_impulse_of_attached_point(const glm::vec3& _point) const
-//	{
-//		glm::vec3 movement_impulse = physics_module()->get_physical_model()->center_of_mass() - physics_module()->get_physical_model_prev_state()->center_of_mass();
-//		movement_impulse /= DT;
-//		glm::vec3 movement_force = movement_impulse * mass;
-
-//		glm::mat4x4 inversed_rotation_matrix = get_rotation_matrix_for_time_ratio(0.0f) / get_rotation_matrix_for_time_ratio(1.0f);
-//		glm::vec3 center_to_particle_vec = _point - physics_module()->get_physical_model()->center_of_mass();
-//		glm::vec3 center_to_particle_vec_prev = inversed_rotation_matrix * glm::vec4(center_to_particle_vec, 1.0f);
-
-//		glm::vec3 rotation_impulse = center_to_particle_vec - center_to_particle_vec_prev;
-
-//		float real_moment_of_inertia = physics_module()->get_physical_model()->moment_of_inertia() * (mass / physics_module()->get_physical_model()->get_polygons_count());
-
-//		rotation_impulse *= real_moment_of_inertia;
-
-//		return /*movement_impulse*/ movement_force + rotation_impulse;
-//	}
-
-//	glm::vec3 get_attached_point_velocity(const glm::vec3& _point) const
-//	{
-//		glm::vec3 movement_velocity = movement_direction * velocity;
-
-//		glm::vec3 linear_velocity_from_angular = get_perp_radius(_point) * angular_velocity;
-
-//		return movement_velocity + linear_velocity_from_angular;
-//	}
-
 	glm::vec3 get_perp_radius(const glm::vec3& _to_point) const
 	{
 		glm::vec3 point_to_center_vec = _to_point - physics_module()->get_physical_model()->center_of_mass();
 		return LEti::Math::rotate_vector(point_to_center_vec, {0.0f , 0.0f, 1.0f}, LEti::Math::HALF_PI);
 	}
-
-//	void apply_impulse(const glm::vec3& _impulse, const glm::vec3& _to_point)
-//	{
-//		if(LEti::Math::floats_are_equal(DT, 0.0f)) return;
-
-//		if(LEti::Math::floats_are_equal(LEti::Math::vector_length(_impulse), 0.0f))
-//			return;
-
-//		glm::vec3 prev_point_impulse = get_impulse_of_attached_point(_to_point);
-//		glm::vec3 result_impulse = prev_point_impulse + _impulse;
-
-//		glm::vec3 point_to_center_vec = physics_module()->get_physical_model()->center_of_mass() - _to_point;
-//		float movement_impulse_ratio = fabs(LEti::Math::angle_cos_between_vectors(point_to_center_vec, result_impulse));
-
-//		angular_velocity = LEti::Math::vector_length(result_impulse) / LEti::Math::vector_length(point_to_center_vec);
-
-//		if(LEti::Math::normalize(result_impulse, point_to_center_vec).z < 0.0f)
-//			angular_velocity *= -1;
-
-//		angular_velocity *= 1.0f - movement_impulse_ratio;
-
-//		movement_direction = result_impulse * movement_impulse_ratio;
-//		velocity = LEti::Math::vector_length(movement_direction);
-//		LEti::Math::shrink_vector_to_1(movement_direction);
-//	}
 
 	void update(float _ratio = 1.0f) override
 	{
@@ -181,9 +122,8 @@ public:
 		else if(type == Type::launch)
 		{
 			glm::vec3 stride = (cursor_pos - launch_from);
-//			grabbed_object->apply_impulse(stride, launch_from);
 
-			grabbed_object->velocity = stride /*/ DT*/;
+			grabbed_object->velocity = stride;
 		}
 
 		grabbed_object = nullptr;
@@ -218,8 +158,8 @@ int main()
 	LEti::Space_Splitter_2D::set_narrow_phase<LEti::Default_Narrow_CD>();
 	LEti::Space_Splitter_2D::set_narrowest_phase<LEti::Default_Narrowest_CD>();
 //	LEti::Space_Splitter_2D::set_precision(10);
-	LEti::Space_Splitter_2D::get_broad_phase()->set_precision(10);
-	LEti::Space_Splitter_2D::get_narrow_phase()->set_precision(10);
+	LEti::Space_Splitter_2D::get_broad_phase()->set_precision(20);
+	LEti::Space_Splitter_2D::get_narrow_phase()->set_precision(20);
 
 	LEti::Resource_Loader::init();
 
@@ -232,25 +172,15 @@ int main()
 	///////////////// 2d collision test
 
 	LEti::Resource_Loader::load_object("flat_co_model", "Resources/Models/quad.mdl");
-//	LEti::Resource_Loader::load_object("flat_co_model", "Resources/Models/triangle.mdl");
 
-
-//	while(true)
+//	const unsigned int blocks_count = 5;
+//	Moving_Object blocks[blocks_count];
+//	for(unsigned int i=0; i < blocks_count; ++i)
 //	{
-//		LEti::Object_2D* test = new LEti::Object_2D;
-//		test->init("flat_co_model");
-//		test->remove_physics_module();
-//		test->create_physics_module();
-//		test->physics_module();
-//		test->remove_physics_module();
-//		test->remove_draw_module();
-//		test->
-//		delete test;
+//		blocks[i].init("flat_co_model");
 //	}
 
 	Moving_Object flat_co;
-//	flat_co.speed = 200.0f;
-//	flat_co.angle = LEti::Math::PI;
 
 	Moving_Object flat_co_2;
 
@@ -732,7 +662,7 @@ int main()
 			Moving_Object& bodyA = *(objects_map.at(it->first));
 			Moving_Object& bodyB = *(objects_map.at(it->second));
 
-			std::cout << "Collision!\n\tFirst: " << bodyA.name << "\n\tSecond: " << bodyB.name << "\n\n";
+//			std::cout << "Collision!\n\tFirst: " << bodyA.name << "\n\tSecond: " << bodyB.name << "\n\n";
 
 //			float dt_before_collision = DT * it->time_of_intersection_ratio;
 
@@ -803,10 +733,10 @@ int main()
 			bodyB.revert_to_previous_state();
 			bodyB.update(it->time_of_intersection_ratio);
 
-//			float avA = LEti::Math::cross_product(ra, impulse) / bodyA.physics_module()->get_physical_model()->moment_of_inertia();
-//			float avB = LEti::Math::cross_product(rb, impulse) / bodyB.physics_module()->get_physical_model()->moment_of_inertia();
-			float avA = LEti::Math::normalize(ra, impulse).z / bodyA.physics_module()->get_physical_model()->moment_of_inertia();
-			float avB = LEti::Math::normalize(rb, impulse).z / bodyB.physics_module()->get_physical_model()->moment_of_inertia();
+			float avA = LEti::Math::cross_product(ra, impulse) / bodyA.physics_module()->get_physical_model()->moment_of_inertia();
+			float avB = LEti::Math::cross_product(rb, impulse) / bodyB.physics_module()->get_physical_model()->moment_of_inertia();
+//			float avA = LEti::Math::normalize(ra, impulse).z / bodyA.physics_module()->get_physical_model()->moment_of_inertia();
+//			float avB = LEti::Math::normalize(rb, impulse).z / bodyB.physics_module()->get_physical_model()->moment_of_inertia();
 
 			bodyA.velocity -= impulse / 1.0f;
 			bodyA.angular_velocity -= avA;
