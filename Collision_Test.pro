@@ -3,20 +3,23 @@ CONFIG += console c++11
 CONFIG -= app_bundle
 CONFIG -= qt
 
-#DEFINES += GLEW_STATIC
+build_pass:CONFIG(debug, debug|release) {
+unix: {
+    #LIBS += "$$PWD/../LEti-Engine/OpenGL/GLFW/lib/glfw3.lib"
+    #LIBS += "$$PWD/../LEti-Engine/OpenGL/GLEW/lib/glew32.lib"
+}
+else: {
+    LIBS += "..\LEti-engine\OpenGL_v2\lib\libglfw3.a"
+    LIBS += "..\LEti-engine\OpenGL_v2\lib\libglew32.a"
+    LIBS += -lopengl32 \
+            -luser32 \
+            -lgdi32 \
+            -lshell32
+    LIBS += "../LEti-engine/debug/libLEti_Engine.a"
+}
+}
 
-LIBS += "../LEti-engine/debug/libLEti_Engine.a"
-#LIBS += "$$PWD/../LEti-Engine/OpenGL/GLFW/lib/glfw3.lib"
-#LIBS += "$$PWD/../LEti-Engine/OpenGL/GLEW/lib/glew32.lib"
 
-LIBS += "..\LEti-engine\OpenGL_v2\lib\libglfw3.a"
-LIBS += "..\LEti-engine\OpenGL_v2\lib\libglew32.a"
-#LIBS += "$$PWD/../LEti-Engine/debug/LEti-Engine.lib"
-
-LIBS += -lopengl32 \
-    -luser32 \
-    -lgdi32 \
-    -lshell32
 
 INCLUDEPATH += "../LEti-Engine/include/" \
 "../LEti-Engine/" \
