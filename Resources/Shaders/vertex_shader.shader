@@ -10,7 +10,7 @@ out vec2 v_out_tex_coords;
 
 void main()
 {
-	gl_Position = projection_matrix * transform_matrix * vec4(pos, 1.0f);
+        gl_Position = projection_matrix * transform_matrix * vec4(pos, 1.0f);
 
-	v_out_tex_coords = in_tex_coords;
+        v_out_tex_coords = in_tex_coords;
 }
