@@ -5,26 +5,28 @@ CONFIG -= qt
 
 build_pass:CONFIG(debug, debug|release) {
 unix: {
-    #LIBS += "$$PWD/../LEti-Engine/OpenGL/GLFW/lib/glfw3.lib"
-    #LIBS += "$$PWD/../LEti-Engine/OpenGL/GLEW/lib/glew32.lib"
+    LIBS += "../LEti-engine/OpenGL/Linux/lib/libglfw3.a"
+    LIBS += "../LEti-engine/OpenGL/Linux/lib/libGLEW.a"
+
+    INCLUDEPATH += "OpenGL/Linux/include/"
 }
 else: {
-    LIBS += "..\LEti-engine\OpenGL_v2\lib\libglfw3.a"
-    LIBS += "..\LEti-engine\OpenGL_v2\lib\libglew32.a"
-    LIBS += -lopengl32 \
-            -luser32 \
-            -lgdi32 \
-            -lshell32
     LIBS += "../LEti-engine/debug/libLEti_Engine.a"
+    LIBS += "../LEti-engine/OpenGL/Windows_x64_mingw/lib/libglfw3.a"
+    LIBS += "../LEti-engine/OpenGL/Windows_x64_mingw/lib/libglew32.a"
+
+    LIBS += -lopengl32 \
+        -luser32 \
+        -lgdi32 \
+        -lshell32
+
+    INCLUDEPATH += "../LEti-Engine/include/" \
+        "../LEti-Engine/" \
+        "../LEti-Engine/OpenGL/Windows_x64_mingw/include/" \
+        "../LEti-Engine/OpenGL/Windows_x64_mingw/include/" \
 }
 }
 
-
-
-INCLUDEPATH += "../LEti-Engine/include/" \
-"../LEti-Engine/" \
-"../LEti-Engine/OpenGL_v2/include/" \
-"../LEti-Engine/OpenGL_v2/include/" \
 
 SOURCES += \
 Main.cpp \
