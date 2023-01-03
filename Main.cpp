@@ -157,7 +157,7 @@ int main()
 	LEti::Space_Splitter_2D::set_broad_phase<LEti::Space_Hasher_2D>();
 	LEti::Space_Splitter_2D::set_narrow_phase<LEti::Default_Narrow_CD>();
 	LEti::Space_Splitter_2D::set_narrowest_phase<LEti::Default_Narrowest_CD>();
-//	LEti::Space_Splitter_2D::set_precision(10);
+	//	LEti::Space_Splitter_2D::set_precision(10);
 	LEti::Space_Splitter_2D::get_broad_phase()->set_precision(20);
 	LEti::Space_Splitter_2D::get_narrow_phase()->set_precision(20);
 
@@ -173,12 +173,12 @@ int main()
 
 	LEti::Resource_Loader::load_object("flat_co_model", "Resources/Models/quad.mdl");
 
-//	const unsigned int blocks_count = 5;
-//	Moving_Object blocks[blocks_count];
-//	for(unsigned int i=0; i < blocks_count; ++i)
-//	{
-//		blocks[i].init("flat_co_model");
-//	}
+	//	const unsigned int blocks_count = 5;
+	//	Moving_Object blocks[blocks_count];
+	//	for(unsigned int i=0; i < blocks_count; ++i)
+	//	{
+	//		blocks[i].init("flat_co_model");
+	//	}
 
 	Moving_Object flat_co;
 
@@ -191,75 +191,31 @@ int main()
 	flat_co.draw_module()->set_texture("white_texture");
 	flat_co.name = "white";
 
-//	LEti::Object_2D flat_co_foreshadow;
-//	flat_co_foreshadow.init("flat_co_model");
-//	flat_co_foreshadow.set_pos(50, 400, 0);
-
 	flat_co_2.init("flat_co_model");
 	flat_co_2.set_scale({20.0f, 20.0f, 1.0f});
 	flat_co_2.set_pos({400, 600, 0});
-//	flat_co_2.speed = 0.0f;
-//	flat_co_2.angle = 2.53f;
+	flat_co_2.name = "red_small";
 
 	flat_co_3.init("flat_co_model");
 	flat_co_3.set_scale({50.0f, 50.0f, 1.0f});
 	flat_co_3.set_pos({400, 400, 0});
 	flat_co_3.name = "red_big";
-//	flat_co_3.speed = 200.0f;
-//	flat_co_3.angle = 0.0f;
 
-//	flat_co.remove_draw_module();
-
-	int delay = 0;
-
-	float co3_init_x = 560;
-//	float co3_init_y = 340;
-	float co3_init_y = 330;
-
-//	auto print_info_func = [&]()
-//	{
-//		auto print_co_data = [](const Moving_Object& _obj)
-//		{
-//			std::cout << _obj.name << ":\n"
-//					  << "\tnovement direction: " << _obj.movement_direction.x << "\t" << _obj.movement_direction.y << "\n"
-//					  << "\tvelocity: " << _obj.velocity << "\n"
-//					  << "\tangular velocity: " << _obj.angular_velocity << "\n\n";
-//		};
-
-//		print_co_data(flat_co);
-//		print_co_data(flat_co_3);
-//	};
-
-	float co_spd= 150.0f;
 	auto reset_func = [&]()
 	{
-		delay = 0;
-
-
 		//	TEST 2
 
-		flat_co.set_pos({700, 400, 0});
-		flat_co_3.set_pos({560, 330, 0});
-
-		//	~TEST 2
-
-		flat_co_2.set_pos({800, 700, 0});
+		flat_co.set_pos({700, 100, 0});
+		flat_co_2.set_pos({600, 425, 0});
+		flat_co_3.set_pos({550, 375, 0});
 
 		flat_co.velocity = {0.0f, 0.0f, 0.0f};
 		flat_co_3.velocity = {0.0f, 0.0f, 0.0f};
 		flat_co_2.velocity = {0.0f, 0.0f, 0.0f};
 
-//		flat_co.movement_direction = {-3.0f, 0.0f, 0.0f};
-//		LEti::Math::shrink_vector_to_1(flat_co.movement_direction);
-//		flat_co_3.movement_direction = {3.0f, 0.0f, 0.0f};
-//		LEti::Math::shrink_vector_to_1(flat_co_3.movement_direction);
-//		flat_co_2.movement_direction = {3.0f, -1.0f, 0.0f};
-//		LEti::Math::shrink_vector_to_1(flat_co_2.movement_direction);
-
 		flat_co.set_scale(50);
 		flat_co_3.set_scale(50);
-		flat_co_3.set_scale({25.0f, 75.0f, 1.0f});
-//		flat_co_2.set_scale(50);
+		flat_co_3.set_scale({75.0f, 25.0f, 1.0f});
 
 		flat_co.set_rotation_angle(LEti::Math::QUARTER_PI);
 		flat_co_3.set_rotation_angle(0.0f);
@@ -285,32 +241,7 @@ int main()
 
 	auto launch_func = [&]()
 	{
-		//	TEST 1
-
-//		flat_co_3.apply_impulse({200, 0, 0}, {co3_init_x + 10, co3_init_y + 50, 0});
-
-		//	~TEST 1
-
-		//	TEST 2
-
-//		flat_co_3.movement_direction = {1.0f, 0.0f, 0.0f};
-//		flat_co_3.velocity = 22.0f;
-//		flat_co_3.angular_velocity = -LEti::Math::HALF_PI;
-
-		//	~TEST 2
-
-		//	TEST 3
-
-//		flat_co.movement_direction = {1.0f, 0.0f, 0.0f};
-//		LEti::Math::shrink_vector_to_1(flat_co.movement_direction);
-//		flat_co.velocity = 100.0f;
-//		flat_co_3.movement_direction = {1.0f, 1.0f, 0.0f};
-//		LEti::Math::shrink_vector_to_1(flat_co_3.movement_direction);
-//		flat_co_3.velocity = 100.0f;
-
-		//	~TEST 3
-
-		//
+		flat_co_3.velocity = {50, 20, 0};
 	};
 
 	Grab grab;
@@ -331,15 +262,15 @@ int main()
 	LEti::Timer fps_timer;
 
 	LEti::Resource_Loader::load_object("text_field", "Resources/Models/text_field.mdl");
-//	LEti::Text_Field intersection_info_block;
-//	intersection_info_block.init("text_field");
-//	LEti::Text_Field tf_flat_co_speed;
-//	tf_flat_co_speed.init("text_field");
-//	tf_flat_co_speed.set_pos(0, 760, 0);
+	//	LEti::Text_Field intersection_info_block;
+	//	intersection_info_block.init("text_field");
+	//	LEti::Text_Field tf_flat_co_speed;
+	//	tf_flat_co_speed.init("text_field");
+	//	tf_flat_co_speed.set_pos(0, 760, 0);
 
 	LEti::Text_Field fps_info_block;
 	fps_info_block.init("text_field");
-//	fps_info_block.set_pos(1150, 770, 0);
+	//	fps_info_block.set_pos(1150, 770, 0);
 	fps_info_block.set_pos({10, 770, 0});
 
 	LEti::Text_Field impulses_summary_infoblock;
@@ -359,7 +290,7 @@ int main()
 	LEti::Space_Splitter_2D::register_object(&flat_co_2);
 	LEti::Space_Splitter_2D::register_object(&flat_co_3);
 
-//	LEti::Space_Splitter_2D::register_point(&cursor_position);
+	//	LEti::Space_Splitter_2D::register_point(&cursor_position);
 
 	bool flat_co_enabled = true;
 
@@ -392,11 +323,11 @@ int main()
 		}
 		if (LEti::Event_Controller::is_key_down(GLFW_KEY_J))
 		{
-//			flat_co.rotate_impulse(LEti::Math::HALF_PI * LEti::Event_Controller::get_dt());
+			//			flat_co.rotate_impulse(LEti::Math::HALF_PI * LEti::Event_Controller::get_dt());
 		}
 		if (LEti::Event_Controller::is_key_down(GLFW_KEY_L))
 		{
-//			flat_co.rotate_impulse(-LEti::Math::HALF_PI * LEti::Event_Controller::get_dt());
+			//			flat_co.rotate_impulse(-LEti::Math::HALF_PI * LEti::Event_Controller::get_dt());
 		}
 
 		if(LEti::Event_Controller::key_was_pressed(GLFW_KEY_C))
@@ -415,82 +346,6 @@ int main()
 			reset_func();
 			launch_func();
 		}
-		if(LEti::Event_Controller::key_was_pressed(GLFW_KEY_EQUAL))
-		{
-			delay += 100;
-		}
-		if(LEti::Event_Controller::key_was_pressed(GLFW_KEY_MINUS))
-		{
-			delay -= 100;
-			if(delay < 0) delay = 0;
-		}
-
-		if(LEti::Event_Controller::is_key_down(GLFW_KEY_A))
-		{
-			flat_co.move({-(co_spd * DT), 0.0f, 0.0f});
-		}
-		if(LEti::Event_Controller::is_key_down(GLFW_KEY_D))
-		{
-			flat_co.move({ (co_spd * DT), 0.0f, 0.0f});
-		}
-		if(LEti::Event_Controller::is_key_down(GLFW_KEY_W))
-		{
-			flat_co.move({0.0f,  (co_spd * DT), 0.0f});
-		}
-		if(LEti::Event_Controller::is_key_down(GLFW_KEY_S))
-		{
-			flat_co.move({0.0f, -(co_spd * DT), 0.0f});
-		}
-		if(LEti::Event_Controller::is_key_down(GLFW_KEY_Q))
-		{
-//			for(auto& co : objects_map)
-//			{
-//				Moving_Object& cco = *co.second;
-//				if(cco.angular_velocity < 0.0f)
-//				{
-//					cco.angular_velocity += LEti::Math::PI * DT;
-//					if(cco.angular_velocity > 0.0f) cco.angular_velocity = 0.0f;
-//				}
-//				else
-//				{
-//					cco.angular_velocity -= LEti::Math::PI * DT;
-//					if(cco.angular_velocity < 0.0f) cco.angular_velocity = 0.0f;
-//				}
-//			}
-			if(flat_co.angular_velocity < 0.0f)
-			{
-				flat_co.angular_velocity += LEti::Math::PI * DT;
-				if(flat_co.angular_velocity > 0.0f) flat_co.angular_velocity = 0.0f;
-			}
-			else
-			{
-				flat_co.angular_velocity -= LEti::Math::PI * DT;
-				if(flat_co.angular_velocity < 0.0f) flat_co.angular_velocity = 0.0f;
-			}
-		}
-		if(LEti::Event_Controller::is_key_down(GLFW_KEY_E))
-		{
-//			for(auto& co : objects_map)
-//			{
-//				Moving_Object& cco = *co.second;
-//				if(cco.angular_velocity < 0.0f)
-//				{
-//					cco.angular_velocity -= LEti::Math::PI* DT;
-//				}
-//				else
-//				{
-//					cco.angular_velocity += LEti::Math::PI * DT;
-//				}
-//			}
-			if(flat_co.angular_velocity < 0.0f)
-			{
-				flat_co.angular_velocity -= LEti::Math::PI* DT;
-			}
-			else
-			{
-				flat_co.angular_velocity += LEti::Math::PI * DT;
-			}
-		}
 
 		for(auto& co : objects_map)
 		{
@@ -498,26 +353,22 @@ int main()
 			if(cco.get_pos().y >= 800.0f)
 			{
 				cco.set_pos({cco.get_pos().x, 799.0f, 0.0f});
-//				cco.angle = LEti::Math::DOUBLE_PI - cco.angle;
 				cco.velocity.y *= -1;
 			}
 			else if(cco.get_pos().y <= 0.0f)
 			{
 				cco.set_pos({cco.get_pos().x, 1.0f, 0.0f});
-//				cco.angle = LEti::Math::DOUBLE_PI - cco.angle;
 				cco.velocity.y *= -1;
 			}
 
 			if(cco.get_pos().x >= 1200.0f)
 			{
 				cco.set_pos({1199.0f, cco.get_pos().y, 0.0f});
-//				cco.angle = LEti::Math::DOUBLE_PI - cco.angle + LEti::Math::PI;
 				cco.velocity.x *= -1;
 			}
 			else if(cco.get_pos().x <= 0.0f)
 			{
 				cco.set_pos({1.0f, cco.get_pos().y, 0.0f});
-//				cco.angle = LEti::Math::DOUBLE_PI - cco.angle + LEti::Math::PI;
 				cco.velocity.x *= -1;
 			}
 		}
@@ -559,8 +410,6 @@ int main()
 		};
 		auto draw_frames_relative_to_other = [&](const LEti::Object_2D& _moving_1, const LEti::Object_2D& _moving_2)->void
 		{
-//				frame.clear_points().clear_sequence();
-
 			LEti::Physical_Model_2D::Imprint pm = *_moving_1.physics_module()->get_physical_model_prev_state();
 
 			draw_frame(frame, pm);
@@ -618,10 +467,10 @@ int main()
 			pm.update(diff_pos, diff_rotation, diff_scale);
 			draw_frame(frame_red, pm);
 
-//			draw_frame(frame, *_moving_2.physics_module()->get_physical_model_prev_state());
+			//			draw_frame(frame, *_moving_2.physics_module()->get_physical_model_prev_state());
 
 		};
-		draw_frames_relative_to_other(flat_co, flat_co_3);
+		draw_frames_relative_to_other(flat_co_2, flat_co_3);
 
 		draw_frame(frame, flat_co.physics_module()->get_physical_model()->create_imprint());
 		draw_frame(frame, flat_co_2.physics_module()->get_physical_model()->create_imprint());
@@ -644,7 +493,7 @@ int main()
 			glm::vec3 rotation_impulse = center_to_particle_vec - center_to_particle_vec_prev;
 
 			return LEti::Math::vector_length(movement_impulse) + LEti::Math::vector_length(rotation_impulse);
-//			return _obj.velocity;
+			//			return _obj.velocity;
 		};
 
 
@@ -662,14 +511,14 @@ int main()
 			Moving_Object& bodyA = *(objects_map.at(it->first));
 			Moving_Object& bodyB = *(objects_map.at(it->second));
 
-//			std::cout << "Collision!\n\tFirst: " << bodyA.name << "\n\tSecond: " << bodyB.name << "\n\n";
+			//			std::cout << "Collision!\n\tFirst: " << bodyA.name << "\n\tSecond: " << bodyB.name << "\n\n";
 
-//			float dt_before_collision = DT * it->time_of_intersection_ratio;
+			//			float dt_before_collision = DT * it->time_of_intersection_ratio;
 
-//			bodyA.revert_to_previous_state();
-//			bodyA.update(it->time_of_intersection_ratio);
-//			BodyB.revert_to_previous_state();
-//			BodyB.update(it->time_of_intersection_ratio);
+			//			bodyA.revert_to_previous_state();
+			//			bodyA.update(it->time_of_intersection_ratio);
+			//			BodyB.revert_to_previous_state();
+			//			BodyB.update(it->time_of_intersection_ratio);
 
 			glm::vec3 normal = it->first_normal;
 			glm::vec3 contact = it->point;
@@ -704,9 +553,9 @@ int main()
 					(raPerpDotN * raPerpDotN) / bodyA.physics_module()->get_physical_model()->moment_of_inertia() +
 					(rbPerpDotN * rbPerpDotN) / bodyB.physics_module()->get_physical_model()->moment_of_inertia();
 
-//			float denom = 1/1 + 1/1 +
-//					(raPerpDotN * raPerpDotN) / 416.66f +
-//					(rbPerpDotN * rbPerpDotN) / 416.66f;
+			//			float denom = 1/1 + 1/1 +
+			//					(raPerpDotN * raPerpDotN) / 416.66f +
+			//					(rbPerpDotN * rbPerpDotN) / 416.66f;
 
 			float j = -(1.0f + e) * contactVelocityMag;
 			j /= denom;
@@ -735,8 +584,8 @@ int main()
 
 			float avA = LEti::Math::cross_product(ra, impulse) / bodyA.physics_module()->get_physical_model()->moment_of_inertia();
 			float avB = LEti::Math::cross_product(rb, impulse) / bodyB.physics_module()->get_physical_model()->moment_of_inertia();
-//			float avA = LEti::Math::normalize(ra, impulse).z / bodyA.physics_module()->get_physical_model()->moment_of_inertia();
-//			float avB = LEti::Math::normalize(rb, impulse).z / bodyB.physics_module()->get_physical_model()->moment_of_inertia();
+			//			float avA = LEti::Math::normalize(ra, impulse).z / bodyA.physics_module()->get_physical_model()->moment_of_inertia();
+			//			float avB = LEti::Math::normalize(rb, impulse).z / bodyB.physics_module()->get_physical_model()->moment_of_inertia();
 
 			bodyA.velocity -= impulse / 1.0f;
 			bodyA.angular_velocity -= avA;
@@ -760,14 +609,14 @@ int main()
 			auto plist = LEti::Space_Splitter_2D::get_collisions__points();
 
 			if(plist.size() != 0)
-				 grab.grab(objects_map.at(plist.begin()->first), Grab::Type::drag);
+				grab.grab(objects_map.at(plist.begin()->first), Grab::Type::drag);
 		}if(LEti::Event_Controller::mouse_button_was_pressed(GLFW_MOUSE_BUTTON_2))
 		{
 			LEti::Space_Splitter_2D::unregister_point(&cursor_position);
 			auto plist = LEti::Space_Splitter_2D::get_collisions__points();
 
 			if(plist.size() != 0)
-				 grab.grab(objects_map.at(plist.begin()->first), Grab::Type::launch);
+				grab.grab(objects_map.at(plist.begin()->first), Grab::Type::launch);
 		}
 		if(LEti::Event_Controller::mouse_button_was_released(GLFW_MOUSE_BUTTON_1))
 		{
@@ -782,13 +631,13 @@ int main()
 		flat_co.draw();
 		flat_co_2.draw();
 		flat_co_3.draw();
-//		draw_frame(frame, flat_co.physics_module()->get_physical_model()->create_imprint());
-//		draw_frame(frame, flat_co_2.physics_module()->get_physical_model()->create_imprint());
-//		draw_frame(frame, flat_co_3.physics_module()->get_physical_model()->create_imprint());
+		//		draw_frame(frame, flat_co.physics_module()->get_physical_model()->create_imprint());
+		//		draw_frame(frame, flat_co_2.physics_module()->get_physical_model()->create_imprint());
+		//		draw_frame(frame, flat_co_3.physics_module()->get_physical_model()->create_imprint());
 
 
-//		intersection_info_block.set_text(std::to_string(list.size()).c_str());
-//		intersection_info_block.draw();
+		//		intersection_info_block.set_text(std::to_string(list.size()).c_str());
+		//		intersection_info_block.draw();
 
 		++fps_counter;
 		fps_timer.update();
@@ -808,8 +657,6 @@ int main()
 		string_summary_impulse_value << std::fixed << std::setprecision(0) << impulse_summary;
 		impulses_summary_infoblock.set_text(string_summary_impulse_value.str().c_str());
 		impulses_summary_infoblock.draw();
-
-		std::this_thread::sleep_for(std::chrono::milliseconds(delay));
 
 		LEti::Window_Controller::swap_buffers();
 	}
