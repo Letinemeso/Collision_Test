@@ -9,7 +9,7 @@ unix {
     LIBS += "../../LEti_Engine/OpenGL/Linux/lib/libglfw3.a"
     LIBS += "../../LEti_Engine/OpenGL/Linux/lib/libGLEW.a"
 
-    LIBS += -lpthread -lm -lz -lGL -lX11 -lXext -lXfixes -ldl
+    LIBS += -lpthread -lGL -lX11 -ldl
 
     INCLUDEPATH += "../LEti_Engine/OpenGL/Linux/include/"
 }
