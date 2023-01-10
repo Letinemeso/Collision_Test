@@ -16,15 +16,17 @@ unix {
 
 
 win32 {
-    LIBS += "../LEti-engine/OpenGL/Windows_x64_mingw/lib/libglfw3.a"
-    LIBS += "../LEti-engine/OpenGL/Windows_x64_mingw/lib/libglew32.a"
+    LIBS += "../LEti_Engine/debug/libLEti_Engine.a"
+
+    LIBS += "../LEti_Engine/OpenGL/Windows_x64_mingw/lib/libglfw3.a"
+    LIBS += "../LEti_Engine/OpenGL/Windows_x64_mingw/lib/libglew32.a"
 
     LIBS += -lopengl32 \
 	-luser32 \
 	-lgdi32 \
 	-lshell32
 
-    INCLUDEPATH += "OpenGL/Windows_x64_mingw/include/"
+    INCLUDEPATH += "../LEti_Engine/OpenGL/Windows_x64_mingw/include/"
 }
 
 INCLUDEPATH += "../LEti_Engine/OpenGL/GLM"
@@ -58,5 +60,5 @@ Resources/Textures/quad.png \
 Resources/Textures/textures.mdl \
 Resources/Textures/ugly_color.png
 
-#win32:CONFIG(release, debug|release): LIBS += -L$$PWD/../LEti-Engine/OpenGL/GLFW/lib/ -lglfw3
-#else:win32:CONFIG(debug, debug|release): LIBS += -L$$PWD/../LEti-Engine/OpenGL/GLFW/lib/ -lglfw3
+#win32:CONFIG(release, debug|release): LIBS += -L$$PWD/../LEti_Engine/OpenGL/GLFW/lib/ -lglfw3
+#else:win32:CONFIG(debug, debug|release): LIBS += -L$$PWD/../LEti_Engine/OpenGL/GLFW/lib/ -lglfw3
