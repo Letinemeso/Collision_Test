@@ -273,10 +273,6 @@ int main()
 	//	fps_info_block.set_pos(1150, 770, 0);
 	fps_info_block.set_pos({10, 770, 0});
 
-	LEti::Text_Field impulses_summary_infoblock;
-	impulses_summary_infoblock.init("text_field");
-	impulses_summary_infoblock.set_pos({10, 10, 0});
-
 	flat_co.update();
 	flat_co_2.update();
 	flat_co_3.update();
@@ -478,25 +474,6 @@ int main()
 
 		LEti::Space_Splitter_2D::update();
 
-		glm::vec3 fcopos = flat_co.get_pos();
-		glm::vec3 fco3pos = flat_co_3.get_pos();
-
-
-		auto get_particle_velocity = [](const Moving_Object& _obj, const glm::vec3& _particle)->float
-		{
-			glm::vec3 movement_impulse = _obj.physics_module()->get_physical_model()->center_of_mass() - _obj.physics_module()->get_physical_model_prev_state()->center_of_mass();
-
-			glm::mat4x4 inversed_rotation_matrix = _obj.get_rotation_matrix_for_time_ratio(0.0f) / _obj.get_rotation_matrix_for_time_ratio(1.0f);
-			glm::vec3 center_to_particle_vec = _particle - _obj.physics_module()->get_physical_model()->center_of_mass();
-			glm::vec3 center_to_particle_vec_prev = inversed_rotation_matrix * glm::vec4(center_to_particle_vec, 1.0f);
-
-			glm::vec3 rotation_impulse = center_to_particle_vec - center_to_particle_vec_prev;
-
-			return LEti::Math::vector_length(movement_impulse) + LEti::Math::vector_length(rotation_impulse);
-			//			return _obj.velocity;
-		};
-
-
 		const LEti::Default_Narrow_CD::Collision_Data_List__Models& list = LEti::Space_Splitter_2D::get_collisions__models();
 
 		auto it = list.begin();
@@ -553,27 +530,10 @@ int main()
 					(raPerpDotN * raPerpDotN) / bodyA.physics_module()->get_physical_model()->moment_of_inertia() +
 					(rbPerpDotN * rbPerpDotN) / bodyB.physics_module()->get_physical_model()->moment_of_inertia();
 
-			//			float denom = 1/1 + 1/1 +
-			//					(raPerpDotN * raPerpDotN) / 416.66f +
-			//					(rbPerpDotN * rbPerpDotN) / 416.66f;
-
 			float j = -(1.0f + e) * contactVelocityMag;
 			j /= denom;
 
 			glm::vec3 impulse = j * normal;
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 			float dt_before_collision = DT * it->time_of_intersection_ratio;
 
@@ -584,8 +544,6 @@ int main()
 
 			float avA = LEti::Math::cross_product(ra, impulse) / bodyA.physics_module()->get_physical_model()->moment_of_inertia();
 			float avB = LEti::Math::cross_product(rb, impulse) / bodyB.physics_module()->get_physical_model()->moment_of_inertia();
-			//			float avA = LEti::Math::normalize(ra, impulse).z / bodyA.physics_module()->get_physical_model()->moment_of_inertia();
-			//			float avB = LEti::Math::normalize(rb, impulse).z / bodyB.physics_module()->get_physical_model()->moment_of_inertia();
 
 			bodyA.velocity -= impulse / 1.0f;
 			bodyA.angular_velocity -= avA;
@@ -648,15 +606,6 @@ int main()
 			fps_counter = 0;
 		}
 		fps_info_block.draw();
-
-		float impulse_summary = 0.0f;
-		for(auto& fco : objects_map)
-			impulse_summary += get_particle_velocity(*fco.second, (*fco.second->physics_module()->get_physical_model())[0][0] /*{25.0f, 0.0f, 0.0f}*/ ) / DT;
-		if(impulse_summary < 0.01f) impulse_summary = 0.0f;
-		std::stringstream string_summary_impulse_value;
-		string_summary_impulse_value << std::fixed << std::setprecision(0) << impulse_summary;
-		impulses_summary_infoblock.set_text(string_summary_impulse_value.str().c_str());
-		impulses_summary_infoblock.draw();
 
 		LEti::Window_Controller::swap_buffers();
 	}
