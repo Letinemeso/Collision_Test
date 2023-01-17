@@ -266,9 +266,12 @@ int main()
 
 	LV::MDL_Reader reader;
 	reader.parse_file("Resources/Models/quad_new");
+	reader.parse_file("Resources/Models/text_field_new");
 
 	LEti::Object_2D_Stub quad;
 	quad.assign_values(reader.get_stub("quad"));
+	LEti::Text_Field_Stub tf_stub;
+	tf_stub.assign_values(reader.get_stub("text_field"));
 
 
 	LEti::Window_Controller::create_window(1200, 800, "Collision Test");
@@ -329,12 +332,12 @@ int main()
 	flat_co.draw_module()->set_texture("white_texture");
 	flat_co.name = "white";
 
-	flat_co_2.init("flat_co_model");
+	flat_co_2.init(quad);
 	flat_co_2.set_scale({20.0f, 20.0f, 1.0f});
 	flat_co_2.set_pos({400, 600, 0});
 	flat_co_2.name = "red_small";
 
-	flat_co_3.init("flat_co_model");
+	flat_co_3.init(quad);
 	flat_co_3.set_scale({50.0f, 50.0f, 1.0f});
 	flat_co_3.set_pos({400, 400, 0});
 	flat_co_3.name = "red_big";
@@ -394,8 +397,8 @@ int main()
 	LEti::Resource_Loader::load_object("debug_frame_red", "Resources/Models/debug_frame_red.mdl");
 
 	LEti::Resource_Loader::load_object("ind", "Resources/Models/intersection_point_indicator.mdl");
-	LEti::Object_2D ind;
-	ind.init("ind");
+//	LEti::Object_2D ind;
+//	ind.init("ind");
 
 	LEti::Timer fps_timer;
 
@@ -407,7 +410,7 @@ int main()
 	//	tf_flat_co_speed.set_pos(0, 760, 0);
 
 	LEti::Text_Field fps_info_block;
-	fps_info_block.init("text_field");
+	fps_info_block.init(tf_stub);
 	//	fps_info_block.set_pos(1150, 770, 0);
 	fps_info_block.set_pos({10, 770, 0});
 
@@ -431,9 +434,9 @@ int main()
 	unsigned int fps_counter = 0;
 
 	LEti::Debug_Drawable_Frame frame;
-	frame.init("debug_frame");
+//	frame.init("debug_frame");
 	LEti::Debug_Drawable_Frame frame_red;
-	frame_red.init("debug_frame_red");
+//	frame_red.init("debug_frame_red");
 
 	bool intersection_on_prev_frame = false;
 
@@ -604,11 +607,11 @@ int main()
 			//			draw_frame(frame, *_moving_2.physics_module()->get_physical_model_prev_state());
 
 		};
-		draw_frames_relative_to_other(flat_co_2, flat_co_3);
+//		draw_frames_relative_to_other(flat_co_2, flat_co_3);
 
-		draw_frame(frame, flat_co.physics_module()->get_physical_model()->create_imprint());
-		draw_frame(frame, flat_co_2.physics_module()->get_physical_model()->create_imprint());
-		draw_frame(frame, flat_co_3.physics_module()->get_physical_model()->create_imprint());
+//		draw_frame(frame, flat_co.physics_module()->get_physical_model()->create_imprint());
+//		draw_frame(frame, flat_co_2.physics_module()->get_physical_model()->create_imprint());
+//		draw_frame(frame, flat_co_3.physics_module()->get_physical_model()->create_imprint());
 
 		LEti::Space_Splitter_2D::update();
 
@@ -723,7 +726,7 @@ int main()
 			grab.release();
 		}
 
-		ind.draw();
+//		ind.draw();
 		flat_co.draw();
 		flat_co_2.draw();
 		flat_co_3.draw();
