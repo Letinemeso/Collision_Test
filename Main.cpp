@@ -3,15 +3,12 @@
 #include "Camera.h"
 #include "Resource_Loader.h"
 
-//#include "Object.h"
 #include "Object_System/Text_Field.h"
 
 #include <Object_System/Object_2D.h>
 
 #include "Physics/Physical_Model_3D.h"
 #include "Physics/Physical_Model_2D.h"
-
-#include "Message_Translator.h"
 
 #include "Physics/Space_Splitter_2D.h"
 #include "Physics/Space_Hasher_2D.h"
@@ -31,13 +28,6 @@
 
 #define DT LEti::Event_Controller::get_dt()
 
-struct On_Button_Pressed_Msg
-{
-	DEFINE_TYPE("obpf");
-	unsigned int btn = 0;
-	On_Button_Pressed_Msg(unsigned int _btn) : btn(_btn) { }
-};
-
 class Moving_Object : public LEti::Object_2D
 {
 public:
@@ -47,12 +37,6 @@ public:
 	std::string name;
 
 public:
-	glm::vec3 get_perp_radius(const glm::vec3& _to_point) const
-	{
-		glm::vec3 point_to_center_vec = _to_point - physics_module()->get_physical_model()->center_of_mass();
-		return LEti::Math::rotate_vector(point_to_center_vec, {0.0f , 0.0f, 1.0f}, LEti::Math::HALF_PI);
-	}
-
 	void update(float _ratio = 1.0f) override
 	{
 		move(velocity * DT * _ratio);
@@ -132,8 +116,161 @@ public:
 
 };
 
+#include "MDL_Reader.h"
+
 int main()
 {
+	LV::Type_Manager::register_type("int", {
+										[](const std::string& _val)
+										{
+											unsigned int i=0;
+											if(_val[0] == '+' || _val[0] == '-')
+											++i;
+											for(; i<_val.size(); ++i)
+											if(_val[i] < '0' || _val[i] > '9')
+											return false;
+											return true;
+										},
+										[](void* _variable_vptr, const LDS::Vector<std::string>& _values_as_string) { *((int*)_variable_vptr) = std::stoi(_values_as_string[0]); }
+									});
+	LV::Type_Manager::register_type("unsigned int", {
+										[](const std::string& _val)
+										{
+											for(unsigned int i=0; i<_val.size(); ++i)
+											if(_val[i] < '0' || _val[i] > '9')
+											return false;
+											return true;
+										},
+										[](void* _variable_vptr, const LDS::Vector<std::string>& _values_as_string) { *((int*)_variable_vptr) = std::stoi(_values_as_string[0]); }
+									});
+	LV::Type_Manager::register_type("bool", {
+										[](const std::string& _val)
+										{
+											if(_val == "true" || _val == "false")
+											return true;
+											return false;
+										},
+										[](void* _variable_vptr, const LDS::Vector<std::string>& _values_as_string) { *((bool*&)_variable_vptr) = _values_as_string[0] == "true" ? true : false; }
+									});
+	LV::Type_Manager::register_type("std::string", {
+										[](const std::string& _val) { return true; },
+										[](void* _variable_vptr, const LDS::Vector<std::string>& _values_as_string) {
+											*((std::string*)_variable_vptr) = _values_as_string[0];
+										}
+									});
+	LV::Type_Manager::register_type("float*", {
+										[](const std::string& _val)
+										{
+											if(_val == ".")
+											return false;
+
+											unsigned int dots_count = 0;
+											unsigned int i=0;
+											if(_val[0] == '+' || _val[0] == '-')
+											++i;
+											for(; i<_val.size(); ++i)
+											{
+												if(_val[i] == '.')
+												{
+													++dots_count;
+													continue;
+												}
+												if(_val[i] < '0' || _val[i] > '9')
+												return false;
+											}
+
+											if(dots_count > 1)
+											return false;
+
+											return true;
+										},
+										[](void* _variable_vptr, const LDS::Vector<std::string>& _values_as_string)
+										{
+											float** var_ptr_ptr = (float**)_variable_vptr;
+
+											if(*var_ptr_ptr == nullptr)
+											*var_ptr_ptr = new float[_values_as_string.size()];
+
+											float* var_ptr = *var_ptr_ptr;
+
+											for(unsigned int i=0; i<_values_as_string.size(); ++i)
+											var_ptr[i] = std::stof(_values_as_string[i]);
+										}
+									});
+	LV::Type_Manager::register_type("glm::vec3", {
+										[](const std::string& _val)
+										{
+											if(_val == ".")
+											return false;
+
+											unsigned int dots_count = 0;
+											unsigned int i=0;
+											if(_val[0] == '+' || _val[0] == '-')
+											++i;
+											for(; i<_val.size(); ++i)
+											{
+												if(_val[i] == '.')
+												{
+													++dots_count;
+													continue;
+												}
+												if(_val[i] < '0' || _val[i] > '9')
+												return false;
+											}
+
+											if(dots_count > 1)
+											return false;
+
+											return true;
+										},
+										[](void* _variable_vptr, const LDS::Vector<std::string>& _values_as_string)
+										{
+											L_ASSERT(_values_as_string.size() == 3);
+
+											glm::vec3& vec = *((glm::vec3*)_variable_vptr);
+											for(unsigned int i=0; i<3; ++i)
+											vec[i] = std::stof(_values_as_string[i]);
+										}
+									});
+	LV::Type_Manager::register_type("float", {
+										[](const std::string& _val)
+										{
+											if(_val == ".")
+											return false;
+
+											unsigned int dots_count = 0;
+											unsigned int i=0;
+											if(_val[0] == '+' || _val[0] == '-')
+											++i;
+											for(; i<_val.size(); ++i)
+											{
+												if(_val[i] == '.')
+												{
+													++dots_count;
+													continue;
+												}
+												if(_val[i] < '0' || _val[i] > '9')
+												return false;
+											}
+
+											if(dots_count > 1)
+											return false;
+
+											return true;
+										},
+										[](void* _variable_vptr, const LDS::Vector<std::string>& _values_as_string) { *((float*)_variable_vptr) = std::stof(_values_as_string[0]); }
+									});
+
+
+
+
+	LV::MDL_Reader reader;
+	reader.parse_file("Resources/Models/quad_new");
+
+	LEti::Object_2D_Stub quad;
+	quad.assign_values(reader.get_stub("quad"));
+
+
 	LEti::Window_Controller::create_window(1200, 800, "Collision Test");
 
 	glEnable(GL_BLEND);
@@ -144,7 +281,7 @@ int main()
 	glCullFace(GL_CW);
 
 	LEti::Shader::init_shader("Resources/Shaders/vertex_shader.shader", "Resources/Shaders/fragment_shader.shader");
-	ASSERT(!LEti::Shader::is_valid());
+	L_ASSERT(!(!LEti::Shader::is_valid()));
 	LEti::Shader::set_texture_uniform_name("input_texture");
 	LEti::Shader::set_transform_matrix_uniform_name("transform_matrix");
 	LEti::Shader::set_projection_matrix_uniform_name("projection_matrix");
@@ -186,7 +323,8 @@ int main()
 
 	Moving_Object flat_co_3;
 
-	flat_co.init("flat_co_model");
+//	flat_co.init("flat_co_model");
+	flat_co.init(quad);
 	flat_co.set_pos({800, 400, 0});
 	flat_co.draw_module()->set_texture("white_texture");
 	flat_co.name = "white";

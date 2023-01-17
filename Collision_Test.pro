@@ -4,6 +4,8 @@ CONFIG -= app_bundle
 CONFIG -= qt
 
 unix {
+    LIBS += "../Utility/libUtility.a"
+    LIBS += "../L_Variable/libL_Variable.a"
     LIBS += "../LEti_Engine/libLEti_Engine.a"
 
     LIBS += "../../LEti_Engine/OpenGL/Linux/lib/libglfw3.a"
@@ -31,6 +33,9 @@ win32 {
 
 INCLUDEPATH += "../LEti_Engine/OpenGL/GLM"
 INCLUDEPATH += "../LEti_Engine/OpenGL/"
+
+INCLUDEPATH += "../Utility/include/"
+INCLUDEPATH += "../L_Variable/include/"
 INCLUDEPATH += "../LEti_Engine/include/"
 
 
@@ -52,8 +57,10 @@ Resources/Models/intersection_indicator_3d.mdl \
 Resources/Models/intersection_point_indicator.mdl \
 Resources/Models/pyramid.mdl \
 Resources/Models/quad.mdl \
+	Resources/Models/quad_new.mdl \
 Resources/Models/red_cube.mdl \
 Resources/Models/text_field.mdl \
+	Resources/Models/text_field_new.mdl \
 Resources/Shaders/fragment_shader.shader \
 Resources/Shaders/vertex_shader.shader \
 Resources/Textures/quad.png \
