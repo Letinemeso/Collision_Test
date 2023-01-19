@@ -350,9 +350,15 @@ int main()
 
 	Moving_Object flat_co;
 
-	Moving_Object flat_co_2;
+	const unsigned int small_quads_amount = 10;
 
-	Moving_Object flat_co_3;
+	Moving_Object small_quads[small_quads_amount];
+	for(unsigned int i=0; i<small_quads_amount; ++i)
+	{
+		small_quads[i].init(quad);
+		small_quads[i].set_scale({25, 25, 1});
+		small_quads[i].set_pos({1000, 200 + (55 * i), 0});
+	}
 
 //	flat_co.init("flat_co_model");
 	flat_co.init(quad);
@@ -360,67 +366,53 @@ int main()
 	flat_co.draw_module()->set_texture(LEti::Picture_Manager::get_picture("white_texture"));
 	flat_co.name = "white";
 
-	flat_co_2.init(quad);
-	flat_co_2.set_scale({20.0f, 20.0f, 1.0f});
-	flat_co_2.set_pos({400, 600, 0});
-	flat_co_2.name = "red_small";
-
-	flat_co_3.init(quad);
-	flat_co_3.set_scale({50.0f, 50.0f, 1.0f});
-	flat_co_3.set_pos({400, 400, 0});
-	flat_co_3.name = "red_big";
-	flat_co_3.set_rotation_angle(LEti::Math::DOUBLE_PI);
 
 	auto reset_func = [&]()
 	{
 		//	TEST 2
 
 		flat_co.set_pos({700, 100, 0});
-		flat_co_2.set_pos({600, 425, 0});
-		flat_co_3.set_pos({550, 375, 0});
 
 		flat_co.velocity = {0.0f, 0.0f, 0.0f};
-		flat_co_3.velocity = {0.0f, 0.0f, 0.0f};
-		flat_co_2.velocity = {0.0f, 0.0f, 0.0f};
 
 		flat_co.set_scale(50);
-		flat_co_3.set_scale(50);
-		flat_co_3.set_scale({75.0f, 25.0f, 1.0f});
 
 		flat_co.set_rotation_angle(LEti::Math::QUARTER_PI);
-		flat_co_3.set_rotation_angle(0.0f);
-		flat_co_2.set_rotation_angle(0.0f);
 
 		flat_co.set_rotation_axis({0.0f, 0.0f, 1.0f});
-		flat_co_3.set_rotation_axis({0.0f, 0.0f, 1.0f});
-		flat_co_2.set_rotation_axis({0.0f, 0.0f, 1.0f});
 
 		flat_co.angular_velocity = 0.0f;
-		flat_co_3.angular_velocity = 0.0f;
-		flat_co_2.angular_velocity = 0.0f;
 
 
 		flat_co.update(0.0f);
-		flat_co_2.update(0.0f);
-		flat_co_3.update(0.0f);
 		flat_co.update_previous_state();
-		flat_co_2.update_previous_state();
-		flat_co_3.update_previous_state();
+
+		for(unsigned int i=0; i<small_quads_amount; ++i)
+		{
+			small_quads[i].set_pos({1000, 200 + (55 * i), 0});
+			small_quads[i].velocity = {0.0f, 0.0f, 0.0f};
+			small_quads[i].angular_velocity = 0.0f;
+			small_quads[i].set_rotation_angle(0.0f);
+
+			small_quads[i].update(0.0f);
+			small_quads[i].update_previous_state();
+		}
 	};
 	reset_func();
 
 	auto launch_func = [&]()
 	{
 //		flat_co_3.velocity = {50, 20, 0};
-		flat_co_3.velocity = {112, -192, 0};
+//		flat_co_3.velocity = {112, -192, 0};
 	};
 
 	Grab grab;
 
 	std::map<const LEti::Object_2D*, Moving_Object*> objects_map;
 	objects_map.emplace(&flat_co, &flat_co);
-	objects_map.emplace(&flat_co_2, &flat_co_2);
-	objects_map.emplace(&flat_co_3, &flat_co_3);
+	for(unsigned int i=0; i<small_quads_amount; ++i)
+		objects_map.emplace(small_quads + i, small_quads + i);
+
 
 //	LEti::Resource_Loader::load_object("flat_indicator_red", "Resources/Models/flat_indicator_red.mdl");
 //	LEti::Resource_Loader::load_object("debug_frame", "Resources/Models/debug_frame.mdl");
@@ -444,18 +436,18 @@ int main()
 	//	fps_info_block.set_pos(1150, 770, 0);
 	fps_info_block.set_pos({10, 770, 0});
 
-	flat_co.update();
-	flat_co_2.update();
-	flat_co_3.update();
+	for(auto& co : objects_map)
+	{
+		co.second->update();
+	}
 
 	glm::vec3 cursor_position;
 
-	flat_co.physics_module()->set_is_dynamic(true);
-	flat_co_2.physics_module()->set_is_dynamic(true);
-	flat_co_3.physics_module()->set_is_dynamic(true);
-	LEti::Space_Splitter_2D::register_object(&flat_co);
-	LEti::Space_Splitter_2D::register_object(&flat_co_2);
-	LEti::Space_Splitter_2D::register_object(&flat_co_3);
+	for(auto& co : objects_map)
+	{
+		co.second->physics_module()->set_is_dynamic(true);
+		LEti::Space_Splitter_2D::register_object(co.second);
+	}
 
 	//	LEti::Space_Splitter_2D::register_point(&cursor_position);
 
@@ -482,9 +474,10 @@ int main()
 			LEti::Camera::toggle_controll(LEti::Camera::get_controllable() ? false : true);
 		LEti::Camera::update(false, true);
 
-		flat_co.update_previous_state();
-		flat_co_2.update_previous_state();
-		flat_co_3.update_previous_state();
+		for(auto& co : objects_map)
+		{
+			co.second->update_previous_state();
+		}
 
 		if (LEti::Event_Controller::key_was_pressed(GLFW_KEY_K))
 		{
@@ -496,13 +489,6 @@ int main()
 		if (LEti::Event_Controller::is_key_down(GLFW_KEY_L))
 		{
 			//			flat_co.rotate_impulse(-LEti::Math::HALF_PI * LEti::Event_Controller::get_dt());
-		}
-
-		if(LEti::Event_Controller::key_was_pressed(GLFW_KEY_C))
-		{
-			flat_co.set_pos({0, 0, 0});
-			flat_co_2.set_pos({0, 0, 0});
-			flat_co_3.set_pos({0, 0, 0});
 		}
 
 		if(LEti::Event_Controller::key_was_pressed(GLFW_KEY_R))
@@ -541,9 +527,10 @@ int main()
 			}
 		}
 
-		flat_co.update();
-		flat_co_2.update();
-		flat_co_3.update();
+		for(auto& co : objects_map)
+		{
+			co.second->update();
+		}
 
 		LEti::Space_Splitter_2D::register_point(&cursor_position);
 
@@ -638,7 +625,7 @@ int main()
 			//			draw_frame(frame, *_moving_2.physics_module()->get_physical_model_prev_state());
 
 		};
-		draw_frames_relative_to_other(flat_co_2, flat_co_3);
+//		draw_frames_relative_to_other(flat_co_2, flat_co_3);
 //		draw_frame(frame, flat_co.physics_module()->get_physical_model()->create_imprint());
 
 //		draw_frame(frame, flat_co.physics_module()->get_physical_model()->create_imprint());
@@ -657,7 +644,7 @@ int main()
 		auto it = list.begin();
 		while(it != list.end())
 		{
-//			if(it->time_of_intersection_ratio < 0.0001f)
+//			if(LEti::Math::floats_are_equal(it->time_of_intersection_ratio, 0.0f) || LEti::Math::floats_are_equal(it->time_of_intersection_ratio, 1.0f))
 //			{
 //				++it;
 //				continue;
@@ -766,9 +753,12 @@ int main()
 		}
 
 		indicator.draw();
-		flat_co.draw();
-		flat_co_2.draw();
-		flat_co_3.draw();
+
+		for(auto& co : objects_map)
+		{
+			co.second->draw();
+		}
+
 		//		draw_frame(frame, flat_co.physics_module()->get_physical_model()->create_imprint());
 		//		draw_frame(frame, flat_co_2.physics_module()->get_physical_model()->create_imprint());
 		//		draw_frame(frame, flat_co_3.physics_module()->get_physical_model()->create_imprint());
