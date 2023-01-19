@@ -1,6 +1,25 @@
-|colliding_object_texture| <texture> [1] "Resources/Textures/ugly_color.png"
-|pyramid_texture| <texture> [1] "Resources/Textures/quad.png"
-|white_texture| <texture> [1] "Resources/Textures/white.png"
-|font_texture| <texture> [1] "Resources/Font/font_yellow.png"
-|red_indicator| <texture> [1] "Resources/Textures/red.png"
-|yellow_indicator| <texture> [1] "Resources/Textures/yellow.png"
+|textures|
+\
+    |amount|
+    \
+        "6"
+    /
+    |names|
+    \
+        "colliding_object_texture"
+        "pyramid_texture"
+        "white_texture"
+        "font_texture"
+        "red_indicator"
+        "yellow_indicator"        
+    /
+    |paths|
+    \
+        "Resources/Textures/ugly_color.png"
+        "Resources/Textures/quad.png"
+        "Resources/Textures/white.png"
+        "Resources/Font/font_yellow.png"
+        "Resources/Textures/red.png"
+        "Resources/Textures/yellow.png"
+    /
+/

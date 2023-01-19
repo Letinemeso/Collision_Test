@@ -42,7 +42,7 @@ INCLUDEPATH += "../LEti_Engine/include/"
 SOURCES += \
 Main.cpp \
 
-DISTFILES += \ \
+DISTFILES += \
 Resources/Font/font_yellow.png \
 Resources/Models/colliding_object.mdl \
 Resources/Models/debug_frame.mdl \

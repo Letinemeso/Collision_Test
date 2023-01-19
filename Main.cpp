@@ -1,7 +1,7 @@
 #include "Event_Controller.h"
 #include "Shader.h"
 #include "Camera.h"
-#include "Resource_Loader.h"
+#include "Picture_Manager.h"
 
 #include "Object_System/Text_Field.h"
 
@@ -197,6 +197,24 @@ int main()
 											var_ptr[i] = std::stof(_values_as_string[i]);
 										}
 									});
+	LV::Type_Manager::register_type("std::string*", {
+										[](const std::string& /*_val*/)
+										{
+											return true;
+										},
+										[](void* _variable_vptr, const LDS::Vector<std::string>& _values_as_string)
+										{
+											std::string** var_ptr_ptr = (std::string**)_variable_vptr;
+
+											if(*var_ptr_ptr == nullptr)
+											*var_ptr_ptr = new std::string[_values_as_string.size()];
+
+											std::string* var_ptr = *var_ptr_ptr;
+
+											for(unsigned int i=0; i<_values_as_string.size(); ++i)
+											var_ptr[i] = _values_as_string[i];
+										}
+									});
 	LV::Type_Manager::register_type("glm::vec3", {
 										[](const std::string& _val)
 										{
@@ -301,9 +319,13 @@ int main()
 	LEti::Space_Splitter_2D::get_broad_phase()->set_precision(20);
 	LEti::Space_Splitter_2D::get_narrow_phase()->set_precision(20);
 
-	LEti::Resource_Loader::init();
+//	LEti::Resource_Loader::init();
 
-	LEti::Resource_Loader::load_object("textures", "Resources/Textures/textures.mdl");
+//	LEti::Resource_Loader::load_object("textures", "Resources/Textures/textures.mdl");
+	reader.parse_file("Resources/Textures/textures");
+	LEti::Picture_Manager::Picture_Autoload_Stub texture_autoload;
+	texture_autoload.assign_values(reader.get_stub("textures"));
+
 
 	LEti::Event_Controller::set_max_dt(60.0f / 1000.0f);
 
@@ -311,7 +333,7 @@ int main()
 
 	///////////////// 2d collision test
 
-	LEti::Resource_Loader::load_object("flat_co_model", "Resources/Models/quad.mdl");
+//	LEti::Resource_Loader::load_object("flat_co_model", "Resources/Models/quad.mdl");
 
 	//	const unsigned int blocks_count = 5;
 	//	Moving_Object blocks[blocks_count];
@@ -329,7 +351,7 @@ int main()
 //	flat_co.init("flat_co_model");
 	flat_co.init(quad);
 	flat_co.set_pos({800, 400, 0});
-	flat_co.draw_module()->set_texture("white_texture");
+	flat_co.draw_module()->set_texture(LEti::Picture_Manager::get_picture("white_texture"));
 	flat_co.name = "white";
 
 	flat_co_2.init(quad);
@@ -392,17 +414,17 @@ int main()
 	objects_map.emplace(&flat_co_2, &flat_co_2);
 	objects_map.emplace(&flat_co_3, &flat_co_3);
 
-	LEti::Resource_Loader::load_object("flat_indicator_red", "Resources/Models/flat_indicator_red.mdl");
-	LEti::Resource_Loader::load_object("debug_frame", "Resources/Models/debug_frame.mdl");
-	LEti::Resource_Loader::load_object("debug_frame_red", "Resources/Models/debug_frame_red.mdl");
+//	LEti::Resource_Loader::load_object("flat_indicator_red", "Resources/Models/flat_indicator_red.mdl");
+//	LEti::Resource_Loader::load_object("debug_frame", "Resources/Models/debug_frame.mdl");
+//	LEti::Resource_Loader::load_object("debug_frame_red", "Resources/Models/debug_frame_red.mdl");
 
-	LEti::Resource_Loader::load_object("ind", "Resources/Models/intersection_point_indicator.mdl");
+//	LEti::Resource_Loader::load_object("ind", "Resources/Models/intersection_point_indicator.mdl");
 //	LEti::Object_2D ind;
 //	ind.init("ind");
 
 	LEti::Timer fps_timer;
 
-	LEti::Resource_Loader::load_object("text_field", "Resources/Models/text_field.mdl");
+//	LEti::Resource_Loader::load_object("text_field", "Resources/Models/text_field.mdl");
 	//	LEti::Text_Field intersection_info_block;
 	//	intersection_info_block.init("text_field");
 	//	LEti::Text_Field tf_flat_co_speed;
