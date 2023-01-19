@@ -342,6 +342,12 @@ int main()
 	//		blocks[i].init("flat_co_model");
 	//	}
 
+	LEti::Object_2D indicator;
+	indicator.init(quad);
+	indicator.draw_module()->set_texture(LEti::Picture_Manager::get_picture("yellow_indicator"));
+	indicator.set_scale({3, 3, 1});
+	indicator.set_rotation_angle(LEti::Math::QUARTER_PI);
+
 	Moving_Object flat_co;
 
 	Moving_Object flat_co_2;
@@ -456,9 +462,10 @@ int main()
 	unsigned int fps_counter = 0;
 
 	LEti::Debug_Drawable_Frame frame;
-//	frame.init("debug_frame");
-	LEti::Debug_Drawable_Frame frame_red;
-//	frame_red.init("debug_frame_red");
+	frame.init(quad);
+	frame.set_pos({0, 0, 0});
+	frame.set_scale({1, 1, 1});
+	frame.draw_module()->set_texture(LEti::Picture_Manager::get_picture("ugly_color"));
 
 	bool intersection_on_prev_frame = false;
 
@@ -618,18 +625,19 @@ int main()
 			initial_second_pm.update(fake_movement_matrix, fake_default_matrix, _moving_2.get_scale_matrix_for_time_ratio(0.0f));
 
 
-			draw_frame(frame_red, initial_second_pm);
+			draw_frame(frame, initial_second_pm);
 
 			pm.update(diff_pos_prev, diff_rotation_prev, diff_scale_prev);
 			draw_frame(frame, pm);
 
 			pm.update(diff_pos, diff_rotation, diff_scale);
-			draw_frame(frame_red, pm);
+			draw_frame(frame, pm);
 
 			//			draw_frame(frame, *_moving_2.physics_module()->get_physical_model_prev_state());
 
 		};
-//		draw_frames_relative_to_other(flat_co_2, flat_co_3);
+		draw_frames_relative_to_other(flat_co_2, flat_co_3);
+//		draw_frame(frame, flat_co.physics_module()->get_physical_model()->create_imprint());
 
 //		draw_frame(frame, flat_co.physics_module()->get_physical_model()->create_imprint());
 //		draw_frame(frame, flat_co_2.physics_module()->get_physical_model()->create_imprint());
@@ -638,6 +646,11 @@ int main()
 		LEti::Space_Splitter_2D::update();
 
 		const LEti::Default_Narrow_CD::Collision_Data_List__Models& list = LEti::Space_Splitter_2D::get_collisions__models();
+
+		if(intersection_on_prev_frame)
+			intersection_on_prev_frame = false;
+
+		intersection_on_prev_frame = list.size() > 0;
 
 		auto it = list.begin();
 		while(it != list.end())
@@ -662,6 +675,8 @@ int main()
 
 			glm::vec3 normal = it->first_normal;
 			glm::vec3 contact = it->point;
+
+			indicator.set_pos(contact);
 
 			float e = 1.0f;
 
@@ -748,7 +763,12 @@ int main()
 			grab.release();
 		}
 
-//		ind.draw();
+		for(auto& co : objects_map)
+		{
+			draw_frame(frame, co.second->physics_module()->get_physical_model()->create_imprint());
+		}
+
+		indicator.draw();
 		flat_co.draw();
 		flat_co_2.draw();
 		flat_co_3.draw();
