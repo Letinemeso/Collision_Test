@@ -369,6 +369,7 @@ int main()
 	flat_co_3.set_scale({50.0f, 50.0f, 1.0f});
 	flat_co_3.set_pos({400, 400, 0});
 	flat_co_3.name = "red_big";
+	flat_co_3.set_rotation_angle(LEti::Math::DOUBLE_PI);
 
 	auto reset_func = [&]()
 	{
@@ -410,7 +411,8 @@ int main()
 
 	auto launch_func = [&]()
 	{
-		flat_co_3.velocity = {50, 20, 0};
+//		flat_co_3.velocity = {50, 20, 0};
+		flat_co_3.velocity = {112, -192, 0};
 	};
 
 	Grab grab;
@@ -543,19 +545,19 @@ int main()
 		flat_co_2.update();
 		flat_co_3.update();
 
+		LEti::Space_Splitter_2D::register_point(&cursor_position);
+
 		if(LEti::Event_Controller::mouse_button_was_pressed(GLFW_MOUSE_BUTTON_1))
 		{
 			cursor_position.z = 0.0f;
 			cursor_position.x = LEti::Window_Controller::get_cursor_position().x;
 			cursor_position.y = LEti::Window_Controller::get_cursor_position().y;
-			LEti::Space_Splitter_2D::register_point(&cursor_position);
 		}
 		if(LEti::Event_Controller::mouse_button_was_pressed(GLFW_MOUSE_BUTTON_2))
 		{
 			cursor_position.z = 0.0f;
 			cursor_position.x = LEti::Window_Controller::get_cursor_position().x;
 			cursor_position.y = LEti::Window_Controller::get_cursor_position().y;
-			LEti::Space_Splitter_2D::register_point(&cursor_position);
 		}
 
 		auto draw_frame = [](LEti::Debug_Drawable_Frame& _frame, const LEti::Physical_Model_2D::Imprint& _pm)->void
@@ -655,25 +657,19 @@ int main()
 		auto it = list.begin();
 		while(it != list.end())
 		{
-			if(it->time_of_intersection_ratio < 0.0001f)
-			{
-				++it;
-				continue;
-			}
+//			if(it->time_of_intersection_ratio < 0.0001f)
+//			{
+//				++it;
+//				continue;
+//			}
 
 			Moving_Object& bodyA = *(objects_map.at(it->first));
 			Moving_Object& bodyB = *(objects_map.at(it->second));
 
-			//			std::cout << "Collision!\n\tFirst: " << bodyA.name << "\n\tSecond: " << bodyB.name << "\n\n";
 
-			//			float dt_before_collision = DT * it->time_of_intersection_ratio;
+			glm::vec3 normal = it->first_normal - it->second_normal;
+			LEti::Math::shrink_vector_to_1(normal);
 
-			//			bodyA.revert_to_previous_state();
-			//			bodyA.update(it->time_of_intersection_ratio);
-			//			BodyB.revert_to_previous_state();
-			//			BodyB.update(it->time_of_intersection_ratio);
-
-			glm::vec3 normal = it->first_normal;
 			glm::vec3 contact = it->point;
 
 			indicator.set_pos(contact);
@@ -739,16 +735,17 @@ int main()
 
 		grab.update();
 
+		LEti::Space_Splitter_2D::unregister_point(&cursor_position);
+
 		if(LEti::Event_Controller::mouse_button_was_pressed(GLFW_MOUSE_BUTTON_1))
 		{
-			LEti::Space_Splitter_2D::unregister_point(&cursor_position);
 			auto plist = LEti::Space_Splitter_2D::get_collisions__points();
 
 			if(plist.size() != 0)
 				grab.grab(objects_map.at(plist.begin()->first), Grab::Type::drag);
-		}if(LEti::Event_Controller::mouse_button_was_pressed(GLFW_MOUSE_BUTTON_2))
+		}
+		if(LEti::Event_Controller::mouse_button_was_pressed(GLFW_MOUSE_BUTTON_2))
 		{
-			LEti::Space_Splitter_2D::unregister_point(&cursor_position);
 			auto plist = LEti::Space_Splitter_2D::get_collisions__points();
 
 			if(plist.size() != 0)
