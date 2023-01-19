@@ -667,7 +667,7 @@ int main()
 			Moving_Object& bodyB = *(objects_map.at(it->second));
 
 
-			glm::vec3 normal = it->first_normal - it->second_normal;
+			glm::vec3 normal = it->normal;
 			LEti::Math::shrink_vector_to_1(normal);
 
 			glm::vec3 contact = it->point;
