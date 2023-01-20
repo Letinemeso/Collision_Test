@@ -14,6 +14,7 @@
 #include "Physics/Space_Hasher_2D.h"
 #include "Physics/Default_Narrow_CD.h"
 #include "Physics/Default_Narrowest_CD.h"
+#include "Physics/SAT_Narrowest_CD.h"
 
 #include "Timer.h"
 
@@ -314,7 +315,8 @@ int main()
 
 	LEti::Space_Splitter_2D::set_broad_phase<LEti::Space_Hasher_2D>();
 	LEti::Space_Splitter_2D::set_narrow_phase<LEti::Default_Narrow_CD>();
-	LEti::Space_Splitter_2D::set_narrowest_phase<LEti::Default_Narrowest_CD>();
+//	LEti::Space_Splitter_2D::set_narrowest_phase<LEti::Default_Narrowest_CD>();
+	LEti::Space_Splitter_2D::set_narrowest_phase<LEti::SAT_Narrowest_CD>();
 	//	LEti::Space_Splitter_2D::set_precision(10);
 	LEti::Space_Splitter_2D::get_broad_phase()->set_precision(20);
 	LEti::Space_Splitter_2D::get_narrow_phase()->set_precision(20);
@@ -346,6 +348,7 @@ int main()
 	indicator.init(quad);
 	indicator.draw_module()->set_texture(LEti::Picture_Manager::get_picture("yellow_indicator"));
 	indicator.set_scale({3, 3, 1});
+	indicator.set_pos({30, 30, 0});
 	indicator.set_rotation_angle(LEti::Math::QUARTER_PI);
 
 	Moving_Object flat_co;
@@ -397,13 +400,21 @@ int main()
 			small_quads[i].update(0.0f);
 			small_quads[i].update_previous_state();
 		}
+
+		small_quads[8].set_pos({600, 600, 0});
+		small_quads[9].set_pos({675, 600, 0});
+
+		small_quads[8].update(0.0f);
+		small_quads[8].update_previous_state();
+
+		small_quads[9].update(0.0f);
+		small_quads[9].update_previous_state();
 	};
 	reset_func();
 
 	auto launch_func = [&]()
 	{
-//		flat_co_3.velocity = {50, 20, 0};
-//		flat_co_3.velocity = {112, -192, 0};
+		small_quads[8].velocity = {50, 50, 0};
 	};
 
 	Grab grab;
@@ -435,6 +446,11 @@ int main()
 	fps_info_block.init(tf_stub);
 	//	fps_info_block.set_pos(1150, 770, 0);
 	fps_info_block.set_pos({10, 770, 0});
+
+	LEti::Text_Field misc_info_block;
+	misc_info_block.init(tf_stub);
+	misc_info_block.set_pos({10, 10, 0});
+	misc_info_block.set_text("");
 
 	for(auto& co : objects_map)
 	{
@@ -641,81 +657,99 @@ int main()
 
 		intersection_on_prev_frame = list.size() > 0;
 
+		std::string points_str;
+
 		auto it = list.begin();
 		while(it != list.end())
 		{
-//			if(LEti::Math::floats_are_equal(it->time_of_intersection_ratio, 0.0f) || LEti::Math::floats_are_equal(it->time_of_intersection_ratio, 1.0f))
-//			{
-//				++it;
-//				continue;
-//			}
 
 			Moving_Object& bodyA = *(objects_map.at(it->first));
 			Moving_Object& bodyB = *(objects_map.at(it->second));
 
 
-			glm::vec3 normal = it->normal;
-			LEti::Math::shrink_vector_to_1(normal);
+			auto calculate_impulse = [&](const glm::vec3& _contact_point)->std::pair<glm::vec3, std::pair<float, float>>
+			{
+				glm::vec3 normal = it->normal;
 
-			glm::vec3 contact = it->point;
+//				glm::vec3 contact = it->point;
+				glm::vec3 contact = _contact_point;
 
-			indicator.set_pos(contact);
+				indicator.set_pos(contact);
 
-			float e = 1.0f;
+				float e = 1.0f;
 
+				glm::vec3 ra = contact - bodyA.physics_module()->get_physical_model()->center_of_mass();
+				glm::vec3 rb = contact - bodyB.physics_module()->get_physical_model()->center_of_mass();
 
+				glm::vec3 raPerp = {-ra.y, ra.x, 0.0f};
+				glm::vec3 rbPerp = {-rb.y, rb.x, 0.0f};
 
+				//	angular linear velocity
+				glm::vec3 alvA = raPerp * bodyA.angular_velocity;
+				glm::vec3 alvB = rbPerp * bodyB.angular_velocity;
 
+				glm::vec3 relativeVelocity = (bodyB.velocity + alvB) - (bodyA.velocity + alvA);
 
+				float contactVelocityMag = LEti::Math::dot_product(relativeVelocity, normal);
 
+				float raPerpDotN = LEti::Math::dot_product(raPerp, normal);
+				float rbPerpDotN = LEti::Math::dot_product(rbPerp, normal);
 
+				float denom = 1/1 + 1/1 +
+						(raPerpDotN * raPerpDotN) / bodyA.physics_module()->get_physical_model()->moment_of_inertia() +
+						(rbPerpDotN * rbPerpDotN) / bodyB.physics_module()->get_physical_model()->moment_of_inertia();
 
-			glm::vec3 ra = contact - bodyA.physics_module()->get_physical_model()->center_of_mass();
-			glm::vec3 rb = contact - bodyB.physics_module()->get_physical_model()->center_of_mass();
+				float j = -(1.0f + e) * contactVelocityMag;
+				j /= denom;
 
-			glm::vec3 raPerp = {-ra.y, ra.x, 0.0f};
-			glm::vec3 rbPerp = {-rb.y, rb.x, 0.0f};
+				glm::vec3 impulse = j * normal;
 
-			//	angular linear velocity
-			glm::vec3 alvA = raPerp * bodyA.angular_velocity;
-			glm::vec3 alvB = rbPerp * bodyB.angular_velocity;
+				float avA = LEti::Math::cross_product(ra, impulse) / bodyA.physics_module()->get_physical_model()->moment_of_inertia();
+				float avB = LEti::Math::cross_product(rb, impulse) / bodyB.physics_module()->get_physical_model()->moment_of_inertia();
 
-			glm::vec3 relativeVelocity = (bodyB.velocity + alvB) - (bodyA.velocity + alvA);
+				return {impulse, {avA, avB}};
+			};
 
-			float contactVelocityMag = LEti::Math::dot_product(relativeVelocity, normal);
+			auto resolve_collision_default = [&](const std::pair<glm::vec3, std::pair<float, float>>& _impulses)
+			{
+				glm::vec3 impulse = _impulses.first;
 
-			float raPerpDotN = LEti::Math::dot_product(raPerp, normal);
-			float rbPerpDotN = LEti::Math::dot_product(rbPerp, normal);
+				bodyA.velocity -= impulse / 1.0f;
+				bodyA.angular_velocity -= _impulses.second.first;
+				bodyB.velocity += impulse / 1.0f;
+				bodyB.angular_velocity += _impulses.second.second;
+			};
+//			resolve_collision_default();
 
-			float denom = 1/1 + 1/1 +
-					(raPerpDotN * raPerpDotN) / bodyA.physics_module()->get_physical_model()->moment_of_inertia() +
-					(rbPerpDotN * rbPerpDotN) / bodyB.physics_module()->get_physical_model()->moment_of_inertia();
+			std::list<std::pair<glm::vec3, std::pair<float, float>>> impulses;
 
-			float j = -(1.0f + e) * contactVelocityMag;
-			j /= denom;
-
-			glm::vec3 impulse = j * normal;
-
-			float dt_before_collision = DT * it->time_of_intersection_ratio;
+			for(auto lit = it->points.begin(); !lit.end_reached(); ++lit)
+			{
+				impulses.push_back(calculate_impulse(*lit));
+			}
 
 			bodyA.revert_to_previous_state();
 			bodyA.update(it->time_of_intersection_ratio);
 			bodyB.revert_to_previous_state();
 			bodyB.update(it->time_of_intersection_ratio);
 
-			float avA = LEti::Math::cross_product(ra, impulse) / bodyA.physics_module()->get_physical_model()->moment_of_inertia();
-			float avB = LEti::Math::cross_product(rb, impulse) / bodyB.physics_module()->get_physical_model()->moment_of_inertia();
-
-			bodyA.velocity -= impulse / 1.0f;
-			bodyA.angular_velocity -= avA;
-			bodyB.velocity += impulse / 1.0f;
-			bodyB.angular_velocity += avB;
-
-
+//			resolve_collision_default()
+			for(const auto& imp : impulses)
+			{
+				resolve_collision_default(imp);
+			}
 
 			bodyA.update(1.0f - it->time_of_intersection_ratio);
 			bodyB.update(1.0f - it->time_of_intersection_ratio);
 
+//			for(auto lit = it->points.begin(); !lit.end_reached(); ++lit)
+//			{
+//				resolve_collision_default(*lit);
+
+//				points_str += std::to_string(lit->x) + ", " + std::to_string(lit->y) + ",, ";
+//			}
+
+			points_str += "/ ";
 
 			++it;
 		}
@@ -752,7 +786,12 @@ int main()
 			draw_frame(frame, co.second->physics_module()->get_physical_model()->create_imprint());
 		}
 
-		indicator.draw();
+		if(intersection_on_prev_frame)
+		{
+			indicator.draw();
+			misc_info_block.set_text(points_str.c_str());
+			misc_info_block.draw();
+		}
 
 		for(auto& co : objects_map)
 		{
