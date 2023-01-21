@@ -708,15 +708,16 @@ int main()
 
 				float j = -(1.0f + e) * contactVelocityMag;
 				j /= denom;
+				j /= (float)it->points.size();
 
 				glm::vec3 impulse = j * normal;
 
 				float avA = LEti::Math::cross_product(ra, impulse) / bodyA.physics_module()->get_physical_model()->moment_of_inertia();
 				float avB = LEti::Math::cross_product(rb, impulse) / bodyB.physics_module()->get_physical_model()->moment_of_inertia();
 
-				impulse /= (float)it->points.size();
-				avA /= (float)it->points.size();
-				avB /= (float)it->points.size();
+//				impulse /= (float)it->points.size();
+//				avA /= (float)it->points.size();
+//				avB /= (float)it->points.size();
 
 				return {impulse, {avA, avB}};
 			};
