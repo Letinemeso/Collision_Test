@@ -18,6 +18,8 @@ unix {
 
 
 win32 {
+    LIBS += "../Utility/debug/libUtility.a"
+    LIBS += "../L_Variable/debug/libL_Variable.a"
     LIBS += "../LEti_Engine/debug/libLEti_Engine.a"
 
     LIBS += "../LEti_Engine/OpenGL/Windows_x64_mingw/lib/libglfw3.a"
