@@ -2,7 +2,7 @@
 \
     |amount|
     \
-        "6"
+        "7"
     /
     |names|
     \
@@ -11,7 +11,8 @@
         "white_texture"
         "font_texture"
         "red_indicator"
-        "yellow_indicator"        
+        "yellow_indicator"
+        "purple_texture"
     /
     |paths|
     \
@@ -21,5 +22,6 @@
         "Resources/Font/font_yellow.png"
         "Resources/Textures/red.png"
         "Resources/Textures/yellow.png"
+        "Resources/Textures/purple.png"
     /
 /

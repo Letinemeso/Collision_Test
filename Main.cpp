@@ -346,7 +346,7 @@ int main()
 
 	LEti::Object_2D indicator;
 	indicator.init(quad);
-	indicator.draw_module()->set_texture(LEti::Picture_Manager::get_picture("yellow_indicator"));
+	indicator.draw_module()->set_texture(LEti::Picture_Manager::get_picture("purple_texture"));
 	indicator.set_scale({3, 3, 1});
 	indicator.set_pos({30, 30, 0});
 	indicator.set_rotation_angle(LEti::Math::QUARTER_PI);
@@ -374,7 +374,7 @@ int main()
 	{
 		//	TEST 2
 
-		flat_co.set_pos({700, 100, 0});
+		flat_co.set_pos({700, 400, 0});
 
 		flat_co.velocity = {0.0f, 0.0f, 0.0f};
 
@@ -390,6 +390,7 @@ int main()
 		flat_co.update(0.0f);
 		flat_co.update_previous_state();
 
+
 		for(unsigned int i=0; i<small_quads_amount; ++i)
 		{
 			small_quads[i].set_pos({1000, 200 + (55 * i), 0});
@@ -400,6 +401,12 @@ int main()
 			small_quads[i].update(0.0f);
 			small_quads[i].update_previous_state();
 		}
+
+
+		small_quads[0].set_pos({500, 400, 0});
+		small_quads[0].update(0.0f);
+		small_quads[0].update_previous_state();
+
 
 		small_quads[8].set_pos({600, 600, 0});
 		small_quads[9].set_pos({675, 600, 0});
@@ -707,6 +714,10 @@ int main()
 				float avA = LEti::Math::cross_product(ra, impulse) / bodyA.physics_module()->get_physical_model()->moment_of_inertia();
 				float avB = LEti::Math::cross_product(rb, impulse) / bodyB.physics_module()->get_physical_model()->moment_of_inertia();
 
+				impulse /= (float)it->points.size();
+				avA /= (float)it->points.size();
+				avB /= (float)it->points.size();
+
 				return {impulse, {avA, avB}};
 			};
 
@@ -726,12 +737,19 @@ int main()
 			for(auto lit = it->points.begin(); !lit.end_reached(); ++lit)
 			{
 				impulses.push_back(calculate_impulse(*lit));
+
+				points_str += std::to_string(lit->x) + ", " + std::to_string(lit->y) + ",, ";
+
+				indicator.set_pos(*lit);
+				indicator.draw();
 			}
 
+			float ratio = it->time_of_intersection_ratio;
+
 			bodyA.revert_to_previous_state();
-			bodyA.update(it->time_of_intersection_ratio);
+			bodyA.update(ratio);
 			bodyB.revert_to_previous_state();
-			bodyB.update(it->time_of_intersection_ratio);
+			bodyB.update(ratio);
 
 //			resolve_collision_default()
 			for(const auto& imp : impulses)
@@ -739,8 +757,8 @@ int main()
 				resolve_collision_default(imp);
 			}
 
-			bodyA.update(1.0f - it->time_of_intersection_ratio);
-			bodyB.update(1.0f - it->time_of_intersection_ratio);
+			bodyA.update(1.0f - ratio);
+			bodyB.update(1.0f - ratio);
 
 //			for(auto lit = it->points.begin(); !lit.end_reached(); ++lit)
 //			{
@@ -788,7 +806,6 @@ int main()
 
 		if(intersection_on_prev_frame)
 		{
-			indicator.draw();
 			misc_info_block.set_text(points_str.c_str());
 			misc_info_block.draw();
 		}
