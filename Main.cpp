@@ -353,6 +353,8 @@ int main()
 
 	Moving_Object flat_co;
 
+	flat_co.mass = 4.0f;
+
 	const unsigned int small_quads_amount = 10;
 
 	Moving_Object small_quads[small_quads_amount];
@@ -408,7 +410,7 @@ int main()
 		small_quads[0].update_previous_state();
 
 
-		small_quads[8].set_pos({600, 600, 0});
+		small_quads[8].set_pos({500, 600, 0});
 		small_quads[9].set_pos({675, 600, 0});
 
 		small_quads[8].update(0.0f);
@@ -421,7 +423,7 @@ int main()
 
 	auto launch_func = [&]()
 	{
-		small_quads[8].velocity = {50, 50, 0};
+		small_quads[8].velocity = {300, 0, 0};
 	};
 
 	Grab grab;
@@ -702,13 +704,13 @@ int main()
 				float raPerpDotN = LEti::Math::dot_product(raPerp, normal);
 				float rbPerpDotN = LEti::Math::dot_product(rbPerp, normal);
 
-				float denom = 1/1 + 1/1 +
+				float denom = 1 / bodyA.mass + 1 / bodyB.mass +
 						(raPerpDotN * raPerpDotN) / bodyA.physics_module()->get_physical_model()->moment_of_inertia() +
 						(rbPerpDotN * rbPerpDotN) / bodyB.physics_module()->get_physical_model()->moment_of_inertia();
 
 				float j = -(1.0f + e) * contactVelocityMag;
 				j /= denom;
-				j /= (float)it->points.size();
+//				j /= (float)it->points.size();
 
 				glm::vec3 impulse = j * normal;
 
@@ -726,24 +728,29 @@ int main()
 			{
 				glm::vec3 impulse = _impulses.first;
 
-				bodyA.velocity -= impulse / 1.0f;
+				bodyA.velocity -= impulse / bodyA.mass;
 				bodyA.angular_velocity -= _impulses.second.first;
-				bodyB.velocity += impulse / 1.0f;
+				bodyB.velocity += impulse / bodyB.mass;
 				bodyB.angular_velocity += _impulses.second.second;
 			};
 //			resolve_collision_default();
 
 			std::list<std::pair<glm::vec3, std::pair<float, float>>> impulses;
 
+			glm::vec3 middle_cp(0.0f, 0.0f, 0.0f);
+
 			for(auto lit = it->points.begin(); !lit.end_reached(); ++lit)
 			{
-				impulses.push_back(calculate_impulse(*lit));
+//				impulses.push_back(calculate_impulse(*lit));
+				middle_cp += *lit;
 
 				points_str += std::to_string(lit->x) + ", " + std::to_string(lit->y) + ",, ";
 
 				indicator.set_pos(*lit);
 				indicator.draw();
 			}
+			middle_cp /= it->points.size();
+			impulses.push_back(calculate_impulse(middle_cp));
 
 			float ratio = it->time_of_intersection_ratio;
 
