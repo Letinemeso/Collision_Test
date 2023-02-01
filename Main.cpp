@@ -72,7 +72,8 @@ public:
 	{
 		cursor_pos = {LEti::Window_Controller::get_cursor_position().x, LEti::Window_Controller::get_cursor_position().y, 0.0f};
 		if(!grabbed_object) return;
-		grabbed_object->velocity = {0.0f, 0.0f, 0.0f};
+//		grabbed_object->velocity = {0.0f, 0.0f, 0.0f};
+		grabbed_object->velocity = grabbed_object->get_pos() - grabbed_object->get_pos_prev();
 
 		if(type == Type::drag)
 			grabbed_object->set_pos(cursor_pos);
@@ -483,8 +484,10 @@ int main()
 //		small_quads[8].velocity = {100, 0, 0};
 //		small_quads[9].velocity = {80, 0, 0};
 
-		small_quads[8].angular_velocity = -LEti::Math::HALF_PI;
-		small_quads[9].angular_velocity = LEti::Math::HALF_PI;
+//		small_quads[8].angular_velocity = -LEti::Math::HALF_PI;
+//		small_quads[9].angular_velocity = LEti::Math::HALF_PI;
+
+		small_quads[7].velocity = {7, -150, 0};
 
 //		small_quads[3].velocity = {0, -100, 0};
 	};
@@ -686,6 +689,7 @@ int main()
 		std::string points_str;
 
 		auto it = list.begin();
+
 		while(it != list.end())
 		{
 
@@ -836,6 +840,7 @@ int main()
 		for(auto& co : objects_map)
 		{
 			draw_frame(frame, co.second->physics_module()->get_physical_model()->create_imprint());
+			draw_frame(frame, *co.second->physics_module()->get_physical_model_prev_state());
 		}
 
 		if(intersection_on_prev_frame)
