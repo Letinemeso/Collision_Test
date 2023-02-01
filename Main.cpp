@@ -397,7 +397,7 @@ int main()
 	{
 		small_quads[i].init(quad);
 		small_quads[i].set_scale({25, 25, 1});
-		small_quads[i].set_pos({1000, 100 + (55 * i), 0});
+		small_quads[i].set_pos({1000, 100 + (70 * i), 0});
 	}
 
 //	flat_co.init("flat_co_model");
@@ -406,6 +406,9 @@ int main()
 	flat_co.draw_module()->set_texture(LEti::Picture_Manager::get_picture("white_texture"));
 	flat_co.name = "white";
 
+
+	small_quads[8].draw_module()->set_texture(LEti::Picture_Manager::get_picture("white_texture"));
+	small_quads[8].name = "white_small";
 
 	auto reset_func = [&]()
 	{
@@ -430,7 +433,7 @@ int main()
 
 		for(unsigned int i=0; i<small_quads_amount; ++i)
 		{
-			small_quads[i].set_pos({1000, 100 + (55 * i), 0});
+			small_quads[i].set_pos({1000, 100 + (70 * i), 0});
 			small_quads[i].velocity = {0.0f, 0.0f, 0.0f};
 			small_quads[i].angular_velocity = 0.0f;
 			small_quads[i].set_rotation_angle(0.0f);
@@ -465,7 +468,7 @@ int main()
 
 
 		small_quads[8].set_pos({500, 600, 0});
-		small_quads[9].set_pos({600, 600, 0});
+		small_quads[9].set_pos({560, 600, 0});
 
 		small_quads[8].update(0.0f);
 		small_quads[8].update_previous_state();
@@ -478,7 +481,12 @@ int main()
 	auto launch_func = [&]()
 	{
 //		small_quads[8].velocity = {100, 0, 0};
-		small_quads[3].velocity = {0, -100, 0};
+//		small_quads[9].velocity = {80, 0, 0};
+
+		small_quads[8].angular_velocity = -LEti::Math::HALF_PI;
+		small_quads[9].angular_velocity = LEti::Math::HALF_PI;
+
+//		small_quads[3].velocity = {0, -100, 0};
 	};
 
 	Grab grab;
@@ -656,7 +664,7 @@ int main()
 
 		for(auto& co : objects_map)
 		{
-//			co.second->velocity -= glm::vec3(0.0f, 5.0f, 0.0f);
+//			co.second->velocity -= glm::vec3(0.0f, 9.8f, 0.0f);
 		}
 
 		LEti::Space_Splitter_2D::update();
@@ -667,6 +675,13 @@ int main()
 			intersection_on_prev_frame = false;
 
 		intersection_on_prev_frame = list.size() > 0;
+
+		if(small_quads[8].velocity != glm::vec3{0, 0, 0} || !LEti::Math::floats_are_equal(small_quads[8].angular_velocity, 0.0f))
+		{
+			int kostyl = 5;
+			kostyl++;
+		}
+
 
 		std::string points_str;
 
@@ -686,6 +701,10 @@ int main()
 				glm::vec3 contact = _contact_point;
 
 				indicator.set_pos(contact);
+//				bodyA.draw();
+//				bodyB.draw();
+//				indicator.draw();
+//				LEti::Window_Controller::swap_buffers();
 
 				float e = 1.0f;
 
