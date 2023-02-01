@@ -147,11 +147,46 @@ int main()
 	LV::Type_Manager::register_type("bool", {
 										[](const std::string& _val)
 										{
-											if(_val == "true" || _val == "false")
-											return true;
+											if(_val == "true" || _val == "false" || _val == "+" || _val == "-" || _val == "1" || _val == "0")
+												return true;
 											return false;
 										},
-										[](void* _variable_vptr, const LDS::Vector<std::string>& _values_as_string) { *((bool*&)_variable_vptr) = _values_as_string[0] == "true" ? true : false; }
+										[](void* _variable_vptr, const LDS::Vector<std::string>& _values_as_string)
+										{
+											bool& var = *((bool*&)_variable_vptr);
+
+											if(_values_as_string[0] == "true" || _values_as_string[0] == "+" || _values_as_string[0] == "1")
+												var = true;
+											else if(_values_as_string[0] == "false" || _values_as_string[0] == "-" || _values_as_string[0] == "0")
+												var = false;
+
+//											*((bool*&)_variable_vptr) = _values_as_string[0] == "true" ? true : false;
+										}
+									});
+	LV::Type_Manager::register_type("bool*", {
+										[](const std::string& _val)
+										{
+											if(_val == "true" || _val == "false" || _val == "+" || _val == "-" || _val == "1" || _val == "0")
+												return true;
+											return false;
+										},
+										[](void* _variable_vptr, const LDS::Vector<std::string>& _values_as_string)
+										{
+											bool** var_ptr_ptr = (bool**)_variable_vptr;
+
+											if(*var_ptr_ptr == nullptr)
+											*var_ptr_ptr = new bool[_values_as_string.size()];
+
+											bool* var_ptr = *var_ptr_ptr;
+
+											for(unsigned int i=0; i<_values_as_string.size(); ++i)
+											{
+												if(_values_as_string[i] == "true" || _values_as_string[i] == "+" || _values_as_string[i] == "1")
+													var_ptr[i] = true;
+												else if(_values_as_string[i] == "false" || _values_as_string[i] == "-" || _values_as_string[i] == "0")
+													var_ptr[i] = false;
+											}
+										}
 									});
 	LV::Type_Manager::register_type("std::string", {
 										[](const std::string& _val) { return true; },
@@ -362,7 +397,7 @@ int main()
 	{
 		small_quads[i].init(quad);
 		small_quads[i].set_scale({25, 25, 1});
-		small_quads[i].set_pos({1000, 200 + (55 * i), 0});
+		small_quads[i].set_pos({1000, 100 + (55 * i), 0});
 	}
 
 //	flat_co.init("flat_co_model");
@@ -395,7 +430,7 @@ int main()
 
 		for(unsigned int i=0; i<small_quads_amount; ++i)
 		{
-			small_quads[i].set_pos({1000, 200 + (55 * i), 0});
+			small_quads[i].set_pos({1000, 100 + (55 * i), 0});
 			small_quads[i].velocity = {0.0f, 0.0f, 0.0f};
 			small_quads[i].angular_velocity = 0.0f;
 			small_quads[i].set_rotation_angle(0.0f);
@@ -404,6 +439,25 @@ int main()
 			small_quads[i].update_previous_state();
 		}
 
+		//	vertical
+		for(unsigned int i=1; i<4; ++i)
+		{
+			small_quads[i].set_pos({100, 400 + (55 * i), 0});
+			small_quads[i].velocity = {0.0f, 0.0f, 0.0f};
+			small_quads[i].angular_velocity = 0.0f;
+			small_quads[i].set_rotation_angle(0.0f);
+
+			small_quads[i].update(0.0f);
+			small_quads[i].update_previous_state();
+		}
+		small_quads[3].set_pos({100, 600, 0});
+		small_quads[3].update(0.0f);
+		small_quads[3].update_previous_state();
+
+		small_quads[1].set_pos({300, 400, 0});
+		small_quads[1].update(0.0f);
+		small_quads[1].update_previous_state();
+		//	~vertical
 
 		small_quads[0].set_pos({500, 400, 0});
 		small_quads[0].update(0.0f);
@@ -411,7 +465,7 @@ int main()
 
 
 		small_quads[8].set_pos({500, 600, 0});
-		small_quads[9].set_pos({675, 600, 0});
+		small_quads[9].set_pos({600, 600, 0});
 
 		small_quads[8].update(0.0f);
 		small_quads[8].update_previous_state();
@@ -423,7 +477,8 @@ int main()
 
 	auto launch_func = [&]()
 	{
-		small_quads[8].velocity = {300, 0, 0};
+//		small_quads[8].velocity = {100, 0, 0};
+		small_quads[3].velocity = {0, -100, 0};
 	};
 
 	Grab grab;
@@ -520,9 +575,19 @@ int main()
 		{
 			reset_func();
 		}
+
+		if(LEti::Event_Controller::key_was_pressed(GLFW_KEY_S))
+		{
+			for(auto& co : objects_map)
+			{
+				co.second->velocity = {0.0f, 0.0f, 0.0f};
+				co.second->angular_velocity = 0.0f;
+			}
+		}
+
 		if(LEti::Event_Controller::key_was_pressed(GLFW_KEY_SPACE))
 		{
-			reset_func();
+//			reset_func();
 			launch_func();
 		}
 
@@ -588,74 +653,11 @@ int main()
 			_frame.update();
 			_frame.draw();
 		};
-		auto draw_frames_relative_to_other = [&](const LEti::Object_2D& _moving_1, const LEti::Object_2D& _moving_2)->void
+
+		for(auto& co : objects_map)
 		{
-			LEti::Physical_Model_2D::Imprint pm = *_moving_1.physics_module()->get_physical_model_prev_state();
-
-			draw_frame(frame, pm);
-
-
-			glm::mat4x4 fake_movement_matrix{
-				1.0f, 0.0f, 0.0f, 0.0f,
-				0.0f, 1.0f, 0.0f, 0.0f,
-				0.0f, 0.0f, 1.0f, 0.0f,
-				900.0f, 600.0f, 0.0f, 1.0f
-			};
-			glm::mat4x4 fake_default_matrix{
-				1.0f, 0.0f, 0.0f, 0.0f,
-				0.0f, 1.0f, 0.0f, 0.0f,
-				0.0f, 0.0f, 1.0f, 0.0f,
-				0.0f, 0.0f, 0.0f, 1.0f
-			};
-			glm::mat4x4 fake_scale_matrix{
-				30.0f, 0.0f, 0.0f, 0.0f,
-				0.0f, 30.0f, 0.0f, 0.0f,
-				0.0f, 0.0f, 1.0f, 0.0f,
-				0.0f, 0.0f, 0.0f, 1.0f
-			};
-
-			glm::vec3 pos_diff_vector_prev = _moving_1.get_pos_prev() - _moving_2.get_pos_prev();
-			pos_diff_vector_prev = _moving_2.get_rotation_matrix_inversed_for_time_ratio(0.0f) * glm::vec4(pos_diff_vector_prev, 1.0f);
-
-			glm::mat4x4 diff_pos_prev = fake_default_matrix;
-			diff_pos_prev *= fake_movement_matrix;
-			diff_pos_prev[3][0] += pos_diff_vector_prev[0];
-			diff_pos_prev[3][1] += pos_diff_vector_prev[1];
-			glm::mat4x4 diff_rotation_prev = _moving_1.get_rotation_matrix_for_time_ratio(0.0f) / _moving_2.get_rotation_matrix_for_time_ratio(0.0f);
-			glm::mat4x4 diff_scale_prev = _moving_1.get_scale_matrix_for_time_ratio(0.0f);
-
-
-			glm::vec3 pos_diff_vector = _moving_1.get_pos() - _moving_2.get_pos();
-			pos_diff_vector = _moving_2.get_rotation_matrix_inversed_for_time_ratio(1.0f) * glm::vec4(pos_diff_vector, 1.0f);
-
-			glm::mat4x4 diff_pos = fake_default_matrix;
-			diff_pos *= fake_movement_matrix;
-			diff_pos[3][0] += pos_diff_vector[0];
-			diff_pos[3][1] += pos_diff_vector[1];
-			glm::mat4x4 diff_rotation = _moving_1.get_rotation_matrix_for_time_ratio(1.0f) / _moving_2.get_rotation_matrix_for_time_ratio(1.0f);
-			glm::mat4x4 diff_scale = _moving_1.get_scale_matrix_for_time_ratio(1.0f) * (_moving_2.get_scale_matrix_for_time_ratio(1.0f) / _moving_2.get_scale_matrix_for_time_ratio(0.0f));
-
-			LEti::Physical_Model_2D::Imprint initial_second_pm = *_moving_2.physics_module()->get_physical_model_prev_state();
-			initial_second_pm.update(fake_movement_matrix, fake_default_matrix, _moving_2.get_scale_matrix_for_time_ratio(0.0f));
-
-
-			draw_frame(frame, initial_second_pm);
-
-			pm.update(diff_pos_prev, diff_rotation_prev, diff_scale_prev);
-			draw_frame(frame, pm);
-
-			pm.update(diff_pos, diff_rotation, diff_scale);
-			draw_frame(frame, pm);
-
-			//			draw_frame(frame, *_moving_2.physics_module()->get_physical_model_prev_state());
-
-		};
-//		draw_frames_relative_to_other(flat_co_2, flat_co_3);
-//		draw_frame(frame, flat_co.physics_module()->get_physical_model()->create_imprint());
-
-//		draw_frame(frame, flat_co.physics_module()->get_physical_model()->create_imprint());
-//		draw_frame(frame, flat_co_2.physics_module()->get_physical_model()->create_imprint());
-//		draw_frame(frame, flat_co_3.physics_module()->get_physical_model()->create_imprint());
+//			co.second->velocity -= glm::vec3(0.0f, 5.0f, 0.0f);
+		}
 
 		LEti::Space_Splitter_2D::update();
 
@@ -717,10 +719,6 @@ int main()
 				float avA = LEti::Math::cross_product(ra, impulse) / bodyA.physics_module()->get_physical_model()->moment_of_inertia();
 				float avB = LEti::Math::cross_product(rb, impulse) / bodyB.physics_module()->get_physical_model()->moment_of_inertia();
 
-//				impulse /= (float)it->points.size();
-//				avA /= (float)it->points.size();
-//				avB /= (float)it->points.size();
-
 				return {impulse, {avA, avB}};
 			};
 
@@ -738,10 +736,8 @@ int main()
 			std::list<std::pair<glm::vec3, std::pair<float, float>>> impulses;
 
 			glm::vec3 middle_cp(0.0f, 0.0f, 0.0f);
-
 			for(auto lit = it->points.begin(); !lit.end_reached(); ++lit)
 			{
-//				impulses.push_back(calculate_impulse(*lit));
 				middle_cp += *lit;
 
 				points_str += std::to_string(lit->x) + ", " + std::to_string(lit->y) + ",, ";
@@ -750,7 +746,18 @@ int main()
 				indicator.draw();
 			}
 			middle_cp /= it->points.size();
+			std::cout << "midddle cp:\nx: " << middle_cp.x << "\ny: " << middle_cp.y << "\n\n";
 			impulses.push_back(calculate_impulse(middle_cp));
+
+//			for(auto lit = it->points.begin(); !lit.end_reached(); ++lit)
+//			{
+//				impulses.push_back(calculate_impulse(*lit));
+
+//				points_str += std::to_string(lit->x) + ", " + std::to_string(lit->y) + ",, ";
+
+//				indicator.set_pos(*lit);
+//				indicator.draw();
+//			}
 
 			float ratio = it->time_of_intersection_ratio;
 
