@@ -27,27 +27,30 @@
 #include <thread>
 
 
+#include <Object_System/Rigid_Body_2D.h>
+
+
 #define DT LEti::Event_Controller::get_dt()
 
-class Moving_Object : public LEti::Object_2D
-{
-public:
-	glm::vec3 velocity;
-	float angular_velocity = 0.0f;
-	float mass = 1.0f;
-	std::string name;
+//class LEti::Rigid_Body_2D : public LEti::Object_2D
+//{
+//public:
+//	glm::vec3 velocity;
+//	float angular_velocity = 0.0f;
+//	float mass = 1.0f;
+//	std::string name;
 
-public:
-	void update(float _ratio = 1.0f) override
-	{
-		move(velocity * DT * _ratio);
+//public:
+//	void update(float _ratio = 1.0f) override
+//	{
+//		move(velocity * DT * _ratio);
 
-		rotate(angular_velocity * DT * (_ratio));
+//		rotate(angular_velocity * DT * (_ratio));
 
-		LEti::Object_2D::update();
-	}
+//		LEti::Object_2D::update();
+//	}
 
-};
+//};
 
 class Grab
 {
@@ -60,7 +63,7 @@ public:
 	};
 
 private:
-	Moving_Object* grabbed_object = nullptr;
+	LEti::Rigid_Body_2D* grabbed_object = nullptr;
 	glm::vec3 cursor_pos;
 
 	glm::vec3 launch_from{0.0f, 0.0f, 0.0f};
@@ -75,7 +78,7 @@ public:
 
 		if(!grabbed_object) return;
 //		grabbed_object->velocity = {0.0f, 0.0f, 0.0f};
-		grabbed_object->velocity = grabbed_object->get_pos() - grabbed_object->get_pos_prev();
+		grabbed_object->set_velocity(grabbed_object->get_pos() - grabbed_object->get_pos_prev());
 
 		if(LEti::Event_Controller::is_key_down(GLFW_KEY_Q))
 			grabbed_object->rotate(LEti::Math::PI * LEti::Event_Controller::get_dt());
@@ -86,14 +89,14 @@ public:
 			grabbed_object->set_pos(cursor_pos);
 	}
 
-	void grab(Moving_Object* _obj, Type _type)
+	void grab(LEti::Rigid_Body_2D* _obj, Type _type)
 	{
 		if(type != Type::none) return;
 		type = _type;
 		grabbed_object = _obj;
 
-		grabbed_object->velocity = {0.0f, 0.0f, 0.0f};
-		grabbed_object->angular_velocity = 0.0f;
+		grabbed_object->set_velocity({0.0f, 0.0f, 0.0f});
+		grabbed_object->set_angular_velocity(0.0f);
 
 		if(_type == Type::drag)
 			grabbed_object->set_pos(cursor_pos);
@@ -115,9 +118,8 @@ public:
 		else if(type == Type::launch)
 		{
 			glm::vec3 stride = (cursor_pos - launch_from);
-			std::cout << grabbed_object->name << "\nx: " << grabbed_object->get_pos().x << " y: " << grabbed_object->get_pos().y << "\nangle: " << grabbed_object->get_rotation_angle() << "\nstride: x: " << stride.x << " y: " << stride.y << "\n\n";
 
-			grabbed_object->velocity = stride;
+			grabbed_object->set_velocity(stride);
 		}
 
 
@@ -380,30 +382,27 @@ int main()
 	indicator.set_pos({30, 30, 0});
 	indicator.set_rotation_angle(LEti::Math::QUARTER_PI);
 
-	Moving_Object flat_co;
+	LEti::Rigid_Body_2D flat_co;
 
-	flat_co.mass = 4.0f;
+	flat_co.set_mass(4.0f);
 
 	const unsigned int small_quads_amount = 10;
 
-	Moving_Object small_quads[small_quads_amount];
+	LEti::Rigid_Body_2D small_quads[small_quads_amount];
 	for(unsigned int i=0; i<small_quads_amount; ++i)
 	{
 		small_quads[i].init(quad);
 		small_quads[i].set_scale({25, 25, 1});
 		small_quads[i].set_pos({1000, 100 + (70 * i), 0});
-		small_quads[i].name = "small_quad_" + std::to_string(i);
 	}
 
 //	flat_co.init("flat_co_model");
 	flat_co.init(quad);
 	flat_co.set_pos({800, 400, 0});
 	flat_co.draw_module()->set_texture(LEti::Picture_Manager::get_picture("white_texture"));
-	flat_co.name = "white";
 
 
 	small_quads[8].draw_module()->set_texture(LEti::Picture_Manager::get_picture("white_texture"));
-	small_quads[8].name = "white_small";
 
 	auto reset_func = [&]()
 	{
@@ -411,7 +410,7 @@ int main()
 
 		flat_co.set_pos({700, 400, 0});
 
-		flat_co.velocity = {0.0f, 0.0f, 0.0f};
+		flat_co.set_velocity({0.0f, 0.0f, 0.0f});
 
 		flat_co.set_scale(50);
 
@@ -419,7 +418,7 @@ int main()
 
 		flat_co.set_rotation_axis({0.0f, 0.0f, 1.0f});
 
-		flat_co.angular_velocity = 0.0f;
+		flat_co.set_angular_velocity(0.0f);
 
 
 		flat_co.update(0.0f);
@@ -429,8 +428,8 @@ int main()
 		for(unsigned int i=0; i<small_quads_amount; ++i)
 		{
 			small_quads[i].set_pos({1000, 100 + (70 * i), 0});
-			small_quads[i].velocity = {0.0f, 0.0f, 0.0f};
-			small_quads[i].angular_velocity = 0.0f;
+			small_quads[i].set_velocity({0.0f, 0.0f, 0.0f});
+			small_quads[i].set_angular_velocity(0.0f);
 			small_quads[i].set_rotation_angle(0.0f);
 
 			small_quads[i].update(0.0f);
@@ -441,8 +440,8 @@ int main()
 		for(unsigned int i=1; i<4; ++i)
 		{
 			small_quads[i].set_pos({100, 400 + (55 * i), 0});
-			small_quads[i].velocity = {0.0f, 0.0f, 0.0f};
-			small_quads[i].angular_velocity = 0.0f;
+			small_quads[i].set_velocity({0.0f, 0.0f, 0.0f});
+			small_quads[i].set_angular_velocity(0.0f);
 			small_quads[i].set_rotation_angle(0.0f);
 
 			small_quads[i].update(0.0f);
@@ -482,18 +481,18 @@ int main()
 
 //		small_quads[0].velocity = {197, -56, 0};
 
-//		small_quads[8].angular_velocity = -LEti::Math::HALF_PI;
-//		small_quads[9].angular_velocity = LEti::Math::HALF_PI;
+//		small_quads[8].set_angular_velocity = -LEti::Math::HALF_PI;
+//		small_quads[9].set_angular_velocity = LEti::Math::HALF_PI;
 
-		small_quads[7].velocity = {0, -1000, 0};
-		small_quads[5].velocity = {0, 1000, 0};
+		small_quads[7].set_velocity({0, -1000, 0});
+		small_quads[5].set_velocity({0, 1000, 0});
 
 //		small_quads[3].velocity = {0, -100, 0};
 	};
 
 	Grab grab;
 
-	std::map<const LEti::Object_2D*, Moving_Object*> objects_map;
+	std::map<const LEti::Object_2D*, LEti::Rigid_Body_2D*> objects_map;
 	objects_map.emplace(&flat_co, &flat_co);
 	for(unsigned int i=0; i<small_quads_amount; ++i)
 		objects_map.emplace(small_quads + i, small_quads + i);
@@ -592,8 +591,8 @@ int main()
 		{
 			for(auto& co : objects_map)
 			{
-				co.second->velocity = {0.0f, 0.0f, 0.0f};
-				co.second->angular_velocity = 0.0f;
+				co.second->set_velocity({0.0f, 0.0f, 0.0f});
+				co.second->set_angular_velocity(0.0f);
 			}
 		}
 
@@ -605,28 +604,32 @@ int main()
 
 		for(auto& co : objects_map)
 		{
-			Moving_Object& cco = *co.second;
+			LEti::Rigid_Body_2D& cco = *co.second;
+			glm::vec3 vel = cco.velocity();
+
 			if(cco.get_pos().y >= 1200.0f)
 			{
 				cco.set_pos({cco.get_pos().x, 1199.0f, 0.0f});
-				cco.velocity.y *= -1;
+				vel.y *= -1;
 			}
 			else if(cco.get_pos().y <= -400.0f)
 			{
 				cco.set_pos({cco.get_pos().x, -399.0f, 0.0f});
-				cco.velocity.y *= -1;
+				vel.y *= -1;
 			}
 
 			if(cco.get_pos().x >= 1800.0f)
 			{
 				cco.set_pos({1799.0f, cco.get_pos().y, 0.0f});
-				cco.velocity.x *= -1;
+				vel.x *= -1;
 			}
 			else if(cco.get_pos().x <= -600.0f)
 			{
 				cco.set_pos({-599.0f, cco.get_pos().y, 0.0f});
-				cco.velocity.x *= -1;
+				vel.x *= -1;
 			}
+
+			cco.set_velocity(vel);
 		}
 
 		for(auto& co : objects_map)
@@ -686,7 +689,7 @@ int main()
 
 		intersection_on_prev_frame = list.size() > 0;
 
-		if(small_quads[8].velocity != glm::vec3{0, 0, 0} || !LEti::Math::floats_are_equal(small_quads[8].angular_velocity, 0.0f))
+		if(small_quads[8].velocity() != glm::vec3{0, 0, 0} || !LEti::Math::floats_are_equal(small_quads[8].angular_velocity(), 0.0f))
 		{
 			int kostyl = 5;
 			kostyl++;
@@ -700,8 +703,8 @@ int main()
 		while(it != list.end())
 		{
 
-			Moving_Object& bodyA = *(objects_map.at(it->first));
-			Moving_Object& bodyB = *(objects_map.at(it->second));
+			LEti::Rigid_Body_2D& bodyA = *(objects_map.at(it->first));
+			LEti::Rigid_Body_2D& bodyB = *(objects_map.at(it->second));
 
 			auto calculate_impulse = [&](const glm::vec3& _contact_point)->std::pair<glm::vec3, std::pair<float, float>>
 			{
@@ -720,17 +723,17 @@ int main()
 				glm::vec3 rbPerp = {-rb.y, rb.x, 0.0f};
 
 				//	angular linear velocity
-				glm::vec3 alvA = raPerp * bodyA.angular_velocity;
-				glm::vec3 alvB = rbPerp * bodyB.angular_velocity;
+				glm::vec3 alvA = raPerp * bodyA.angular_velocity();
+				glm::vec3 alvB = rbPerp * bodyB.angular_velocity();
 
-				glm::vec3 relativeVelocity = (bodyB.velocity + alvB) - (bodyA.velocity + alvA);
+				glm::vec3 relativeVelocity = (bodyB.velocity() + alvB) - (bodyA.velocity() + alvA);
 
 				float contactVelocityMag = LEti::Math::dot_product(relativeVelocity, normal);
 
 				float raPerpDotN = LEti::Math::dot_product(raPerp, normal);
 				float rbPerpDotN = LEti::Math::dot_product(rbPerp, normal);
 
-				float denom = 1 / bodyA.mass + 1 / bodyB.mass +
+				float denom = 1 / bodyA.mass() + 1 / bodyB.mass() +
 						(raPerpDotN * raPerpDotN) / bodyA.physics_module()->get_physical_model()->moment_of_inertia() +
 						(rbPerpDotN * rbPerpDotN) / bodyB.physics_module()->get_physical_model()->moment_of_inertia();
 
@@ -749,10 +752,10 @@ int main()
 			{
 				glm::vec3 impulse = _impulses.first;
 
-				bodyA.velocity -= impulse / bodyA.mass;
-				bodyA.angular_velocity -= _impulses.second.first;
-				bodyB.velocity += impulse / bodyB.mass;
-				bodyB.angular_velocity += _impulses.second.second;
+				bodyA.apply_linear_impulse(-impulse / bodyA.mass());
+				bodyA.apply_rotation(-_impulses.second.first);
+				bodyB.apply_linear_impulse(impulse / bodyB.mass());
+				bodyB.apply_rotation(_impulses.second.second);
 			};
 
 			std::pair<glm::vec3, std::pair<float, float>> impulse;
@@ -805,8 +808,8 @@ int main()
 
 		for(auto& co : objects_map)
 		{
-			draw_frame(frame, co.second->physics_module()->get_physical_model()->create_imprint());
-			draw_frame(frame, *co.second->physics_module()->get_physical_model_prev_state());
+//			draw_frame(frame, co.second->physics_module()->get_physical_model()->create_imprint());
+//			draw_frame(frame, *co.second->physics_module()->get_physical_model_prev_state());
 		}
 
 		if(intersection_on_prev_frame)
