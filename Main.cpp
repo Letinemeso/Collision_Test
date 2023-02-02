@@ -75,6 +75,11 @@ public:
 //		grabbed_object->velocity = {0.0f, 0.0f, 0.0f};
 		grabbed_object->velocity = grabbed_object->get_pos() - grabbed_object->get_pos_prev();
 
+		if(LEti::Event_Controller::is_key_down(GLFW_KEY_Q))
+			grabbed_object->rotate(LEti::Math::PI * LEti::Event_Controller::get_dt());
+		if(LEti::Event_Controller::is_key_down(GLFW_KEY_E))
+			grabbed_object->rotate(-LEti::Math::PI * LEti::Event_Controller::get_dt());
+
 		if(type == Type::drag)
 			grabbed_object->set_pos(cursor_pos);
 	}
@@ -101,16 +106,18 @@ public:
 
 		if(type == Type::drag)
 		{
-			glm::vec3 stride = grabbed_object->get_pos() - grabbed_object->get_pos_prev();
+//			glm::vec3 stride = grabbed_object->get_pos() - grabbed_object->get_pos_prev();
 
-			grabbed_object->velocity = stride / DT;
+//			grabbed_object->velocity = stride / DT;
 		}
 		else if(type == Type::launch)
 		{
 			glm::vec3 stride = (cursor_pos - launch_from);
+			std::cout << grabbed_object->name << "\nx: " << grabbed_object->get_pos().x << " y: " << grabbed_object->get_pos().y << "\nangle: " << grabbed_object->get_rotation_angle() << "\nstride: x: " << stride.x << " y: " << stride.y << "\n\n";
 
 			grabbed_object->velocity = stride;
 		}
+
 
 		grabbed_object = nullptr;
 		type = Type::none;
@@ -399,6 +406,7 @@ int main()
 		small_quads[i].init(quad);
 		small_quads[i].set_scale({25, 25, 1});
 		small_quads[i].set_pos({1000, 100 + (70 * i), 0});
+		small_quads[i].name = "small_quad_" + std::to_string(i);
 	}
 
 //	flat_co.init("flat_co_model");
@@ -481,13 +489,17 @@ int main()
 
 	auto launch_func = [&]()
 	{
-//		small_quads[8].velocity = {100, 0, 0};
-//		small_quads[9].velocity = {80, 0, 0};
+//		small_quads[8].velocity = {20, -30, 0};
+//		small_quads[9].velocity = {-20, -30, 0};
+
+//		flat_co.velocity = {-193, -64, 0.0f};
+
+		small_quads[0].velocity = {197, -56, 0};
 
 //		small_quads[8].angular_velocity = -LEti::Math::HALF_PI;
 //		small_quads[9].angular_velocity = LEti::Math::HALF_PI;
 
-		small_quads[7].velocity = {7, -150, 0};
+//		small_quads[7].velocity = {7, -150, 0};
 
 //		small_quads[3].velocity = {0, -100, 0};
 	};
@@ -561,8 +573,8 @@ int main()
 
 		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
-		if (LEti::Event_Controller::key_was_pressed(GLFW_KEY_TAB))
-			LEti::Camera::toggle_controll(LEti::Camera::get_controllable() ? false : true);
+//		if (LEti::Event_Controller::key_was_pressed(GLFW_KEY_TAB))
+//			LEti::Camera::toggle_controll(LEti::Camera::get_controllable() ? false : true);
 		LEti::Camera::update(false, true);
 
 		for(auto& co : objects_map)
@@ -667,12 +679,12 @@ int main()
 
 		for(auto& co : objects_map)
 		{
-//			co.second->velocity -= glm::vec3(0.0f, 9.8f, 0.0f);
+			co.second->velocity -= glm::vec3(0.0f, 3.0f, 0.0f);
 		}
 
 		LEti::Space_Splitter_2D::update();
 
-		const LEti::Default_Narrow_CD::Collision_Data_List__Models& list = LEti::Space_Splitter_2D::get_collisions__models();
+		LEti::Default_Narrow_CD::Collision_Data_List__Models list = LEti::Space_Splitter_2D::get_collisions__models();
 
 		if(intersection_on_prev_frame)
 			intersection_on_prev_frame = false;
@@ -695,6 +707,14 @@ int main()
 
 			Moving_Object& bodyA = *(objects_map.at(it->first));
 			Moving_Object& bodyB = *(objects_map.at(it->second));
+
+
+			glm::vec3 direction = bodyA.physics_module()->get_physical_model()->center_of_mass() - bodyB.physics_module()->get_physical_model()->center_of_mass();
+
+			if (LEti::Math::dot_product(direction, it->normal) < 0.0f)
+			{
+				it->normal = -it->normal;
+			}
 
 
 			auto calculate_impulse = [&](const glm::vec3& _contact_point)->std::pair<glm::vec3, std::pair<float, float>>
@@ -769,7 +789,6 @@ int main()
 				indicator.draw();
 			}
 			middle_cp /= it->points.size();
-			std::cout << "midddle cp:\nx: " << middle_cp.x << "\ny: " << middle_cp.y << "\n\n";
 			impulses.push_back(calculate_impulse(middle_cp));
 
 //			for(auto lit = it->points.begin(); !lit.end_reached(); ++lit)
@@ -789,14 +808,17 @@ int main()
 			bodyB.revert_to_previous_state();
 			bodyB.update(ratio);
 
+			bodyA.move(it->normal * it->depth / 2.0f);
+			bodyB.move(-it->normal * it->depth / 2.0f);
+
 //			resolve_collision_default()
 			for(const auto& imp : impulses)
 			{
 				resolve_collision_default(imp);
 			}
 
-			bodyA.update(1.0f - ratio);
-			bodyB.update(1.0f - ratio);
+//			bodyA.update(1.0f - ratio);
+//			bodyB.update(1.0f - ratio);
 
 //			for(auto lit = it->points.begin(); !lit.end_reached(); ++lit)
 //			{
