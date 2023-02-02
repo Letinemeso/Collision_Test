@@ -494,12 +494,13 @@ int main()
 
 //		flat_co.velocity = {-193, -64, 0.0f};
 
-		small_quads[0].velocity = {197, -56, 0};
+//		small_quads[0].velocity = {197, -56, 0};
 
 //		small_quads[8].angular_velocity = -LEti::Math::HALF_PI;
 //		small_quads[9].angular_velocity = LEti::Math::HALF_PI;
 
-//		small_quads[7].velocity = {7, -150, 0};
+		small_quads[7].velocity = {0, -1000, 0};
+		small_quads[4].velocity = {0, 1000, 0};
 
 //		small_quads[3].velocity = {0, -100, 0};
 	};
@@ -679,7 +680,7 @@ int main()
 
 		for(auto& co : objects_map)
 		{
-			co.second->velocity -= glm::vec3(0.0f, 3.0f, 0.0f);
+//			co.second->velocity -= glm::vec3(0.0f, 3.0f, 0.0f);
 		}
 
 		LEti::Space_Splitter_2D::update();
@@ -709,13 +710,12 @@ int main()
 			Moving_Object& bodyB = *(objects_map.at(it->second));
 
 
-			glm::vec3 direction = bodyA.physics_module()->get_physical_model()->center_of_mass() - bodyB.physics_module()->get_physical_model()->center_of_mass();
+//			glm::vec3 direction = bodyA.physics_module()->get_physical_model()->center_of_mass() - bodyB.physics_module()->get_physical_model()->center_of_mass();
 
-			if (LEti::Math::dot_product(direction, it->normal) < 0.0f)
-			{
-				it->normal = -it->normal;
-			}
-
+//			if (LEti::Math::dot_product(direction, it->normal) < 0.0f)
+//			{
+//				it->normal = -it->normal;
+//			}
 
 			auto calculate_impulse = [&](const glm::vec3& _contact_point)->std::pair<glm::vec3, std::pair<float, float>>
 			{
