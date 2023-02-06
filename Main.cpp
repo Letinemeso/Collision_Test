@@ -11,6 +11,9 @@
 #include "Physics/Physical_Model_2D.h"
 
 #include "Physics/Collision_Detector_2D.h"
+#include "Physics/Collision_Resolver.h"
+#include "Physics/Collision_Resolution__Rigid_Body.h"
+
 #include "Physics/Space_Hasher_2D.h"
 #include "Physics/Default_Narrow_CD.h"
 #include "Physics/Default_Narrowest_CD.h"
@@ -364,6 +367,9 @@ int main()
 	collision_detector.set_narrow_phase(new LEti::Default_Narrow_CD, 10);
 	collision_detector.set_narrowest_phase(new LEti::SAT_Narrowest_CD);
 
+	LEti::Collision_Resolver Collision_Resolver;
+	Collision_Resolver.add_resolution(new LEti::Collision_Resolution__Rigid_Body);
+
 	reader.parse_file("Resources/Textures/textures");
 	LEti::Picture_Manager::Picture_Autoload_Stub texture_autoload;
 	texture_autoload.assign_values(reader.get_stub("textures"));
@@ -682,23 +688,15 @@ int main()
 
 		collision_detector.update();
 
-		LEti::Default_Narrow_CD::Collision_Data_List__Models list = collision_detector.get_collisions__models();
+//		LEti::Default_Narrow_CD::Collision_Data_List__Models list = collision_detector.get_collisions__models();
 
-		if(intersection_on_prev_frame)
-			intersection_on_prev_frame = false;
+		Collision_Resolver.resolve_all(collision_detector.get_collisions__models());
 
-		intersection_on_prev_frame = list.size() > 0;
-
-		if(small_quads[8].velocity() != glm::vec3{0, 0, 0} || !LEti::Math::floats_are_equal(small_quads[8].angular_velocity(), 0.0f))
-		{
-			int kostyl = 5;
-			kostyl++;
-		}
 
 
 		std::string points_str;
 
-		auto it = list.begin();
+		/*auto it = list.begin();
 
 		while(it != list.end())
 		{
@@ -778,6 +776,7 @@ int main()
 
 			++it;
 		}
+		*/
 
 		grab.update();
 
