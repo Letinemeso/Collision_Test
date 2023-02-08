@@ -12,7 +12,7 @@
 
 #include "Physics/Collision_Detector_2D.h"
 #include "Physics/Collision_Resolver.h"
-#include "Physics/Collision_Resolution__Rigid_Body.h"
+#include "Physics/Collision_Resolution__Rigid_Body_2D.h"
 
 #include "Physics/Space_Hasher_2D.h"
 #include "Physics/Default_Narrow_CD.h"
@@ -363,7 +363,7 @@ int main()
 	collision_detector.set_narrowest_phase(new LEti::SAT_Narrowest_CD);
 
 	LEti::Collision_Resolver Collision_Resolver;
-	Collision_Resolver.add_resolution(new LEti::Collision_Resolution__Rigid_Body);
+	Collision_Resolver.add_resolution(new LEti::Collision_Resolution__Rigid_Body_2D);
 
 	reader.parse_file("Resources/Textures/textures");
 	LEti::Picture_Manager::Picture_Autoload_Stub texture_autoload;
