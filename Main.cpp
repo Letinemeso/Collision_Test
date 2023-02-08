@@ -387,20 +387,20 @@ int main()
 
 	LEti::Rigid_Body_2D flat_co;
 
-	flat_co.set_mass(4.0f);
-
 	const unsigned int small_quads_amount = 10;
 
 	LEti::Rigid_Body_2D small_quads[small_quads_amount];
 	for(unsigned int i=0; i<small_quads_amount; ++i)
 	{
 		small_quads[i].init(quad);
+		small_quads[i].set_mass(1.0f);
 		small_quads[i].set_scale({25, 25, 1});
 		small_quads[i].set_pos({1000, 100 + (70 * i), 0});
 	}
 
 //	flat_co.init("flat_co_model");
 	flat_co.init(quad);
+	flat_co.set_mass(4.0f);
 	flat_co.set_pos({800, 400, 0});
 	flat_co.draw_module()->set_texture(LEti::Picture_Manager::get_picture("white_texture"));
 
