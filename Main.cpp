@@ -55,6 +55,27 @@
 
 //};
 
+class CameraControll
+{
+private:
+	bool m_grabbed = false;
+
+public:
+	void update()
+	{
+		if(LEti::Event_Controller::mouse_button_was_pressed(GLFW_MOUSE_BUTTON_3))
+			m_grabbed = true;
+		if(LEti::Event_Controller::mouse_button_was_released(GLFW_MOUSE_BUTTON_3))
+			m_grabbed = false;
+
+		if(!m_grabbed)
+			return;
+
+		LEti::Camera_2D::set_position(LEti::Camera_2D::position() + (glm::vec3(LEti::Window_Controller::get_cursor_stride().x, LEti::Window_Controller::get_cursor_stride().y, 0.0f) * LEti::Camera_2D::view_scale()));
+	}
+
+};
+
 class Grab
 {
 public:
@@ -325,7 +346,7 @@ int main()
 										[](void* _variable_vptr, const LDS::Vector<std::string>& _values_as_string) { *((float*)_variable_vptr) = std::stof(_values_as_string[0]); }
 									});
 
-
+	CameraControll camera_controll;
 
 
 	LV::MDL_Reader reader;
@@ -354,7 +375,7 @@ int main()
 	LEti::Shader::set_projection_matrix_uniform_name("projection_matrix");
 
 	LEti::Camera_2D::set_position({600, 400, 0.0f});
-	LEti::Camera_2D::set_view_scale(2.0f);
+//	LEti::Camera_2D::set_view_scale(2.0f);
 
 	LEti::Collision_Detector_2D collision_detector;
 
@@ -501,7 +522,6 @@ int main()
 	for(unsigned int i=0; i<small_quads_amount; ++i)
 		objects_map.emplace(small_quads + i, small_quads + i);
 
-
 //	LEti::Resource_Loader::load_object("flat_indicator_red", "Resources/Models/flat_indicator_red.mdl");
 //	LEti::Resource_Loader::load_object("debug_frame", "Resources/Models/debug_frame.mdl");
 //	LEti::Resource_Loader::load_object("debug_frame_red", "Resources/Models/debug_frame_red.mdl");
@@ -555,6 +575,16 @@ int main()
 	frame.set_pos({0, 0, 0});
 	frame.set_scale({1, 1, 1});
 	frame.draw_module()->set_texture(LEti::Picture_Manager::get_picture("ugly_color"));
+
+	LEti::Debug_Drawable_Frame border_frame;
+	border_frame.init(quad);
+	border_frame.set_pos({0, 0, 0});
+	border_frame.set_scale({1, 1, 1});
+	border_frame.draw_module()->set_texture(LEti::Picture_Manager::get_picture("ugly_color"));
+	border_frame.set_point(0, {1.0f, 1.0f, 0.0f}).set_sequence_element(0, 0)
+			.set_point(1, {1200.0f, 1.0f, 0.0f}).set_sequence_element(1, 1)
+			.set_point(2, {1200.0f, 800.0f, 0.0f}).set_sequence_element(2, 2)
+			.set_point(3, {1.0f, 800.0f, 0.0f}).set_sequence_element(3, 3);
 
 	bool intersection_on_prev_frame = false;
 
@@ -610,30 +640,39 @@ int main()
 		if (LEti::Event_Controller::is_key_down(GLFW_KEY_E))
 			flat_co.apply_rotation(-LEti::Math::QUARTER_PI);
 
+		if(LEti::Event_Controller::mouse_wheel_rotation() != 0)
+		{
+			float additional_scale_per_rotation = 0.2f;
+
+			additional_scale_per_rotation *= -(float)(LEti::Event_Controller::mouse_wheel_rotation());
+
+			LEti::Camera_2D::set_view_scale(LEti::Camera_2D::view_scale() + additional_scale_per_rotation);
+		}
+
 		for(auto& co : objects_map)
 		{
 			LEti::Rigid_Body_2D& cco = *co.second;
 			glm::vec3 vel = cco.velocity();
 
-			if(cco.get_pos().y >= 1200.0f)
+			if(cco.get_pos().y >= 800.0f)
 			{
-				cco.set_pos({cco.get_pos().x, 1199.0f, 0.0f});
+				cco.set_pos({cco.get_pos().x, 799.0f, 0.0f});
 				vel.y *= -1;
 			}
-			else if(cco.get_pos().y <= -400.0f)
+			else if(cco.get_pos().y <= 0.0f)
 			{
-				cco.set_pos({cco.get_pos().x, -399.0f, 0.0f});
+				cco.set_pos({cco.get_pos().x, 1.0f, 0.0f});
 				vel.y *= -1;
 			}
 
-			if(cco.get_pos().x >= 1800.0f)
+			if(cco.get_pos().x >= 1200.0f)
 			{
-				cco.set_pos({1799.0f, cco.get_pos().y, 0.0f});
+				cco.set_pos({1199.0f, cco.get_pos().y, 0.0f});
 				vel.x *= -1;
 			}
-			else if(cco.get_pos().x <= -600.0f)
+			else if(cco.get_pos().x <= 0.0f)
 			{
-				cco.set_pos({-599.0f, cco.get_pos().y, 0.0f});
+				cco.set_pos({1.0f, cco.get_pos().y, 0.0f});
 				vel.x *= -1;
 			}
 
@@ -644,6 +683,8 @@ int main()
 		{
 			co.second->update();
 		}
+
+		LEti::Camera_2D::set_position(flat_co.get_pos());
 
 		if(LEti::Event_Controller::mouse_button_was_pressed(GLFW_MOUSE_BUTTON_1))
 		{
@@ -710,89 +751,9 @@ int main()
 
 		std::string points_str;
 
-		/*auto it = list.begin();
-
-		while(it != list.end())
-		{
-
-			LEti::Rigid_Body_2D& bodyA = *(objects_map.at(it->first));
-			LEti::Rigid_Body_2D& bodyB = *(objects_map.at(it->second));
-
-			auto calculate_impulse = [&](const glm::vec3& _contact_point)->std::pair<glm::vec3, std::pair<float, float>>
-			{
-				glm::vec3 normal = it->normal;
-
-				glm::vec3 contact = _contact_point;
-
-				indicator.set_pos(contact);
-
-				float e = 1.0f;
-
-				glm::vec3 ra = contact - bodyA.physics_module()->get_physical_model()->center_of_mass();
-				glm::vec3 rb = contact - bodyB.physics_module()->get_physical_model()->center_of_mass();
-
-				glm::vec3 raPerp = {-ra.y, ra.x, 0.0f};
-				glm::vec3 rbPerp = {-rb.y, rb.x, 0.0f};
-
-				//	angular linear velocity
-				glm::vec3 alvA = raPerp * bodyA.angular_velocity();
-				glm::vec3 alvB = rbPerp * bodyB.angular_velocity();
-
-				glm::vec3 relativeVelocity = (bodyB.velocity() + alvB) - (bodyA.velocity() + alvA);
-
-				float contactVelocityMag = LEti::Math::dot_product(relativeVelocity, normal);
-
-				float raPerpDotN = LEti::Math::dot_product(raPerp, normal);
-				float rbPerpDotN = LEti::Math::dot_product(rbPerp, normal);
-
-				float denom = 1 / bodyA.mass() + 1 / bodyB.mass() +
-						(raPerpDotN * raPerpDotN) / bodyA.physics_module()->get_physical_model()->moment_of_inertia() +
-						(rbPerpDotN * rbPerpDotN) / bodyB.physics_module()->get_physical_model()->moment_of_inertia();
-
-				float j = -(1.0f + e) * contactVelocityMag;
-				j /= denom;
-
-				glm::vec3 impulse = j * normal;
-
-				float avA = LEti::Math::cross_product(ra, impulse) / bodyA.physics_module()->get_physical_model()->moment_of_inertia();
-				float avB = LEti::Math::cross_product(rb, impulse) / bodyB.physics_module()->get_physical_model()->moment_of_inertia();
-
-				return {impulse, {avA, avB}};
-			};
-
-			auto resolve_collision_default = [&](const std::pair<glm::vec3, std::pair<float, float>>& _impulses)
-			{
-				glm::vec3 impulse = _impulses.first;
-
-				bodyA.apply_linear_impulse(-impulse / bodyA.mass());
-				bodyA.apply_rotation(-_impulses.second.first);
-				bodyB.apply_linear_impulse(impulse / bodyB.mass());
-				bodyB.apply_rotation(_impulses.second.second);
-			};
-
-			std::pair<glm::vec3, std::pair<float, float>> impulse;
-
-			impulse = calculate_impulse(it->point);
-
-			float ratio = it->time_of_intersection_ratio;
-
-			bodyA.revert_to_previous_state();
-			bodyA.update(ratio);
-			bodyB.revert_to_previous_state();
-			bodyB.update(ratio);
-
-			bodyA.move(it->normal * it->depth / 2.0f);
-			bodyB.move(-it->normal * it->depth / 2.0f);
-
-			resolve_collision_default(impulse);
-
-			points_str += "/ ";
-
-			++it;
-		}
-		*/
-
 		grab.update();
+
+		camera_controll.update();
 
 //		collision_detector.unregister_point(&cursor_position);
 
@@ -824,6 +785,8 @@ int main()
 			draw_frame(frame, co.second->physics_module()->get_physical_model()->create_imprint());
 //			draw_frame(frame, *co.second->physics_module()->get_physical_model_prev_state());
 		}
+		border_frame.update();
+		border_frame.draw();
 
 		if(intersection_on_prev_frame)
 		{
