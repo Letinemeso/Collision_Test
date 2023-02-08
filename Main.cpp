@@ -351,13 +351,18 @@ int main()
 
 	LV::MDL_Reader reader;
 	reader.parse_file("Resources/Models/quad_new");
+	reader.parse_file("Resources/Models/circleish");
+	reader.parse_file("Resources/Models/sandclock");
 	reader.parse_file("Resources/Models/text_field_new");
 
 	LEti::Object_2D_Stub quad;
 	quad.assign_values(reader.get_stub("quad"));
+	LEti::Object_2D_Stub circleish;
+	circleish.assign_values(reader.get_stub("circleish"));
+	LEti::Object_2D_Stub sandclock;
+	sandclock.assign_values(reader.get_stub("sandclock"));
 	LEti::Text_Field_Stub tf_stub;
 	tf_stub.assign_values(reader.get_stub("text_field"));
-
 
 	LEti::Window_Controller::create_window(1200, 800, "Collision Test");
 
@@ -406,9 +411,22 @@ int main()
 	indicator.set_pos({30, 30, 0});
 	indicator.set_rotation_angle(LEti::Math::QUARTER_PI);
 
+	LEti::Rigid_Body_2D circleish_co;
+	circleish_co.init(circleish);
+	circleish_co.set_mass(4.0f);
+	circleish_co.set_pos({200, 600, 0});
+	circleish_co.draw_module()->set_texture(LEti::Picture_Manager::get_picture("pyramid_texture"));
+
+	LEti::Rigid_Body_2D sandclock_co;
+	sandclock_co.init(sandclock);
+	sandclock_co.set_mass(6.0f);
+	sandclock_co.set_pos({200, 200, 0});
+	sandclock_co.set_scale(20.0f);
+	sandclock_co.draw_module()->set_texture(LEti::Picture_Manager::get_picture("white_texture"));
+
 	LEti::Rigid_Body_2D flat_co;
 
-	const unsigned int small_quads_amount = 10;
+	const unsigned int small_quads_amount = 4;
 
 	LEti::Rigid_Body_2D small_quads[small_quads_amount];
 	for(unsigned int i=0; i<small_quads_amount; ++i)
@@ -424,9 +442,6 @@ int main()
 	flat_co.set_mass(4.0f);
 	flat_co.set_pos({800, 400, 0});
 	flat_co.draw_module()->set_texture(LEti::Picture_Manager::get_picture("white_texture"));
-
-
-	small_quads[8].draw_module()->set_texture(LEti::Picture_Manager::get_picture("white_texture"));
 
 	auto reset_func = [&]()
 	{
@@ -448,6 +463,18 @@ int main()
 		flat_co.update(0.0f);
 		flat_co.update_previous_state();
 
+		circleish_co.set_pos({200, 600, 0});
+		circleish_co.set_angular_velocity(0.0f);
+		circleish_co.set_velocity({0.0f, 0.0f, 0.0f});
+		circleish_co.update(0.0f);
+		circleish_co.update_previous_state();
+
+		sandclock_co.set_pos({200, 200, 0});
+		sandclock_co.set_angular_velocity(0.0f);
+		sandclock_co.set_velocity({0.0f, 0.0f, 0.0f});
+		sandclock_co.update(0.0f);
+		sandclock_co.update_previous_state();
+
 
 		for(unsigned int i=0; i<small_quads_amount; ++i)
 		{
@@ -459,40 +486,6 @@ int main()
 			small_quads[i].update(0.0f);
 			small_quads[i].update_previous_state();
 		}
-
-		//	vertical
-		for(unsigned int i=1; i<4; ++i)
-		{
-			small_quads[i].set_pos({100, 400 + (55 * i), 0});
-			small_quads[i].set_velocity({0.0f, 0.0f, 0.0f});
-			small_quads[i].set_angular_velocity(0.0f);
-			small_quads[i].set_rotation_angle(0.0f);
-
-			small_quads[i].update(0.0f);
-			small_quads[i].update_previous_state();
-		}
-		small_quads[3].set_pos({100, 600, 0});
-		small_quads[3].update(0.0f);
-		small_quads[3].update_previous_state();
-
-		small_quads[1].set_pos({300, 400, 0});
-		small_quads[1].update(0.0f);
-		small_quads[1].update_previous_state();
-		//	~vertical
-
-		small_quads[0].set_pos({500, 400, 0});
-		small_quads[0].update(0.0f);
-		small_quads[0].update_previous_state();
-
-
-		small_quads[8].set_pos({500, 600, 0});
-		small_quads[9].set_pos({560, 600, 0});
-
-		small_quads[8].update(0.0f);
-		small_quads[8].update_previous_state();
-
-		small_quads[9].update(0.0f);
-		small_quads[9].update_previous_state();
 	};
 	reset_func();
 
@@ -519,6 +512,8 @@ int main()
 
 	std::map<const LEti::Object_2D*, LEti::Rigid_Body_2D*> objects_map;
 	objects_map.emplace(&flat_co, &flat_co);
+	objects_map.emplace(&circleish_co, &circleish_co);
+	objects_map.emplace(&sandclock_co, &sandclock_co);
 	for(unsigned int i=0; i<small_quads_amount; ++i)
 		objects_map.emplace(small_quads + i, small_quads + i);
 
@@ -628,17 +623,17 @@ int main()
 		}
 
 		if (LEti::Event_Controller::is_key_down(GLFW_KEY_W))
-			flat_co.apply_linear_impulse({0.0f, 10.0f, 0.0f});
+			sandclock_co.apply_linear_impulse({0.0f, 10.0f, 0.0f});
 		if (LEti::Event_Controller::is_key_down(GLFW_KEY_S))
-			flat_co.apply_linear_impulse({0.0f, -10.0f, 0.0f});
+			sandclock_co.apply_linear_impulse({0.0f, -10.0f, 0.0f});
 		if (LEti::Event_Controller::is_key_down(GLFW_KEY_A))
-			flat_co.apply_linear_impulse({-10.0f, 0.0f, 0.0f});
+			sandclock_co.apply_linear_impulse({-10.0f, 0.0f, 0.0f});
 		if (LEti::Event_Controller::is_key_down(GLFW_KEY_D))
-			flat_co.apply_linear_impulse({10.0f, 0.0f, 0.0f});
+			sandclock_co.apply_linear_impulse({10.0f, 0.0f, 0.0f});
 		if (LEti::Event_Controller::is_key_down(GLFW_KEY_Q))
-			flat_co.apply_rotation(LEti::Math::QUARTER_PI);
+			sandclock_co.apply_rotation(LEti::Math::QUARTER_PI);
 		if (LEti::Event_Controller::is_key_down(GLFW_KEY_E))
-			flat_co.apply_rotation(-LEti::Math::QUARTER_PI);
+			sandclock_co.apply_rotation(-LEti::Math::QUARTER_PI);
 
 		if(LEti::Event_Controller::mouse_wheel_rotation() != 0)
 		{
@@ -684,7 +679,7 @@ int main()
 			co.second->update();
 		}
 
-		LEti::Camera_2D::set_position(flat_co.get_pos());
+//		LEti::Camera_2D::set_position(flat_co.get_pos());
 
 		if(LEti::Event_Controller::mouse_button_was_pressed(GLFW_MOUSE_BUTTON_1))
 		{
@@ -782,8 +777,7 @@ int main()
 
 		for(auto& co : objects_map)
 		{
-			draw_frame(frame, co.second->physics_module()->get_physical_model()->create_imprint());
-//			draw_frame(frame, *co.second->physics_module()->get_physical_model_prev_state());
+//			draw_frame(frame, co.second->physics_module()->get_physical_model()->create_imprint());
 		}
 		border_frame.update();
 		border_frame.draw();

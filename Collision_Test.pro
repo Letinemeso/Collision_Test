@@ -46,6 +46,7 @@ Main.cpp \
 
 DISTFILES += \
 Resources/Font/font_yellow.png \
+	Resources/Models/circleish.mdl \
 Resources/Models/colliding_object.mdl \
 Resources/Models/debug_frame.mdl \
 Resources/Models/flat_co.mdl \
@@ -61,6 +62,7 @@ Resources/Models/pyramid.mdl \
 Resources/Models/quad.mdl \
 Resources/Models/quad_new.mdl \
 Resources/Models/red_cube.mdl \
+	Resources/Models/sandclock.mdl \
 Resources/Models/text_field.mdl \
 Resources/Models/text_field_new.mdl \
 Resources/Shaders/fragment_shader.shader \
