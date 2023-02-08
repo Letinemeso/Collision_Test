@@ -83,11 +83,6 @@ public:
 //		grabbed_object->velocity = {0.0f, 0.0f, 0.0f};
 		grabbed_object->set_velocity(grabbed_object->get_pos() - grabbed_object->get_pos_prev());
 
-		if(LEti::Event_Controller::is_key_down(GLFW_KEY_Q))
-			grabbed_object->rotate(LEti::Math::PI * LEti::Event_Controller::get_dt());
-		if(LEti::Event_Controller::is_key_down(GLFW_KEY_E))
-			grabbed_object->rotate(-LEti::Math::PI * LEti::Event_Controller::get_dt());
-
 		if(type == Type::drag)
 			grabbed_object->set_pos(cursor_pos);
 	}
@@ -377,6 +372,8 @@ int main()
 
 	LEti::Event_Controller::set_max_dt(60.0f / 1000.0f);
 
+
+	L_CREATE_LOG_LEVEL("MOUSE_POS_LL");
 	
 
 	///////////////// 2d collision test
@@ -414,7 +411,7 @@ int main()
 	{
 		//	TEST 2
 
-		flat_co.set_pos({700, 400, 0});
+		flat_co.set_pos({558, 386, 0});
 
 		flat_co.set_velocity({0.0f, 0.0f, 0.0f});
 
@@ -483,15 +480,16 @@ int main()
 //		small_quads[8].velocity = {20, -30, 0};
 //		small_quads[9].velocity = {-20, -30, 0};
 
-//		flat_co.velocity = {-193, -64, 0.0f};
+//		flat_co.set_velocity({-200, 0.0f, 0.0f});
+		flat_co.set_angular_velocity(LEti::Math::PI);
 
 //		small_quads[0].velocity = {197, -56, 0};
 
 //		small_quads[8].set_angular_velocity = -LEti::Math::HALF_PI;
 //		small_quads[9].set_angular_velocity = LEti::Math::HALF_PI;
 
-		small_quads[7].set_velocity({0, -1000, 0});
-		small_quads[5].set_velocity({0, 1000, 0});
+//		small_quads[7].set_velocity({0, -1000, 0});
+//		small_quads[5].set_velocity({0, 1000, 0});
 
 //		small_quads[3].velocity = {0, -100, 0};
 	};
@@ -593,20 +591,24 @@ int main()
 			reset_func();
 		}
 
-		if(LEti::Event_Controller::key_was_pressed(GLFW_KEY_S))
-		{
-			for(auto& co : objects_map)
-			{
-				co.second->set_velocity({0.0f, 0.0f, 0.0f});
-				co.second->set_angular_velocity(0.0f);
-			}
-		}
-
 		if(LEti::Event_Controller::key_was_pressed(GLFW_KEY_SPACE))
 		{
 //			reset_func();
 			launch_func();
 		}
+
+		if (LEti::Event_Controller::is_key_down(GLFW_KEY_W))
+			flat_co.apply_linear_impulse({0.0f, 10.0f, 0.0f});
+		if (LEti::Event_Controller::is_key_down(GLFW_KEY_S))
+			flat_co.apply_linear_impulse({0.0f, -10.0f, 0.0f});
+		if (LEti::Event_Controller::is_key_down(GLFW_KEY_A))
+			flat_co.apply_linear_impulse({-10.0f, 0.0f, 0.0f});
+		if (LEti::Event_Controller::is_key_down(GLFW_KEY_D))
+			flat_co.apply_linear_impulse({10.0f, 0.0f, 0.0f});
+		if (LEti::Event_Controller::is_key_down(GLFW_KEY_Q))
+			flat_co.apply_rotation(LEti::Math::QUARTER_PI);
+		if (LEti::Event_Controller::is_key_down(GLFW_KEY_E))
+			flat_co.apply_rotation(-LEti::Math::QUARTER_PI);
 
 		for(auto& co : objects_map)
 		{
@@ -649,11 +651,23 @@ int main()
 			cursor_position.x = LEti::Window_Controller::get_cursor_position().x;
 			cursor_position.y = LEti::Window_Controller::get_cursor_position().y;
 
-			std::cout << "Raw coords: " << cursor_position.x << " " << cursor_position.y << "\n";
+			L_LOG("MOUSE_POS_LL", "Raw coords: " + std::to_string(cursor_position.x) + " " + std::to_string(cursor_position.y));
 
 			cursor_position = LEti::Camera_2D::convert_window_coords(cursor_position);
 
-			std::cout << "Processed coords: " << cursor_position.x << " " << cursor_position.y << "\n\n";
+			L_LOG("MOUSE_POS_LL", "Processed coords: " + std::to_string(cursor_position.x) + " " + std::to_string(cursor_position.y));
+		}
+		if(LEti::Event_Controller::mouse_button_was_released(GLFW_MOUSE_BUTTON_1))
+		{
+			cursor_position.z = 0.0f;
+			cursor_position.x = LEti::Window_Controller::get_cursor_position().x;
+			cursor_position.y = LEti::Window_Controller::get_cursor_position().y;
+
+			L_LOG("MOUSE_POS_LL", "Raw coords: " + std::to_string(cursor_position.x) + " " + std::to_string(cursor_position.y));
+
+			cursor_position = LEti::Camera_2D::convert_window_coords(cursor_position);
+
+			L_LOG("MOUSE_POS_LL", "Processed coords: " + std::to_string(cursor_position.x) + " " + std::to_string(cursor_position.y));
 		}
 		if(LEti::Event_Controller::mouse_button_was_pressed(GLFW_MOUSE_BUTTON_2))
 		{
@@ -683,7 +697,7 @@ int main()
 
 		for(auto& co : objects_map)
 		{
-//			co.second->velocity -= glm::vec3(0.0f, 3.0f, 0.0f);
+//			co.second->apply_linear_impulse(glm::vec3(0.0f, -9.8f, 0.0f));
 		}
 
 		collision_detector.update();
@@ -807,7 +821,7 @@ int main()
 
 		for(auto& co : objects_map)
 		{
-//			draw_frame(frame, co.second->physics_module()->get_physical_model()->create_imprint());
+			draw_frame(frame, co.second->physics_module()->get_physical_model()->create_imprint());
 //			draw_frame(frame, *co.second->physics_module()->get_physical_model_prev_state());
 		}
 
