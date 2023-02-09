@@ -403,8 +403,7 @@ int main()
 
 
 //	L_CREATE_LOG_LEVEL("MOUSE_POS_LL");
-    L_CREATE_LOG_LEVEL("KINETIC_ENERGY");
-	
+
 
 	///////////////// 2d collision test
 
