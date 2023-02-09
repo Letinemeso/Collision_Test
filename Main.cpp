@@ -426,7 +426,7 @@ int main()
 
 	LEti::Rigid_Body_2D flat_co;
 
-	const unsigned int small_quads_amount = 4;
+    const unsigned int small_quads_amount = 4;
 
 	LEti::Rigid_Body_2D small_quads[small_quads_amount];
 	for(unsigned int i=0; i<small_quads_amount; ++i)
@@ -466,12 +466,14 @@ int main()
 		circleish_co.set_pos({200, 600, 0});
 		circleish_co.set_angular_velocity(0.0f);
 		circleish_co.set_velocity({0.0f, 0.0f, 0.0f});
+        circleish_co.set_rotation_angle(0);
 		circleish_co.update(0.0f);
 		circleish_co.update_previous_state();
 
 		sandclock_co.set_pos({200, 200, 0});
 		sandclock_co.set_angular_velocity(0.0f);
 		sandclock_co.set_velocity({0.0f, 0.0f, 0.0f});
+        sandclock_co.set_rotation_angle(0);
 		sandclock_co.update(0.0f);
 		sandclock_co.update_previous_state();
 
@@ -511,9 +513,9 @@ int main()
 	Grab grab;
 
 	std::map<const LEti::Object_2D*, LEti::Rigid_Body_2D*> objects_map;
-	objects_map.emplace(&flat_co, &flat_co);
-	objects_map.emplace(&circleish_co, &circleish_co);
-	objects_map.emplace(&sandclock_co, &sandclock_co);
+    objects_map.emplace(&flat_co, &flat_co);
+    objects_map.emplace(&circleish_co, &circleish_co);
+    objects_map.emplace(&sandclock_co, &sandclock_co);
 	for(unsigned int i=0; i<small_quads_amount; ++i)
 		objects_map.emplace(small_quads + i, small_quads + i);
 
