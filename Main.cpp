@@ -353,6 +353,7 @@ int main()
 	reader.parse_file("Resources/Models/quad_new");
 	reader.parse_file("Resources/Models/circleish");
 	reader.parse_file("Resources/Models/sandclock");
+    reader.parse_file("Resources/Models/hollow_square");
 	reader.parse_file("Resources/Models/text_field_new");
 
 	LEti::Object_2D_Stub quad;
@@ -361,6 +362,8 @@ int main()
 	circleish.assign_values(reader.get_stub("circleish"));
 	LEti::Object_2D_Stub sandclock;
 	sandclock.assign_values(reader.get_stub("sandclock"));
+    LEti::Object_2D_Stub hollow_square;
+    hollow_square.assign_values(reader.get_stub("hollow_square"));
 	LEti::Text_Field_Stub tf_stub;
 	tf_stub.assign_values(reader.get_stub("text_field"));
 
@@ -399,7 +402,8 @@ int main()
 	LEti::Event_Controller::set_max_dt(60.0f / 1000.0f);
 
 
-	L_CREATE_LOG_LEVEL("MOUSE_POS_LL");
+//	L_CREATE_LOG_LEVEL("MOUSE_POS_LL");
+    L_CREATE_LOG_LEVEL("KINETIC_ENERGY");
 	
 
 	///////////////// 2d collision test
@@ -424,6 +428,13 @@ int main()
 	sandclock_co.set_scale(20.0f);
 	sandclock_co.draw_module()->set_texture(LEti::Picture_Manager::get_picture("white_texture"));
 
+    LEti::Rigid_Body_2D hollow_square_co;
+    hollow_square_co.init(hollow_square);
+    hollow_square_co.set_mass(1.0f);
+    hollow_square_co.set_pos({1000, 700, 0});
+    hollow_square_co.set_scale(20.0f);
+    hollow_square_co.draw_module()->set_texture(LEti::Picture_Manager::get_picture("yellow_indicator"));
+
 	LEti::Rigid_Body_2D flat_co;
 
     const unsigned int small_quads_amount = 4;
@@ -447,19 +458,12 @@ int main()
 	{
 		//	TEST 2
 
-		flat_co.set_pos({558, 386, 0});
-
+        flat_co.set_pos({200, 200, 0});
 		flat_co.set_velocity({0.0f, 0.0f, 0.0f});
-
 		flat_co.set_scale(50);
-
 		flat_co.set_rotation_angle(LEti::Math::QUARTER_PI);
-
 		flat_co.set_rotation_axis({0.0f, 0.0f, 1.0f});
-
 		flat_co.set_angular_velocity(0.0f);
-
-
 		flat_co.update(0.0f);
 		flat_co.update_previous_state();
 
@@ -470,12 +474,19 @@ int main()
 		circleish_co.update(0.0f);
 		circleish_co.update_previous_state();
 
-		sandclock_co.set_pos({200, 200, 0});
+        sandclock_co.set_pos({558, 386, 0});
 		sandclock_co.set_angular_velocity(0.0f);
 		sandclock_co.set_velocity({0.0f, 0.0f, 0.0f});
         sandclock_co.set_rotation_angle(0);
 		sandclock_co.update(0.0f);
 		sandclock_co.update_previous_state();
+
+        hollow_square_co.set_pos({1000, 700, 0});
+        hollow_square_co.set_angular_velocity(0.0f);
+        hollow_square_co.set_velocity({0.0f, 0.0f, 0.0f});
+        hollow_square_co.set_rotation_angle(0);
+        hollow_square_co.update(0.0f);
+        hollow_square_co.update_previous_state();
 
 
 		for(unsigned int i=0; i<small_quads_amount; ++i)
@@ -516,8 +527,9 @@ int main()
     objects_map.emplace(&flat_co, &flat_co);
     objects_map.emplace(&circleish_co, &circleish_co);
     objects_map.emplace(&sandclock_co, &sandclock_co);
-	for(unsigned int i=0; i<small_quads_amount; ++i)
-		objects_map.emplace(small_quads + i, small_quads + i);
+    objects_map.emplace(&hollow_square_co, &hollow_square_co);
+    for(unsigned int i=0; i<small_quads_amount; ++i)
+        objects_map.emplace(small_quads + i, small_quads + i);
 
 //	LEti::Resource_Loader::load_object("flat_indicator_red", "Resources/Models/flat_indicator_red.mdl");
 //	LEti::Resource_Loader::load_object("debug_frame", "Resources/Models/debug_frame.mdl");
@@ -581,7 +593,8 @@ int main()
 	border_frame.set_point(0, {1.0f, 1.0f, 0.0f}).set_sequence_element(0, 0)
 			.set_point(1, {1200.0f, 1.0f, 0.0f}).set_sequence_element(1, 1)
 			.set_point(2, {1200.0f, 800.0f, 0.0f}).set_sequence_element(2, 2)
-			.set_point(3, {1.0f, 800.0f, 0.0f}).set_sequence_element(3, 3);
+            .set_point(3, {1.0f, 800.0f, 0.0f}).set_sequence_element(3, 3)
+            .set_point(4, {1.0f, 1.0f, 0.0f}).set_sequence_element(4, 4);
 
 	bool intersection_on_prev_frame = false;
 
@@ -716,21 +729,34 @@ int main()
 			cursor_position = LEti::Camera_2D::convert_window_coords(cursor_position);
 		}
 
-		auto draw_frame = [](LEti::Debug_Drawable_Frame& _frame, const LEti::Physical_Model_2D::Imprint& _pm)->void
-		{
-			_frame.clear_points().clear_sequence();
-
-			unsigned int counter = 0;
+        auto draw_frame = [&](LEti::Debug_Drawable_Frame& _frame, const LEti::Physical_Model_2D::Imprint& _pm)->void
+        {
 			for(unsigned int i=0; i<_pm.get_polygons_count(); ++i)
-			{
-				for(unsigned int j=0; j<3; ++j)
-				{
-					_frame.set_point(counter, _pm[i][j]).set_sequence_element(counter, counter);
-					++counter;
-				}
-			}
-			_frame.update();
-			_frame.draw();
+            {
+                for(unsigned int j=0; j<3; ++j)
+                {
+                    if(!_pm[i].segment_can_collide(j))
+                        continue;
+
+                    _frame.clear_points().clear_sequence();
+
+                    _frame.set_point(0, _pm[i][j]).set_sequence_element(0, 0);
+                    _frame.set_point(1, _pm[i][j + 1]).set_sequence_element(1, 1);
+
+                    _frame.update();
+                    _frame.draw();
+                }
+
+            }
+
+            glm::vec3 center(0.0f, 0.0f, 0.0f);
+
+            for(unsigned int i=0; i<_pm.get_polygons_count(); ++i)
+                center += _pm.get_polygons()[i].center();
+            center /= (float)_pm.get_polygons_count();
+
+            indicator.set_pos(center);
+            indicator.draw();
 		};
 
 		for(auto& co : objects_map)
@@ -741,6 +767,21 @@ int main()
 		collision_detector.update();
 
 //		LEti::Default_Narrow_CD::Collision_Data_List__Models list = collision_detector.get_collisions__models();
+
+//        if(collision_detector.get_collisions__models().size() > 0)
+//        {
+//            for(const auto& id : collision_detector.get_collisions__models())
+//            {
+//                indicator.set_pos(id.point);
+//                indicator.draw();
+//            }
+//            for(auto& co : objects_map)
+//            {
+//                draw_frame(frame, co.second->physics_module()->get_physical_model()->create_imprint());
+//            }
+//            LEti::Window_Controller::swap_buffers();
+//            std::cout << "ass\n";
+//        }
 
 		Collision_Resolver.resolve_all(collision_detector.get_collisions__models());
 
@@ -779,7 +820,7 @@ int main()
 
 		for(auto& co : objects_map)
 		{
-//			draw_frame(frame, co.second->physics_module()->get_physical_model()->create_imprint());
+//            draw_frame(frame, co.second->physics_module()->get_physical_model()->create_imprint());
 		}
 		border_frame.update();
 		border_frame.draw();
@@ -792,16 +833,8 @@ int main()
 
 		for(auto& co : objects_map)
 		{
-			co.second->draw();
+            co.second->draw();
 		}
-
-		//		draw_frame(frame, flat_co.physics_module()->get_physical_model()->create_imprint());
-		//		draw_frame(frame, flat_co_2.physics_module()->get_physical_model()->create_imprint());
-		//		draw_frame(frame, flat_co_3.physics_module()->get_physical_model()->create_imprint());
-
-
-		//		intersection_info_block.set_text(std::to_string(list.size()).c_str());
-		//		intersection_info_block.draw();
 
 		++fps_counter;
 		fps_timer.update();

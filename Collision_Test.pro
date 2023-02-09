@@ -56,6 +56,7 @@ Resources/Models/flat_cos/flat_co_1.mdl \
 Resources/Models/flat_cos/flat_co_2.mdl \
 Resources/Models/flat_cos/flat_co_3.mdl \
 Resources/Models/flat_indicator_red.mdl \
+	Resources/Models/hollow_square.mdl \
 Resources/Models/intersection_indicator_3d.mdl \
 Resources/Models/intersection_point_indicator.mdl \
 Resources/Models/pyramid.mdl \
