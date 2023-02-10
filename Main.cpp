@@ -15,7 +15,7 @@
 #include "Physics/Collision_Resolution__Rigid_Body_2D.h"
 
 #include "Physics/Space_Hasher_2D.h"
-#include "Physics/Default_Narrow_CD.h"
+#include "Physics/Dynamic_Narrow_CD.h"
 #include "Physics/Default_Narrowest_CD.h"
 #include "Physics/SAT_Narrowest_CD.h"
 
@@ -55,7 +55,57 @@
 
 //};
 
-class CameraControll
+class Color_Controll
+{
+private:
+    glm::vec3 initial_direction = {1.0f, 1.0f, 1.0f};
+    glm::vec3 axis = {-1.0f, 1.0f, -1.0f};
+    glm::mat4x4 matrix;
+    float angle = 0.0f;
+
+    glm::vec3 result_direction;
+
+public:
+    Color_Controll()
+    {
+        matrix = glm::rotate(angle, axis);
+        result_direction = matrix * glm::vec4(initial_direction, 1.0f);
+    }
+
+    void update()
+    {
+        angle += LEti::Math::PI * LEti::Event_Controller::get_dt();
+
+        matrix = glm::rotate(angle, axis);
+        result_direction = matrix * glm::vec4(initial_direction, 1.0f);
+    }
+
+    float r_ratio() const
+    {
+        return fabs(result_direction.x);
+    }
+    float g_ratio() const
+    {
+        return fabs(result_direction.y);
+    }
+    float b_ratio() const
+    {
+        return fabs(result_direction.z);
+    }
+
+    void change_color(LEti::Object_2D& _obj)
+    {
+        for(unsigned int i=0; i < _obj.draw_module()->colors().size(); i += 4)
+            _obj.draw_module()->colors()[i] = r_ratio();
+        for(unsigned int i=1; i < _obj.draw_module()->colors().size(); i += 4)
+            _obj.draw_module()->colors()[i] = g_ratio();
+        for(unsigned int i=2; i < _obj.draw_module()->colors().size(); i += 4)
+            _obj.draw_module()->colors()[i] = b_ratio();
+    }
+
+};
+
+class Camera_Controll
 {
 private:
 	bool m_grabbed = false;
@@ -346,7 +396,7 @@ int main()
 										[](void* _variable_vptr, const LDS::Vector<std::string>& _values_as_string) { *((float*)_variable_vptr) = std::stof(_values_as_string[0]); }
 									});
 
-	CameraControll camera_controll;
+    Camera_Controll camera_controll;
 
 
 	LV::MDL_Reader reader;
@@ -376,8 +426,7 @@ int main()
 	glEnable(GL_CULL_FACE);
 	glCullFace(GL_CW);
 
-	LEti::Shader::init_shader("Resources/Shaders/vertex_shader.shader", "Resources/Shaders/fragment_shader.shader");
-	L_ASSERT(!(!LEti::Shader::is_valid()));
+    LEti::Shader::init_shader("Resources/Shaders/vertex_shader.shader", "Resources/Shaders/fragment_shader.shader");
 	LEti::Shader::set_texture_uniform_name("input_texture");
 	LEti::Shader::set_transform_matrix_uniform_name("transform_matrix");
 	LEti::Shader::set_projection_matrix_uniform_name("projection_matrix");
@@ -388,7 +437,7 @@ int main()
 	LEti::Collision_Detector_2D collision_detector;
 
 	collision_detector.set_broad_phase(new LEti::Space_Hasher_2D, 10);
-	collision_detector.set_narrow_phase(new LEti::Default_Narrow_CD, 10);
+	collision_detector.set_narrow_phase(new LEti::Dynamic_Narrow_CD, 10);
 	collision_detector.set_narrowest_phase(new LEti::SAT_Narrowest_CD);
 
 	LEti::Collision_Resolver Collision_Resolver;
@@ -418,7 +467,7 @@ int main()
 	circleish_co.init(circleish);
 	circleish_co.set_mass(4.0f);
 	circleish_co.set_pos({200, 600, 0});
-	circleish_co.draw_module()->set_texture(LEti::Picture_Manager::get_picture("pyramid_texture"));
+    circleish_co.draw_module()->set_texture(LEti::Picture_Manager::get_picture("pyramid_texture"));
 
 	LEti::Rigid_Body_2D sandclock_co;
 	sandclock_co.init(sandclock);
@@ -447,7 +496,6 @@ int main()
 		small_quads[i].set_pos({1000, 100 + (70 * i), 0});
 	}
 
-//	flat_co.init("flat_co_model");
 	flat_co.init(quad);
 	flat_co.set_mass(4.0f);
 	flat_co.set_pos({800, 400, 0});
@@ -567,14 +615,9 @@ int main()
 	collision_detector.register_point(&cursor_position);
 
 	for(auto& co : objects_map)
-	{
-		co.second->physics_module()->set_is_dynamic(true);
+    {
 		collision_detector.register_object(co.second);
-	}
-
-	//	LEti::Collision_Detector_2D::register_point(&cursor_position);
-
-	bool flat_co_enabled = true;
+    }
 
 	unsigned int fps_counter = 0;
 
@@ -597,16 +640,14 @@ int main()
 
 	bool intersection_on_prev_frame = false;
 
+    Color_Controll color_controll;
+
 	while (!LEti::Window_Controller::window_should_close())
 	{
 		LEti::Event_Controller::update();
 		LEti::Window_Controller::update();
 
 		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-
-//		if (LEti::Event_Controller::key_was_pressed(GLFW_KEY_TAB))
-//			LEti::Camera::toggle_controll(LEti::Camera::get_controllable() ? false : true);
-//		LEti::Camera::update(false, true);
 
 		for(auto& co : objects_map)
 		{
@@ -760,12 +801,12 @@ int main()
 
 		for(auto& co : objects_map)
 		{
-//			co.second->apply_linear_impulse(glm::vec3(0.0f, -9.8f, 0.0f));
+//            co.second->apply_linear_impulse(glm::vec3(0.0f, -9.8f, 0.0f));
 		}
 
 		collision_detector.update();
 
-//		LEti::Default_Narrow_CD::Collision_Data_List__Models list = collision_detector.get_collisions__models();
+//		LEti::Dynamic_Narrow_CD::Collision_Data_List__Models list = collision_detector.get_collisions__models();
 
 //        if(collision_detector.get_collisions__models().size() > 0)
 //        {
@@ -819,7 +860,7 @@ int main()
 
 		for(auto& co : objects_map)
 		{
-//            draw_frame(frame, co.second->physics_module()->get_physical_model()->create_imprint());
+            draw_frame(frame, co.second->physics_module()->get_physical_model()->create_imprint());
 		}
 		border_frame.update();
 		border_frame.draw();
@@ -829,6 +870,12 @@ int main()
 			misc_info_block.set_text(points_str.c_str());
 			misc_info_block.draw();
 		}
+
+        color_controll.update();
+        for(auto& co : objects_map)
+        {
+            color_controll.change_color(*co.second);
+        }
 
 		for(auto& co : objects_map)
 		{
@@ -843,7 +890,7 @@ int main()
 			fps_info_block.set_text((std::to_string(fps_counter)).c_str());
 			fps_counter = 0;
 		}
-		fps_info_block.draw();
+        fps_info_block.draw();
 
 		LEti::Window_Controller::swap_buffers();
 	}
