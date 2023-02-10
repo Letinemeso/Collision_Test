@@ -431,7 +431,7 @@ int main()
 	LEti::Shader::set_transform_matrix_uniform_name("transform_matrix");
 	LEti::Shader::set_projection_matrix_uniform_name("projection_matrix");
 
-	LEti::Camera_2D::set_position({600, 400, 0.0f});
+//	LEti::Camera_2D::set_position({600, 400, 0.0f});
 //	LEti::Camera_2D::set_view_scale(2.0f);
 
 	LEti::Collision_Detector_2D collision_detector;
@@ -478,9 +478,10 @@ int main()
 
     LEti::Rigid_Body_2D hollow_square_co;
     hollow_square_co.init(hollow_square);
-    hollow_square_co.set_mass(1.0f);
+    hollow_square_co.set_mass(8.0f);
     hollow_square_co.set_pos({1000, 700, 0});
-    hollow_square_co.set_scale(20.0f);
+//    hollow_square_co.set_scale({20, 30, 0});
+    hollow_square_co.set_scale(50.0f);
     hollow_square_co.draw_module()->set_texture(LEti::Picture_Manager::get_picture("yellow_indicator"));
 
 	LEti::Rigid_Body_2D flat_co;
