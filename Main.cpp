@@ -32,6 +32,8 @@
 
 #include <Object_System/Rigid_Body_2D.h>
 
+#include <Renderer.h>
+
 
 #define DT LEti::Event_Controller::get_dt()
 
@@ -54,6 +56,8 @@
 //	}
 
 //};
+
+
 
 class Color_Controll
 {
@@ -111,6 +115,9 @@ private:
 	bool m_grabbed = false;
 
 public:
+    LEti::Camera_2D* camera = nullptr;
+
+public:
 	void update()
 	{
 		if(LEti::Event_Controller::mouse_button_was_pressed(GLFW_MOUSE_BUTTON_3))
@@ -121,7 +128,7 @@ public:
 		if(!m_grabbed)
 			return;
 
-		LEti::Camera_2D::set_position(LEti::Camera_2D::position() + (glm::vec3(LEti::Window_Controller::get_cursor_stride().x, LEti::Window_Controller::get_cursor_stride().y, 0.0f) * LEti::Camera_2D::view_scale()));
+        camera->set_position(camera->position() + (glm::vec3(LEti::Window_Controller::get_cursor_stride().x, LEti::Window_Controller::get_cursor_stride().y, 0.0f) * camera->view_scale()));
 	}
 
 };
@@ -145,10 +152,13 @@ private:
 	Type type = Type::none;
 
 public:
+    const LEti::Camera_2D* camera = nullptr;
+
+public:
 	void update()
 	{
 		cursor_pos = {LEti::Window_Controller::get_cursor_position().x, LEti::Window_Controller::get_cursor_position().y, 0.0f};
-		cursor_pos = LEti::Camera_2D::convert_window_coords(cursor_pos);
+        cursor_pos = camera->convert_window_coords(cursor_pos);
 
 		if(!grabbed_object) return;
 //		grabbed_object->velocity = {0.0f, 0.0f, 0.0f};
@@ -394,10 +404,7 @@ int main()
 											return true;
 										},
 										[](void* _variable_vptr, const LDS::Vector<std::string>& _values_as_string) { *((float*)_variable_vptr) = std::stof(_values_as_string[0]); }
-									});
-
-    Camera_Controll camera_controll;
-
+                                    });
 
 	LV::MDL_Reader reader;
 	reader.parse_file("Resources/Models/quad_new");
@@ -417,19 +424,33 @@ int main()
 	LEti::Text_Field_Stub tf_stub;
 	tf_stub.assign_values(reader.get_stub("text_field"));
 
-	LEti::Window_Controller::create_window(1200, 800, "Collision Test");
+    LEti::Window_Controller::create_window(1200, 800, "Collision Test");
 
-	glEnable(GL_BLEND);
-	glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
-	glEnable(GL_DEPTH_TEST);
+    glEnable(GL_BLEND);
+    glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+    glEnable(GL_DEPTH_TEST);
 
-	glEnable(GL_CULL_FACE);
-	glCullFace(GL_CW);
+    glEnable(GL_CULL_FACE);
+    glCullFace(GL_CW);
 
-    LEti::Shader::init_shader("Resources/Shaders/vertex_shader.shader", "Resources/Shaders/fragment_shader.shader");
-	LEti::Shader::set_texture_uniform_name("input_texture");
-	LEti::Shader::set_transform_matrix_uniform_name("transform_matrix");
-	LEti::Shader::set_projection_matrix_uniform_name("projection_matrix");
+    LEti::Camera_2D camera;
+
+    camera.set_position({600, 40, 0});
+    camera.set_view_scale(2.0f);
+
+    LEti::Shader shader;
+
+    LEti::Renderer renderer;
+    renderer.set_camera(&camera);
+    renderer.set_shader(&shader);
+
+    Camera_Controll camera_controll;
+    camera_controll.camera = &camera;
+
+    shader.init("Resources/Shaders/vertex_shader.shader", "Resources/Shaders/fragment_shader.shader");
+    shader.set_texture_uniform("input_texture");
+    shader.set_transform_matrix_uniform("transform_matrix");
+    shader.set_projection_matrix_uniform("projection_matrix");
 
 //	LEti::Camera_2D::set_position({600, 400, 0.0f});
 //	LEti::Camera_2D::set_view_scale(2.0f);
@@ -570,6 +591,7 @@ int main()
 	};
 
 	Grab grab;
+    grab.camera = &camera;
 
 	std::map<const LEti::Object_2D*, LEti::Rigid_Body_2D*> objects_map;
     objects_map.emplace(&flat_co, &flat_co);
@@ -697,7 +719,7 @@ int main()
 
 			additional_scale_per_rotation *= -(float)(LEti::Event_Controller::mouse_wheel_rotation());
 
-			LEti::Camera_2D::set_view_scale(LEti::Camera_2D::view_scale() + additional_scale_per_rotation);
+            camera.set_view_scale(camera.view_scale() + additional_scale_per_rotation);
 		}
 
 		for(auto& co : objects_map)
@@ -745,7 +767,7 @@ int main()
 
 			L_LOG("MOUSE_POS_LL", "Raw coords: " + std::to_string(cursor_position.x) + " " + std::to_string(cursor_position.y));
 
-			cursor_position = LEti::Camera_2D::convert_window_coords(cursor_position);
+            cursor_position = camera.convert_window_coords(cursor_position);
 
 			L_LOG("MOUSE_POS_LL", "Processed coords: " + std::to_string(cursor_position.x) + " " + std::to_string(cursor_position.y));
 		}
@@ -757,7 +779,7 @@ int main()
 
 			L_LOG("MOUSE_POS_LL", "Raw coords: " + std::to_string(cursor_position.x) + " " + std::to_string(cursor_position.y));
 
-			cursor_position = LEti::Camera_2D::convert_window_coords(cursor_position);
+            cursor_position = camera.convert_window_coords(cursor_position);
 
 			L_LOG("MOUSE_POS_LL", "Processed coords: " + std::to_string(cursor_position.x) + " " + std::to_string(cursor_position.y));
 		}
@@ -767,7 +789,7 @@ int main()
 			cursor_position.x = LEti::Window_Controller::get_cursor_position().x;
 			cursor_position.y = LEti::Window_Controller::get_cursor_position().y;
 
-			cursor_position = LEti::Camera_2D::convert_window_coords(cursor_position);
+            cursor_position = camera.convert_window_coords(cursor_position);
 		}
 
         auto draw_frame = [&](LEti::Debug_Drawable_Frame& _frame, const LEti::Physical_Model_2D::Imprint& _pm)->void
@@ -785,7 +807,8 @@ int main()
                     _frame.set_point(1, _pm[i][j + 1]).set_sequence_element(1, 1);
 
                     _frame.update();
-                    _frame.draw();
+//                    _frame.draw();
+                    renderer.draw(*_frame.draw_module());
                 }
 
             }
@@ -797,7 +820,8 @@ int main()
             center /= (float)_pm.get_polygons_count();
 
             indicator.set_pos(center);
-            indicator.draw();
+//            indicator.draw();
+            renderer.draw(*indicator.draw_module());
 		};
 
 		for(auto& co : objects_map)
@@ -864,12 +888,14 @@ int main()
             draw_frame(frame, co.second->physics_module()->get_physical_model()->create_imprint());
 		}
 		border_frame.update();
-		border_frame.draw();
+//		border_frame.draw();
+        renderer.draw(*border_frame.draw_module());
 
 		if(intersection_on_prev_frame)
 		{
 			misc_info_block.set_text(points_str.c_str());
-			misc_info_block.draw();
+//			misc_info_block.draw();
+            renderer.draw(*misc_info_block.draw_module());
 		}
 
         color_controll.update();
@@ -880,7 +906,8 @@ int main()
 
 		for(auto& co : objects_map)
 		{
-            co.second->draw();
+//            co.second->draw();
+            renderer.draw(*co.second->draw_module());
 		}
 
 		++fps_counter;
@@ -891,7 +918,8 @@ int main()
 			fps_info_block.set_text((std::to_string(fps_counter)).c_str());
 			fps_counter = 0;
 		}
-        fps_info_block.draw();
+//        fps_info_block.draw();
+        renderer.draw(*fps_info_block.draw_module());
 
 		LEti::Window_Controller::swap_buffers();
 	}
