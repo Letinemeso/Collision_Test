@@ -620,13 +620,19 @@ int main()
 
 	LEti::Text_Field fps_info_block;
 	fps_info_block.init(tf_stub);
-	//	fps_info_block.set_pos(1150, 770, 0);
-	fps_info_block.set_pos({10, 770, 0});
+    //	fps_info_block.set_pos(1150, 770, 0);
+    fps_info_block.set_pos({10, 770, 0});
+    fps_info_block.set_scale(1);
+    fps_info_block.set_rotation_axis({0.0f, 0.0f, 1.0f});
+    fps_info_block.set_rotation_angle(0.0f);
 
 	LEti::Text_Field misc_info_block;
 	misc_info_block.init(tf_stub);
 	misc_info_block.set_pos({10, 10, 0});
-	misc_info_block.set_text("");
+    misc_info_block.set_scale(1);
+    misc_info_block.set_rotation_axis({0.0f, 0.0f, 1.0f});
+    misc_info_block.set_rotation_angle(0.0f);
+//    misc_info_block.set_text("abc");
 
 	for(auto& co : objects_map)
 	{
@@ -891,13 +897,6 @@ int main()
 //		border_frame.draw();
         renderer.draw(*border_frame.draw_module());
 
-		if(intersection_on_prev_frame)
-		{
-			misc_info_block.set_text(points_str.c_str());
-//			misc_info_block.draw();
-            renderer.draw(*misc_info_block.draw_module());
-		}
-
         color_controll.update();
         for(auto& co : objects_map)
         {
@@ -912,10 +911,15 @@ int main()
 
 		++fps_counter;
 		fps_timer.update();
+
+        misc_info_block.update();
+        renderer.draw(*misc_info_block.draw_module());
+
 		if(!fps_timer.is_active())
 		{
 			fps_timer.start(1.0f);
 			fps_info_block.set_text((std::to_string(fps_counter)).c_str());
+            fps_info_block.update();
 			fps_counter = 0;
 		}
 //        fps_info_block.draw();
