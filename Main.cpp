@@ -632,7 +632,7 @@ int main()
     misc_info_block.set_scale(1);
     misc_info_block.set_rotation_axis({0.0f, 0.0f, 1.0f});
     misc_info_block.set_rotation_angle(0.0f);
-//    misc_info_block.set_text("abc");
+    misc_info_block.set_text("abc");
 
 	for(auto& co : objects_map)
 	{
