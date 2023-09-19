@@ -1,27 +1,53 @@
-|textures|
+|resources|
 \
-    |amount|
+    ||pictures||
     \
-        "7"
+        ||font_texture||
+        \
+            |path|
+            \
+                "Resources/Font/font_yellow.png"
+            /
+        /
+        ||white_texture||
+        \
+            |path|
+            \
+                "Resources/Textures/white.png"
+            /
+        /
+        ||quad_texture||
+        \
+            |path|
+            \
+                "Resources/Textures/quad.png"
+            /
+        /
+        ||ugly_texture||
+        \
+            |path|
+            \
+                "Resources/Textures/ugly_color.png"
+            /
+        /
     /
-    |names|
+    
+    ||fonts||
     \
-        "ugly_color"
-        "pyramid_texture"
-        "white_texture"
-        "font_texture"
-        "red_indicator"
-        "yellow_indicator"
-        "purple_texture"
-    /
-    |paths|
-    \
-        "Resources/Textures/ugly_color.png"
-        "Resources/Textures/quad.png"
-        "Resources/Textures/white.png"
-        "Resources/Font/font_yellow.png"
-        "Resources/Textures/red.png"
-        "Resources/Textures/yellow.png"
-        "Resources/Textures/purple.png"
+        ||small_font||
+        \
+            |path|
+            \
+                "Resources/Font/small_font"
+            /
+        /
+
+        ||font_yellow||
+        \
+            |path|
+            \
+                "Resources/Font/font_yellow"
+            /
+        /
     /
 /

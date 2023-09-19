@@ -221,9 +221,9 @@ public:
 
 		if(type == Type::drag)
 		{
-//			glm::vec3 stride = grabbed_object->get_pos() - grabbed_object->get_pos_prev();
+			glm::vec3 stride = grabbed_object->current_state().position() - grabbed_object->previous_state().position();
 
-//			grabbed_object->velocity = stride / DT;
+			grabbed_object->velocity = stride / DT;
 		}
 		else if(type == Type::launch)
 		{
