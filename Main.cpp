@@ -215,23 +215,20 @@ public:
             launch_from = cursor_pos;
 	}
 
-	void release()
+    void release(float _dt)
 	{
 		if(!grabbed_object) return;
 
 		if(type == Type::drag)
 		{
-//			glm::vec3 stride = grabbed_object->get_pos() - grabbed_object->get_pos_prev();
-
-//			grabbed_object->velocity = stride / DT;
+            glm::vec3 stride = grabbed_object->current_state().position() - grabbed_object->previous_state().position();
+            grabbed_object->physics_module->set_velocity(stride);
 		}
 		else if(type == Type::launch)
 		{
 			glm::vec3 stride = (cursor_pos - launch_from);
-
-//			grabbed_object->set_velocity(stride);
+            grabbed_object->physics_module->set_velocity(stride);
 		}
-
 
 		grabbed_object = nullptr;
 		type = Type::none;
@@ -515,18 +512,13 @@ int main()
 
     LR::Window_Controller::create_window(1200, 800, "Generic Space Shooter Game");
 
-    //    glEnable(GL_DEPTH_TEST);
-    //    glClearColor(0.0,0.0,0.0,0.0);
-
     glEnable(GL_SCISSOR_TEST);
-//    glScissor(20, 20, 200, 200);
 
     LR::Shader shader;
 
     LR::Camera_2D camera;
     camera.set_view_scale(1.0f);
     camera.set_position({600, 400, 0});
-//    camera.set_position({0, 0, 0});
 
     LR::Renderer renderer;
     renderer.set_camera(&camera);
@@ -570,17 +562,15 @@ int main()
     test_object_stub.scale = {20.0f, 20.0f, 1.0f};
 
 
-    std::map<const LPhys::Rigid_Body_2D*, Test_Object*> objects_map;
+    std::map<const LPhys::Physics_Module_2D*, Test_Object*> objects_map;
 
-
+    constexpr unsigned int objects_amount = 10;
     LDS::Vector<Test_Object*> test_objects;
-    test_objects.resize(5);
+    test_objects.resize(objects_amount);
 
-    for(unsigned int i=0; i<5; ++i)
+    for(unsigned int i=0; i<objects_amount; ++i)
     {
         Test_Object* test_object = (Test_Object*)test_object_stub.construct();
-
-        test_object->current_state().set_position( (glm::vec3(100.0f, 100.0f, 0.0f) * (float)i) + glm::vec3(400.0f, 200.0f, 0.0f));
 
         test_objects.push(test_object);
 
@@ -594,58 +584,49 @@ int main()
 
 	auto reset_func = [&]()
 	{
-        for(unsigned int i=0; i<5; ++i)
+        for(unsigned int i=0; i<objects_amount; ++i)
         {
             Test_Object* test_object = test_objects[i];
-            test_object->current_state().set_position( (glm::vec3(100.0f, 100.0f, 0.0f) * (float)i) + glm::vec3(400.0f, 200.0f, 0.0f));
+            test_object->current_state().set_position( (glm::vec3(75.0f, 50.0f, 0.0f) * (float)i) + glm::vec3(50.0f, 50.0f, 0.0f));
+            test_object->current_state().set_rotation({0.0f, 0.0f, 0.0f});
+            test_object->physics_module->set_velocity({0.0f, 0.0f, 0.0f});
+            test_object->physics_module->set_angular_velocity(0.0f);
+            test_object->update_previous_state();
 
+//            test_object->physics_module->set_mass_multiplier((float)i + 1);
         }
+
+//        Test_Object* test_object_0 = test_objects[0];
+//        Test_Object* test_object_1 = test_objects[1];
+
+//        test_object_0->current_state().set_position( {300.0f, 400.0f, 0.0f} );
+//        test_object_0->current_state().set_rotation( {0.0f, 0.0f, LEti::Math::PI * 1.0f / 3.0f} );
+//        test_object_1->current_state().set_position( {400.0f, 400.0f, 0.0f} );
+//        test_object_1->current_state().set_rotation( {0.0f, 0.0f, 0.0f} );
+
+//        test_object_0->update_previous_state();
+//        test_object_1->update_previous_state();
 	};
 	reset_func();
 
 	auto launch_func = [&]()
     {
-        Test_Object* test_object = test_objects[0];
-        test_object->physics_module->set_velocity({50.0f, 50.0f, 0.0f});
+        Test_Object* test_object_0 = test_objects[0];
+        Test_Object* test_object_1 = test_objects[1];
+
+//        test_object_0->physics_module->set_angular_velocity(LEti::Math::PI);
+//        test_object_1->physics_module->set_angular_velocity(LEti::Math::PI);
+
+        test_object_0->physics_module->set_velocity({700.0f, 0.0f, 0.0f});
 	};
 
 	Grab grab;
     grab.camera = &camera;
 
-//	LEti::Resource_Loader::load_object("flat_indicator_red", "Resources/Models/flat_indicator_red.mdl");
-//	LEti::Resource_Loader::load_object("debug_frame", "Resources/Models/debug_frame.mdl");
-//	LEti::Resource_Loader::load_object("debug_frame_red", "Resources/Models/debug_frame_red.mdl");
-
-//	LEti::Resource_Loader::load_object("ind", "Resources/Models/intersection_point_indicator.mdl");
-//	LEti::Object_2D ind;
-//	ind.init("ind");
-
     LEti::FPS_Timer fps_timer;
     timer.set_max_dt(60.0f / 1000.0f);
 
-//	LEti::Resource_Loader::load_object("text_field", "Resources/Models/text_field.mdl");
-	//	LEti::Text_Field intersection_info_block;
-	//	intersection_info_block.init("text_field");
-	//	LEti::Text_Field tf_flat_co_speed;
-	//	tf_flat_co_speed.init("text_field");
-	//	tf_flat_co_speed.set_pos(0, 760, 0);
-
-//	LEti::Text_Field fps_info_block;
-//	fps_info_block.init(tf_stub);
-//    //	fps_info_block.set_pos(1150, 770, 0);
-//    fps_info_block.set_pos({10, 770, 0});
-//    fps_info_block.set_scale(1);
-//    fps_info_block.set_rotation_axis({0.0f, 0.0f, 1.0f});
-//    fps_info_block.set_rotation_angle(0.0f);
-
-//	LEti::Text_Field misc_info_block;
-//	misc_info_block.init(tf_stub);
-//	misc_info_block.set_pos({10, 10, 0});
-//    misc_info_block.set_scale(1);
-//    misc_info_block.set_rotation_axis({0.0f, 0.0f, 1.0f});
-//    misc_info_block.set_rotation_angle(0.0f);
-//    misc_info_block.set_text("abc");
-
+    collision_detector.register_point(&cursor_position);
 
 	unsigned int fps_counter = 0;
 
@@ -660,7 +641,7 @@ int main()
 
 		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
-        for(unsigned int i=0; i<5; ++i)
+        for(unsigned int i=0; i<objects_amount; ++i)
         {
             Test_Object* object = test_objects[i];
             object->update_previous_state();
@@ -711,10 +692,31 @@ int main()
 //            camera.set_view_scale(camera.view_scale() + additional_scale_per_rotation);
 //		}
 
-        for(unsigned int i=0; i<5; ++i)
+        for(unsigned int i=0; i<objects_amount; ++i)
         {
             Test_Object* object = test_objects[i];
             object->update(timer.dt());
+
+            if(object->current_state().position().x < 0.0f)
+            {
+                object->current_state().set_position({1.0f, object->current_state().position().y, 0.0f});
+                object->physics_module->set_velocity({-object->physics_module->velocity().x, object->physics_module->velocity().y, 0.0f});
+            }
+            if(object->current_state().position().x > 1200.0f)
+            {
+                object->current_state().set_position({1199.0f, object->current_state().position().y, 0.0f});
+                object->physics_module->set_velocity({-object->physics_module->velocity().x, object->physics_module->velocity().y, 0.0f});
+            }
+            if(object->current_state().position().y < 0.0f)
+            {
+                object->current_state().set_position({object->current_state().position().x, 1.0f, 0.0f});
+                object->physics_module->set_velocity({object->physics_module->velocity().x, -object->physics_module->velocity().y, 0.0f});
+            }
+            if(object->current_state().position().y > 800.0f)
+            {
+                object->current_state().set_position({object->current_state().position().x, 799.0f, 0.0f});
+                object->physics_module->set_velocity({object->physics_module->velocity().x, -object->physics_module->velocity().y, 0.0f});
+            }
         }
 
 //		LEti::Camera_2D::set_position(flat_co.get_pos());
@@ -754,7 +756,7 @@ int main()
 
 		collision_detector.update();
 
-        collision_resolver.resolve_all(collision_detector.get_collisions__models());
+        collision_resolver.resolve_all(collision_detector.get_collisions__models(), timer.dt());
 
 
 
@@ -762,35 +764,35 @@ int main()
 
 		grab.update();
 
-//        if(LR::Window_Controller::mouse_button_was_pressed(GLFW_MOUSE_BUTTON_1))
-//		{
-//			auto plist = collision_detector.get_collisions__points();
+        if(LR::Window_Controller::mouse_button_was_pressed(GLFW_MOUSE_BUTTON_1))
+        {
+            auto plist = collision_detector.get_collisions__points();
 
-//			if(plist.size() != 0)
-//				grab.grab(objects_map.at(plist.begin()->first), Grab::Type::drag);
-//		}
-//        if(LR::Window_Controller::mouse_button_was_pressed(GLFW_MOUSE_BUTTON_2))
-//		{
-//			auto plist = collision_detector.get_collisions__points();
+            if(plist.size() != 0)
+                grab.grab(objects_map.at(plist.begin()->first), Grab::Type::drag);
+        }
+        if(LR::Window_Controller::mouse_button_was_pressed(GLFW_MOUSE_BUTTON_2))
+        {
+            auto plist = collision_detector.get_collisions__points();
 
-//			if(plist.size() != 0)
-//				grab.grab(objects_map.at(plist.begin()->first), Grab::Type::launch);
-//		}
-//        if(LR::Window_Controller::mouse_button_was_released(GLFW_MOUSE_BUTTON_1))
-//		{
-//			grab.release();
-//		}
-//        if(LR::Window_Controller::mouse_button_was_released(GLFW_MOUSE_BUTTON_2))
-//		{
-//			grab.release();
-//		}
+            if(plist.size() != 0)
+                grab.grab(objects_map.at(plist.begin()->first), Grab::Type::launch);
+        }
+        if(LR::Window_Controller::mouse_button_was_released(GLFW_MOUSE_BUTTON_1))
+        {
+            grab.release(timer.dt());
+        }
+        if(LR::Window_Controller::mouse_button_was_released(GLFW_MOUSE_BUTTON_2))
+        {
+            grab.release(timer.dt());
+        }
 
 
 
         LR::Window_Controller::swap_buffers();
 	}
 
-    for(unsigned int i=0; i<5; ++i)
+    for(unsigned int i=0; i<objects_amount; ++i)
     {
         Test_Object* object = test_objects[i];
         delete object;
