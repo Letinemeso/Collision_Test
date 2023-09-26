@@ -531,8 +531,12 @@ int main()
 
     LPhys::Collision_Detector_2D collision_detector;
 
-    collision_detector.set_broad_phase(new LPhys::Space_Hasher_2D, 10);
-    collision_detector.set_narrow_phase(new LPhys::Dynamic_Narrow_CD, 10);
+    LPhys::Space_Hasher_2D* cd_broad_phase = new LPhys::Space_Hasher_2D;
+    cd_broad_phase->set_precision(10);
+    collision_detector.set_broad_phase(cd_broad_phase);
+    LPhys::Dynamic_Narrow_CD* cd_narrow_phase = new LPhys::Dynamic_Narrow_CD;
+    cd_narrow_phase->set_precision(10);
+    collision_detector.set_narrow_phase(cd_narrow_phase);
     collision_detector.set_narrowest_phase(new LPhys::SAT_Narrowest_CD);
 
     LPhys::Collision_Resolver collision_resolver;
@@ -564,7 +568,7 @@ int main()
 
     std::map<const LPhys::Physics_Module_2D*, Test_Object*> objects_map;
 
-    constexpr unsigned int objects_amount = 10;
+    constexpr unsigned int objects_amount = 15;
     LDS::Vector<Test_Object*> test_objects;
     test_objects.resize(objects_amount);
 
