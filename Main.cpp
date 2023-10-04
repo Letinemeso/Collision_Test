@@ -525,9 +525,24 @@ int main()
     renderer.set_shader(&shader);
 
     shader.init(vertex_shader_file.extract_block(), fragment_shader_file.extract_block());
-    shader.set_texture_uniform("input_texture");
-    shader.set_transform_matrix_uniform("transform_matrix");
-    shader.set_projection_matrix_uniform("projection_matrix");
+
+    glm::mat4x4 test_crop_matrix =
+    {
+        0.0f, 0.0f, 0.0f, 0.0f,
+        0.0f, 0.0f, 0.0f, 0.0f,
+        0.0f, 0.0f, 0.0f, 0.0f,
+        0.0f, 0.0f, 0.0f, 0.0f
+    };
+//    test_crop_matrix[0][0] = 100.0f;
+//    test_crop_matrix[0][1] = 500.0f;
+//    test_crop_matrix[1][0] = 100.0f;
+//    test_crop_matrix[1][1] = 500.0f;
+    test_crop_matrix[0][0] = 30.0f;
+    test_crop_matrix[0][1] = 1200.0f - 30.0f;
+    test_crop_matrix[1][0] = 30.0f;
+    test_crop_matrix[1][1] = 800.0f - 30.0f;
+    shader.set_matrix_uniform(test_crop_matrix, shader.get_matrix_uniform_location("vs_in_crop_area"));
+
 
     LPhys::Collision_Detector_2D collision_detector;
 
