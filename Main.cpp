@@ -723,6 +723,12 @@ int main()
             }
         }
 
+        for(unsigned int i=0; i<objects_amount; ++i)
+        {
+            Test_Object* object = test_objects[i];
+            object->physics_module->apply_linear_impulse(glm::vec3(0.0f, -100.0f, 0.0f) * timer.dt());
+        }
+
 //		LEti::Camera_2D::set_position(flat_co.get_pos());
 
         if(LR::Window_Controller::mouse_button_was_pressed(GLFW_MOUSE_BUTTON_1))
