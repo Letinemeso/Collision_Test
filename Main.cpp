@@ -10,7 +10,9 @@
 #include <FPS_Timer.h>
 #include <Object_System/Object_2D.h>
 
-#include <Shader/Shader.h>
+#include <Shader/Vertex_Shader.h>
+#include <Shader/Fragment_Shader.h>
+#include <Shader/Shader_Program.h>
 #include <Camera/Camera_2D.h>
 #include <Picture/Graphic_Resources_Manager.h>
 
@@ -514,7 +516,16 @@ int main()
 
     glEnable(GL_SCISSOR_TEST);
 
-    LR::Shader shader;
+    LR::Shader_Program shader_program;
+
+    LR::Vertex_Shader* vertex_shader = new LR::Vertex_Shader;
+    vertex_shader->init(vertex_shader_file.extract_block());
+    LR::Fragment_Shader* fragment_shader = new LR::Fragment_Shader;
+    fragment_shader->init(fragment_shader_file.extract_block());
+
+    shader_program.add_shader(vertex_shader);
+    shader_program.add_shader(fragment_shader);
+    shader_program.init();
 
     LR::Camera_2D camera;
     camera.set_view_scale(1.0f);
@@ -522,9 +533,7 @@ int main()
 
     LR::Renderer renderer;
     renderer.set_camera(&camera);
-    renderer.set_shader(&shader);
-
-    shader.init(vertex_shader_file.extract_block(), fragment_shader_file.extract_block());
+    renderer.set_shader_program(&shader_program);
 
     glm::mat4x4 test_crop_matrix =
     {
@@ -541,7 +550,7 @@ int main()
     test_crop_matrix[0][1] = 1200.0f - 30.0f;
     test_crop_matrix[1][0] = 30.0f;
     test_crop_matrix[1][1] = 800.0f - 30.0f;
-    shader.set_matrix_uniform(test_crop_matrix, shader.get_matrix_uniform_location("vs_in_crop_area"));
+    shader_program.set_matrix_uniform(test_crop_matrix, shader_program.get_matrix_uniform_location("vs_in_crop_area"));
 
 
     LPhys::Collision_Detector_2D collision_detector;
