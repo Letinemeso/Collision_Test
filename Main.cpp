@@ -10,8 +10,9 @@
 #include <FPS_Timer.h>
 #include <Object_System/Object_2D.h>
 
-#include <Shader/Vertex_Shader.h>
-#include <Shader/Fragment_Shader.h>
+#include <Shader/Shader_Components/Shader_Transform_Component.h>
+#include <Shader/Shader_Types/Vertex_Shader.h>
+#include <Shader/Shader_Types/Fragment_Shader.h>
 #include <Shader/Shader_Program.h>
 #include <Camera/Camera_2D.h>
 #include <Picture/Graphic_Resources_Manager.h>
@@ -507,8 +508,11 @@ int main()
     glm::vec3 cursor_position(0.0f, 0.0f, 0.0f);
 
 
-    LST::File vertex_shader_file("Resources/Shaders/vertex_shader.shader");
-    LST::File fragment_shader_file("Resources/Shaders/fragment_shader.shader");
+//    LST::File vertex_shader_file("Resources/Shaders/vertex_shader.shader");
+//    LST::File fragment_shader_file("Resources/Shaders/fragment_shader.shader");
+
+    LST::File vertex_shader_file("Resources/Shaders/test/vertex_transform_component.shader");
+    LST::File fragment_shader_file("Resources/Shaders/test/fragment_shader.shader");
 
     LV::MDL_Reader reader;
 
@@ -516,13 +520,25 @@ int main()
 
     glEnable(GL_SCISSOR_TEST);
 
-    LR::Shader_Program shader_program;
+    LR::Shader_Transform_Component* v_shader_transform_component = new LR::Shader_Transform_Component;
+    v_shader_transform_component->set_source(vertex_shader_file.extract_block());
+    v_shader_transform_component->set_main_call("process_transform();");
 
     LR::Vertex_Shader* vertex_shader = new LR::Vertex_Shader;
-    vertex_shader->init(vertex_shader_file.extract_block());
-    LR::Fragment_Shader* fragment_shader = new LR::Fragment_Shader;
-    fragment_shader->init(fragment_shader_file.extract_block());
+    vertex_shader->set_glsl_version("330 core");
+    vertex_shader->add_component(v_shader_transform_component);
+    vertex_shader->compile();
 
+    LR::Shader_Transform_Component* f_shader_transform_component = new LR::Shader_Transform_Component;
+    f_shader_transform_component->set_source(fragment_shader_file.extract_block());
+    f_shader_transform_component->set_main_call("process_color();");
+
+    LR::Fragment_Shader* fragment_shader = new LR::Fragment_Shader;
+    fragment_shader->set_glsl_version("330 core");
+    fragment_shader->add_component(f_shader_transform_component);
+    fragment_shader->compile();
+
+    LR::Shader_Program shader_program;
     shader_program.add_shader(vertex_shader);
     shader_program.add_shader(fragment_shader);
     shader_program.init();
