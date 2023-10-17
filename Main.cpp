@@ -529,13 +529,13 @@ int main()
     vertex_shader->add_component(v_shader_transform_component);
     vertex_shader->compile();
 
-    LR::Shader_Transform_Component* f_shader_transform_component = new LR::Shader_Transform_Component;
-    f_shader_transform_component->set_source(fragment_shader_file.extract_block());
-    f_shader_transform_component->set_main_call("process_color();");
+    LR::Shader_Component* f_shader_component = new LR::Shader_Component;
+    f_shader_component->set_source(fragment_shader_file.extract_block());
+    f_shader_component->set_main_call("process_color();");
 
     LR::Fragment_Shader* fragment_shader = new LR::Fragment_Shader;
     fragment_shader->set_glsl_version("330 core");
-    fragment_shader->add_component(f_shader_transform_component);
+    fragment_shader->add_component(f_shader_component);
     fragment_shader->compile();
 
     LR::Shader_Program shader_program;
@@ -551,22 +551,19 @@ int main()
     renderer.set_camera(&camera);
     renderer.set_shader_program(&shader_program);
 
-    glm::mat4x4 test_crop_matrix =
-    {
-        0.0f, 0.0f, 0.0f, 0.0f,
-        0.0f, 0.0f, 0.0f, 0.0f,
-        0.0f, 0.0f, 0.0f, 0.0f,
-        0.0f, 0.0f, 0.0f, 0.0f
-    };
-//    test_crop_matrix[0][0] = 100.0f;
-//    test_crop_matrix[0][1] = 500.0f;
-//    test_crop_matrix[1][0] = 100.0f;
-//    test_crop_matrix[1][1] = 500.0f;
-    test_crop_matrix[0][0] = 30.0f;
-    test_crop_matrix[0][1] = 1200.0f - 30.0f;
-    test_crop_matrix[1][0] = 30.0f;
-    test_crop_matrix[1][1] = 800.0f - 30.0f;
-    shader_program.set_matrix_uniform(test_crop_matrix, shader_program.get_matrix_uniform_location("vs_in_crop_area"));
+//    glm::mat4x4 test_crop_matrix =
+//    {
+//        0.0f, 0.0f, 0.0f, 0.0f,
+//        0.0f, 0.0f, 0.0f, 0.0f,
+//        0.0f, 0.0f, 0.0f, 0.0f,
+//        0.0f, 0.0f, 0.0f, 0.0f
+//    };
+
+//    test_crop_matrix[0][0] = 30.0f;
+//    test_crop_matrix[0][1] = 1200.0f - 30.0f;
+//    test_crop_matrix[1][0] = 30.0f;
+//    test_crop_matrix[1][1] = 800.0f - 30.0f;
+//    shader_program.set_matrix_uniform(test_crop_matrix, shader_program.get_matrix_uniform_location("vs_in_crop_area"));
 
 
     LPhys::Collision_Detector_2D collision_detector;
@@ -602,6 +599,7 @@ int main()
     test_object_stub.assign_values(reader.get_stub("triangle"));
     test_object_stub.on_values_assigned();
     test_object_stub.draw_module->renderer = &renderer;
+    test_object_stub.draw_module->shader_transform_component = v_shader_transform_component;
     test_object_stub.draw_module->graphic_resources_manager = &graphics_resources_manager;
     test_object_stub.scale = {20.0f, 20.0f, 1.0f};
 
