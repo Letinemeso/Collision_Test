@@ -8,7 +8,7 @@
 #include <Stuff/File.h>
 
 #include <FPS_Timer.h>
-#include <Object_System/Object_2D.h>
+#include <Object_System/Object.h>
 
 #include <Shader/Shader_Components/Shader_Transform_Component.h>
 #include <Shader/Shader_Types/Vertex_Shader.h>
@@ -33,7 +33,7 @@
 #define DT LR::Window_Controller::get_dt()
 
 
-class Test_Object : public LEti::Object_2D
+class Test_Object : public LEti::Object
 {
 public:
     DECLARE_VARIABLE;
@@ -43,19 +43,19 @@ public:
 
 };
 
-INIT_FIELDS(Test_Object, LEti::Object_2D)
+INIT_FIELDS(Test_Object, LEti::Object)
 FIELDS_END
 
 
 
-class Test_Object_Stub : public LEti::Object_2D_Stub
+class Test_Object_Stub : public LEti::Object_Stub
 {
 public:
     DECLARE_VARIABLE;
 
 public:
     LPhys::Rigid_Body_2D__Stub* physics_module = nullptr;
-    LR::Default_Draw_Module_2D_Stub* draw_module = nullptr;
+    LR::Default_Draw_Module_Stub* draw_module = nullptr;
 
 protected:
     LV::Variable_Base* M_construct_product() const override;
@@ -68,10 +68,10 @@ public:
 
 
 
-INIT_FIELDS(Test_Object_Stub, LEti::Object_2D_Stub)
+INIT_FIELDS(Test_Object_Stub, LEti::Object_Stub)
 
-ADD_CHILD("draw_module", *draw_module)
-ADD_CHILD("physics_module", *physics_module)
+ADD_CHILD("draw_module", draw_module)
+ADD_CHILD("physics_module", physics_module)
 
 FIELDS_END
 
@@ -83,11 +83,11 @@ LV::Variable_Base* Test_Object_Stub::M_construct_product() const
 
 void Test_Object_Stub::M_init_constructed_product(LV::Variable_Base* _product) const
 {
-    LEti::Object_2D_Stub::M_init_constructed_product(_product);
+    LEti::Object_Stub::M_init_constructed_product(_product);
 
     Test_Object* result = (Test_Object*)_product;
 
-    LR::Default_Draw_Module_2D* dm = (LR::Default_Draw_Module_2D*)draw_module->construct();
+    LR::Default_Draw_Module* dm = (LR::Default_Draw_Module*)draw_module->construct();
 
     LPhys::Rigid_Body_2D* pm = (LPhys::Rigid_Body_2D*)physics_module->construct();
     pm->set_on_alignment_func([pm, dm]()
@@ -153,7 +153,7 @@ public:
         return fabs(result_direction.z);
     }
 
-    void change_color(LEti::Object_2D& _obj)
+    void change_color(LEti::Object& _obj)
     {
 //        for(unsigned int i=0; i < _obj.draw_module()->colors().size(); i += 4)
 //            _obj.draw_module()->colors()[i] = r_ratio();
@@ -594,9 +594,10 @@ int main()
 
 
     Test_Object_Stub test_object_stub;
-    test_object_stub.draw_module = new LR::Default_Draw_Module_2D_Stub;
+    test_object_stub.draw_module = new LR::Default_Draw_Module_Stub;
     test_object_stub.physics_module = new LPhys::Rigid_Body_2D__Stub;
     test_object_stub.assign_values(reader.get_stub("triangle"));
+    test_object_stub.init_childs(reader.get_stub("triangle"));
     test_object_stub.on_values_assigned();
     test_object_stub.draw_module->renderer = &renderer;
     test_object_stub.draw_module->shader_transform_component = v_shader_transform_component;

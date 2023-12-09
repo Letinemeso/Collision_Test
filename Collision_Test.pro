@@ -11,12 +11,12 @@ unix {
     LIBS += "../L_Variable/libL_Variable.a"
     LIBS += "../L_Utility/libL_Utility.a"
 
-    LIBS += "../../LEti_Engine/OpenGL/Linux/lib/libglfw3.a"
-    LIBS += "../../LEti_Engine/OpenGL/Linux/lib/libGLEW.a"
+    LIBS += "../../L_Renderer/OpenGL/Linux/lib/libglfw3.a"
+    LIBS += "../../L_Renderer/OpenGL/Linux/lib/libGLEW.a"
 
     LIBS += -lpthread -lGL -lX11 -ldl
 
-    INCLUDEPATH += "../LEti_Engine/OpenGL/Linux/include/"
+    INCLUDEPATH += "../L_Renderer/OpenGL/Linux/include/"
 }
 
 
@@ -28,8 +28,8 @@ win32 {
     LIBS += "../L_Variable/debug/libL_Variable.a"
     LIBS += "../L_Utility/debug/libL_Utility.a"
 
-    LIBS += "../../LEti_Engine/OpenGL/Windows_x64_mingw/lib/libglfw3.a"
-    LIBS += "../../LEti_Engine/OpenGL/Windows_x64_mingw/lib/libglew32.a"
+    LIBS += "../../L_Renderer/OpenGL/Windows_x64_mingw/lib/libglfw3.a"
+    LIBS += "../../L_Renderer/OpenGL/Windows_x64_mingw/lib/libglew32.a"
 
     LIBS += -lopengl32 \
 	-luser32 \
@@ -40,7 +40,7 @@ win32 {
 	-static-libstdc++ \
 	-static-libgcc
 
-    INCLUDEPATH += "../LEti_Engine/OpenGL/Windows_x64_mingw/include/"
+    INCLUDEPATH += "../L_Renderer/OpenGL/Windows_x64_mingw/include/"
 }
 
 INCLUDEPATH += "../LEti_Engine/OpenGL/GLM"
