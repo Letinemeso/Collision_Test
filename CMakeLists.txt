@@ -43,22 +43,22 @@ target_include_directories(Collision_Test PUBLIC
                             "${PROJECT_SOURCE_DIR}/../L_Gamedev_Lib/include"
 )
 
+
+add_library(glfw STATIC IMPORTED)
+add_library(glew STATIC IMPORTED)
+
 if (WIN32)
-    target_include_directories(Collision_Test PUBLIC
-                                "${PROJECT_SOURCE_DIR}/../L_Renderer/OpenGL/Windows_x64_mingw/include"
-    )
+    target_include_directories(Collision_Test PUBLIC "${PROJECT_SOURCE_DIR}/../L_Renderer/OpenGL/Windows_x64_mingw/include" )
+    set_target_properties(glfw PROPERTIES IMPORTED_LOCATION "${PROJECT_SOURCE_DIR}/../L_Renderer/OpenGL/Windows_x64_mingw/lib/libglfw3.a")
+    set_target_properties(glew PROPERTIES IMPORTED_LOCATION "${PROJECT_SOURCE_DIR}/../L_Renderer/OpenGL/Windows_x64_mingw/lib/libglew32.a")
 endif (WIN32)
 
 if (UNIX)
-    target_include_directories(Collision_Test PUBLIC
-                                "${PROJECT_SOURCE_DIR}/../L_Renderer/OpenGL/Linux/include"
-    )
+    target_include_directories(Collision_Test PUBLIC "${PROJECT_SOURCE_DIR}/../L_Renderer/OpenGL/Linux/include" )
+    set_target_properties(glfw PROPERTIES IMPORTED_LOCATION "${PROJECT_SOURCE_DIR}/../L_Renderer/OpenGL/Linux/lib/libglfw3.a")
+    set_target_properties(glew PROPERTIES IMPORTED_LOCATION "${PROJECT_SOURCE_DIR}/../L_Renderer/OpenGL/Linux/lib/libGLEW.a")
 endif (UNIX)
 
-add_library(glfw STATIC IMPORTED)
-set_target_properties(glfw PROPERTIES IMPORTED_LOCATION "${PROJECT_SOURCE_DIR}/../L_Renderer/OpenGL/Windows_x64_mingw/lib/libglfw3.a")
-add_library(glew STATIC IMPORTED)
-set_target_properties(glew PROPERTIES IMPORTED_LOCATION "${PROJECT_SOURCE_DIR}/../L_Renderer/OpenGL/Windows_x64_mingw/lib/libglew32.a")
 
 target_link_libraries(Collision_Test PUBLIC
     L_Gamedev_Lib
