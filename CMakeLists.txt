@@ -44,20 +44,7 @@ target_include_directories(Collision_Test PUBLIC
 )
 
 
-add_library(glfw STATIC IMPORTED)
-add_library(glew STATIC IMPORTED)
-
-if (WIN32)
-    target_include_directories(Collision_Test PUBLIC "${PROJECT_SOURCE_DIR}/../L_Renderer/OpenGL/Windows_x64_mingw/include" )
-    set_target_properties(glfw PROPERTIES IMPORTED_LOCATION "${PROJECT_SOURCE_DIR}/../L_Renderer/OpenGL/Windows_x64_mingw/lib/libglfw3.a")
-    set_target_properties(glew PROPERTIES IMPORTED_LOCATION "${PROJECT_SOURCE_DIR}/../L_Renderer/OpenGL/Windows_x64_mingw/lib/libglew32.a")
-endif (WIN32)
-
-if (UNIX)
-    target_include_directories(Collision_Test PUBLIC "${PROJECT_SOURCE_DIR}/../L_Renderer/OpenGL/Linux/include" )
-    set_target_properties(glfw PROPERTIES IMPORTED_LOCATION "${PROJECT_SOURCE_DIR}/../L_Renderer/OpenGL/Linux/lib/libglfw3.a")
-    set_target_properties(glew PROPERTIES IMPORTED_LOCATION "${PROJECT_SOURCE_DIR}/../L_Renderer/OpenGL/Linux/lib/libGLEW.a")
-endif (UNIX)
+target_include_directories(Collision_Test PUBLIC "${PROJECT_SOURCE_DIR}/../L_Renderer/OpenGL/include" )
 
 
 target_link_libraries(Collision_Test PUBLIC
@@ -69,14 +56,38 @@ target_link_libraries(Collision_Test PUBLIC
     L_Utility
 )
 
+add_library(glfw STATIC IMPORTED)
+add_library(glew STATIC IMPORTED)
+
+if (WIN32)
+    set_target_properties(glfw PROPERTIES IMPORTED_LOCATION "${PROJECT_SOURCE_DIR}/../L_Renderer/OpenGL/Windows_x64_mingw/lib/libglfw3.a")
+    set_target_properties(glew PROPERTIES IMPORTED_LOCATION "${PROJECT_SOURCE_DIR}/../L_Renderer/OpenGL/Windows_x64_mingw/lib/libglew32.a")
+endif (WIN32)
+
+if (UNIX)
+    set_target_properties(glfw PROPERTIES IMPORTED_LOCATION "${PROJECT_SOURCE_DIR}/../L_Renderer/OpenGL/Linux/lib/libglfw3.a")
+    set_target_properties(glew PROPERTIES IMPORTED_LOCATION "${PROJECT_SOURCE_DIR}/../L_Renderer/OpenGL/Linux/lib/libGLEW.a")
+endif (UNIX)
+
 target_link_libraries(Collision_Test PUBLIC
     glfw
     glew
 )
 
-target_link_libraries(Collision_Test PUBLIC
-    opengl32
-    user32
-    gdi32
-    shell32
-)
+if (WIN32)
+    target_link_libraries(Collision_Test PUBLIC
+        opengl32
+        user32
+        gdi32
+        shell32
+    )
+endif (WIN32)
+
+if (UNIX)
+    target_link_libraries(Collision_Test PUBLIC
+        pthread
+        GL
+        X11
+        dl
+    )
+endif (UNIX)
