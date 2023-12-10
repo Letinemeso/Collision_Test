@@ -59,15 +59,8 @@ target_link_libraries(Collision_Test PUBLIC
 add_library(glfw STATIC IMPORTED)
 add_library(glew STATIC IMPORTED)
 
-if (WIN32)
-    set_target_properties(glfw PROPERTIES IMPORTED_LOCATION "${PROJECT_SOURCE_DIR}/../L_Renderer/OpenGL/Windows_x64_mingw/lib/libglfw3.a")
-    set_target_properties(glew PROPERTIES IMPORTED_LOCATION "${PROJECT_SOURCE_DIR}/../L_Renderer/OpenGL/Windows_x64_mingw/lib/libglew32.a")
-endif (WIN32)
-
-if (UNIX)
-    set_target_properties(glfw PROPERTIES IMPORTED_LOCATION "${PROJECT_SOURCE_DIR}/../L_Renderer/OpenGL/Linux/lib/libglfw3.a")
-    set_target_properties(glew PROPERTIES IMPORTED_LOCATION "${PROJECT_SOURCE_DIR}/../L_Renderer/OpenGL/Linux/lib/libGLEW.a")
-endif (UNIX)
+set_target_properties(glfw PROPERTIES IMPORTED_LOCATION "${PROJECT_SOURCE_DIR}/../Third_Party/libglfw3.a")
+set_target_properties(glew PROPERTIES IMPORTED_LOCATION "${PROJECT_SOURCE_DIR}/../Third_Party/libglew32.a")
 
 target_link_libraries(Collision_Test PUBLIC
     glfw
