@@ -100,6 +100,9 @@ void Test_Object_Stub::M_init_constructed_product(LV::Variable_Base* _product) c
     result->add_module(dm);
 
     result->physics_module = pm;
+
+    result->update(0.0f);
+    result->update_previous_state();
 }
 
 
@@ -231,6 +234,8 @@ public:
 		{
 			glm::vec3 stride = (cursor_pos - launch_from);
             grabbed_object->physics_module->set_velocity(stride);
+
+            std::cout << stride.x << "   " << stride.y << "\n";
 		}
 
 		grabbed_object = nullptr;
@@ -504,7 +509,6 @@ int main()
                                     });
     srand(time(nullptr));
 
-
     glm::vec3 cursor_position(0.0f, 0.0f, 0.0f);
 
 
@@ -580,7 +584,8 @@ int main()
     collision_resolver.add_resolution(new LPhys::Collision_Resolution__Rigid_Body_2D);
 
     reader.parse_file("Resources/Textures/textures");
-    reader.parse_file("Resources/Models/triangle");
+//    reader.parse_file("Resources/Models/triangle");
+    reader.parse_file("Resources/Models/circleish");
     LR::Graphic_Resources_Manager graphics_resources_manager;
 
     graphics_resources_manager.load_resources(reader.get_stub("resources"));
@@ -602,25 +607,44 @@ int main()
     test_object_stub.draw_module->renderer = &renderer;
     test_object_stub.draw_module->shader_transform_component = v_shader_transform_component;
     test_object_stub.draw_module->graphic_resources_manager = &graphics_resources_manager;
-    test_object_stub.scale = {20.0f, 20.0f, 1.0f};
+//
+//    test_object_stub.scale = {20.0f, 20.0f, 1.0f};
 
 
     std::map<const LPhys::Physics_Module_2D*, Test_Object*> objects_map;
 
-    constexpr unsigned int objects_amount = 15;
+    constexpr unsigned int objects_amount = 2;
     LDS::Vector<Test_Object*> test_objects;
     test_objects.resize(objects_amount);
 
-    for(unsigned int i=0; i<objects_amount; ++i)
-    {
-        Test_Object* test_object = (Test_Object*)test_object_stub.construct();
 
-        test_objects.push(test_object);
+    Test_Object* test_object = (Test_Object*)test_object_stub.construct();
+    test_objects.push(test_object);
+    objects_map.emplace(test_object->physics_module, test_object);
+    collision_detector.register_object(test_object->physics_module);
+    test_object_stub.draw_module->texture_name = "ugly_texture";
+    test_object = (Test_Object*)test_object_stub.construct();
+    test_objects.push(test_object);
+    objects_map.emplace(test_object->physics_module, test_object);
+    collision_detector.register_object(test_object->physics_module);
 
-        objects_map.emplace(test_object->physics_module, test_object);
+    test_object_stub.draw_module->texture_name = "quad_texture";
 
-        collision_detector.register_object(test_object->physics_module);
-    }
+    LEti::Object* collision_pointer = new LEti::Object;
+    collision_pointer->current_state().set_scale({10, 10, 1});
+    collision_pointer->current_state().set_rotation({0, 0, 0.785398163f});
+    collision_pointer->add_module((LEti::Module*)test_object_stub.draw_module->construct());
+
+//    for(unsigned int i=0; i<objects_amount; ++i)
+//    {
+//        Test_Object* test_object = (Test_Object*)test_object_stub.construct();
+
+//        test_objects.push(test_object);
+
+//        objects_map.emplace(test_object->physics_module, test_object);
+
+//        collision_detector.register_object(test_object->physics_module);
+//    }
 
 
 	///////////////// 2d collision test
@@ -630,7 +654,7 @@ int main()
         for(unsigned int i=0; i<objects_amount; ++i)
         {
             Test_Object* test_object = test_objects[i];
-            test_object->current_state().set_position( (glm::vec3(75.0f, 50.0f, 0.0f) * (float)i) + glm::vec3(50.0f, 50.0f, 0.0f));
+            test_object->current_state().set_position( (glm::vec3(200.0f, 150.0f, 0.0f) * (float)i) + glm::vec3(150.0f, 150.0f, 0.0f));
             test_object->current_state().set_rotation({0.0f, 0.0f, 0.0f});
             test_object->physics_module->set_velocity({0.0f, 0.0f, 0.0f});
             test_object->physics_module->set_angular_velocity(0.0f);
@@ -660,7 +684,7 @@ int main()
 //        test_object_0->physics_module->set_angular_velocity(LEti::Math::PI);
 //        test_object_1->physics_module->set_angular_velocity(LEti::Math::PI);
 
-        test_object_0->physics_module->set_velocity({700.0f, 0.0f, 0.0f});
+        test_object_0->physics_module->set_velocity({325.0f, 440.0f, 0.0f});
 	};
 
 	Grab grab;
@@ -765,7 +789,7 @@ int main()
         for(unsigned int i=0; i<objects_amount; ++i)
         {
             Test_Object* object = test_objects[i];
-            object->physics_module->apply_linear_impulse(glm::vec3(0.0f, -100.0f, 0.0f) * timer.dt());
+//            object->physics_module->apply_linear_impulse(glm::vec3(0.0f, -100.0f, 0.0f) * timer.dt());
         }
 
 //		LEti::Camera_2D::set_position(flat_co.get_pos());
@@ -804,6 +828,14 @@ int main()
 		}
 
 		collision_detector.update();
+//collision_pointer
+
+        collision_pointer->update_previous_state();
+
+        for(auto it = collision_detector.get_collisions__models().begin(); !it.end_reached(); ++it)
+        {
+            collision_pointer->current_state().set_position(it->point);
+        }
 
         collision_resolver.resolve_all(collision_detector.get_collisions__models(), timer.dt());
 
@@ -837,6 +869,7 @@ int main()
         }
 
 
+        collision_pointer->update(0.0f);
 
         LR::Window_Controller::swap_buffers();
 	}

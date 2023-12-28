@@ -5,8 +5,12 @@ project(Collision_Test LANGUAGES CXX)
 set(CMAKE_CXX_STANDARD 17)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 
-FILE(GLOB_RECURSE LibFiles "include/*.h")
-add_custom_target(Collision_Test_include SOURCES ${LibFiles})
+FILE(GLOB_RECURSE Collision_Test_include "include/*.h")
+add_custom_target(_Collision_Test_include SOURCES ${Collision_Test_include})
+FILE(GLOB_RECURSE Collision_Test_models "Resources/*.mdl")
+add_custom_target(Collision_Test_models SOURCES ${Collision_Test_models})
+FILE(GLOB_RECURSE Collision_Test_shaders "Resources/*.shader")
+add_custom_target(Collision_Test_shaders SOURCES ${Collision_Test_shaders})
 
 
 add_executable(Collision_Test
