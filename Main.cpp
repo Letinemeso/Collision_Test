@@ -8,7 +8,7 @@
 #include <Stuff/File.h>
 
 #include <FPS_Timer.h>
-#include <Object_System/Object.h>
+#include <Object.h>
 
 #include <Shader/Shader_Components/Shader_Transform_Component.h>
 #include <Shader/Shader_Types/Vertex_Shader.h>
@@ -24,13 +24,77 @@
 #include <Collision_Detection/SAT_Narrowest_CD.h>
 #include <Collision_Resolution/Collision_Resolver.h>
 #include <Collision_Resolution/Collision_Resolution__Rigid_Body_2D.h>
-#include <Draw_Modules/Draw_Module__Animation.h>
-#include <Draw_Modules/Draw_Module__Text_Field.h>
+//#include <Draw_Modules/Draw_Module__Animation.h>
+//#include <Draw_Modules/Draw_Module__Text_Field.h>
 #include <Renderer/Renderer.h>
 
 
 
 #define DT LR::Window_Controller::get_dt()
+
+
+
+class Test_Draw_Module : public LR::Draw_Module
+{
+public:
+    DECLARE_VARIABLE;
+
+public:
+    LR::Graphics_Component* coords = nullptr;
+    LR::Graphics_Component* colors = nullptr;
+    LR::Graphics_Component__Texture* texture = nullptr;
+
+};
+
+INIT_FIELDS(Test_Draw_Module, LR::Draw_Module)
+FIELDS_END
+
+
+
+class Test_Draw_Module__Stub : public LR::Draw_Module_Stub
+{
+public:
+    DECLARE_VARIABLE;
+
+public:
+    LR::Graphics_Component_Stub coords_stub;
+    LR::Graphics_Component_Stub colors_stub;
+    LR::Graphics_Component_Stub__Texture texture_stub;
+    LR::Graphics_Component_Stub* coords_stub_ptr = &coords_stub;
+    LR::Graphics_Component_Stub* colors_stub_ptr = &colors_stub;
+    LR::Graphics_Component_Stub__Texture* texture_stub_ptr = &texture_stub;
+
+protected:
+    LV::Variable_Base* M_construct_product() const override
+    {
+        return new Test_Draw_Module;
+    }
+
+    void M_init_constructed_product(LV::Variable_Base* _product) const override
+    {
+        LR::Draw_Module_Stub::M_init_constructed_product(_product);
+
+        Test_Draw_Module* product = (Test_Draw_Module*)_product;
+
+        product->coords = (LR::Graphics_Component*)coords_stub.construct();
+        product->colors = (LR::Graphics_Component*)colors_stub.construct();
+        product->texture = (LR::Graphics_Component__Texture*)texture_stub.construct();
+
+        product->add_graphics_component(product->coords);
+        product->add_graphics_component(product->colors);
+        product->add_graphics_component(product->texture);
+    }
+
+};
+
+INIT_FIELDS(Test_Draw_Module__Stub, LR::Draw_Module_Stub)
+
+ADD_CHILD("coords_stub", coords_stub_ptr)
+ADD_CHILD("colors_stub", colors_stub_ptr)
+ADD_CHILD("texture_stub", texture_stub_ptr)
+
+FIELDS_END
+
 
 
 class Test_Object : public LEti::Object
@@ -55,7 +119,7 @@ public:
 
 public:
     LPhys::Rigid_Body_2D__Stub* physics_module = nullptr;
-    LR::Default_Draw_Module_Stub* draw_module = nullptr;
+    Test_Draw_Module__Stub* draw_module = nullptr;
 
 protected:
     LV::Variable_Base* M_construct_product() const override;
@@ -87,12 +151,18 @@ void Test_Object_Stub::M_init_constructed_product(LV::Variable_Base* _product) c
 
     Test_Object* result = (Test_Object*)_product;
 
-    LR::Default_Draw_Module* dm = (LR::Default_Draw_Module*)draw_module->construct();
+    Test_Draw_Module* dm = (Test_Draw_Module*)draw_module->construct();
 
     LPhys::Rigid_Body_2D* pm = (LPhys::Rigid_Body_2D*)physics_module->construct();
     pm->set_on_alignment_func([pm, dm]()
     {
-        dm->move_raw(-pm->calculate_raw_center_of_mass());
+        glm::vec3 stride = -pm->calculate_raw_center_of_mass();
+        for(unsigned int i=0; i<dm->coords->buffer().size(); i += 3)
+        {
+            dm->coords->buffer()[i] += stride.x;
+            dm->coords->buffer()[i + 1] += stride.y;
+            dm->coords->buffer()[i + 2] += stride.z;
+        }
     });
     pm->align_to_center_of_mass();
 
@@ -251,276 +321,280 @@ int main()
 {
     //  engine setup
 
-    LV::Type_Manager::register_type("int", {
-                                        [](const std::string& _val)
-                                        {
-                                            unsigned int i=0;
-                                            if(_val[0] == '+' || _val[0] == '-')
-                                            ++i;
-                                            for(; i<_val.size(); ++i)
-                                            if(_val[i] < '0' || _val[i] > '9')
-                                            return false;
-                                            return true;
-                                        },
-                                        [](void* _variable_vptr, const LDS::Vector<std::string>& _values_as_string) { *((int*)_variable_vptr) = std::stoi(_values_as_string[0]); }
-                                    });
-    LV::Type_Manager::register_type("int*", {
-                                        [](const std::string& _val)
-                                        {
-                                            unsigned int i=0;
-                                            if(_val[0] == '+' || _val[0] == '-')
-                                            ++i;
-                                            for(; i<_val.size(); ++i)
-                                            if(_val[i] < '0' || _val[i] > '9')
-                                            return false;
-                                            return true;
-                                        },
-                                        [](void* _variable_vptr, const LDS::Vector<std::string>& _values_as_string)
-                                        {
-                                            int** var_ptr_ptr = (int**)_variable_vptr;
+    {
 
-                                            if(*var_ptr_ptr == nullptr)
+        LV::Type_Manager::register_type("int", {
+                                            [](const std::string& _val)
+                                            {
+                                                unsigned int i=0;
+                                                if(_val[0] == '+' || _val[0] == '-')
+                                                ++i;
+                                                for(; i<_val.size(); ++i)
+                                                if(_val[i] < '0' || _val[i] > '9')
+                                                return false;
+                                                return true;
+                                            },
+                                            [](void* _variable_vptr, const LDS::Vector<std::string>& _values_as_string) { *((int*)_variable_vptr) = std::stoi(_values_as_string[0]); }
+                                        });
+        LV::Type_Manager::register_type("int*", {
+                                            [](const std::string& _val)
+                                            {
+                                                unsigned int i=0;
+                                                if(_val[0] == '+' || _val[0] == '-')
+                                                ++i;
+                                                for(; i<_val.size(); ++i)
+                                                if(_val[i] < '0' || _val[i] > '9')
+                                                return false;
+                                                return true;
+                                            },
+                                            [](void* _variable_vptr, const LDS::Vector<std::string>& _values_as_string)
+                                            {
+                                                int** var_ptr_ptr = (int**)_variable_vptr;
+
+                                                if(*var_ptr_ptr == nullptr)
                                                 *var_ptr_ptr = new int[_values_as_string.size()];
 
-                                            int* var_ptr = *var_ptr_ptr;
+                                                int* var_ptr = *var_ptr_ptr;
 
-                                            for(unsigned int i=0; i<_values_as_string.size(); ++i)
+                                                for(unsigned int i=0; i<_values_as_string.size(); ++i)
                                                 var_ptr[i] = std::stoi(_values_as_string[i]);
-                                        }
-                                    });
-    LV::Type_Manager::register_type("unsigned char*", {
-                                        [](const std::string& _val)
-                                        {
-                                            if(_val.size() != 1)
+                                            }
+                                        });
+        LV::Type_Manager::register_type("unsigned char*", {
+                                            [](const std::string& _val)
+                                            {
+                                                if(_val.size() != 1)
                                                 return false;
-                                            return true;
-                                        },
-                                        [](void* _variable_vptr, const LDS::Vector<std::string>& _values_as_string)
-                                        {
-                                            unsigned char** var_ptr_ptr = (unsigned char**)_variable_vptr;
+                                                return true;
+                                            },
+                                            [](void* _variable_vptr, const LDS::Vector<std::string>& _values_as_string)
+                                            {
+                                                unsigned char** var_ptr_ptr = (unsigned char**)_variable_vptr;
 
-                                            if(*var_ptr_ptr == nullptr)
+                                                if(*var_ptr_ptr == nullptr)
                                                 *var_ptr_ptr = new unsigned char[_values_as_string.size()];
 
-                                            unsigned char* var_ptr = *var_ptr_ptr;
+                                                unsigned char* var_ptr = *var_ptr_ptr;
 
-                                            for(unsigned int i=0; i<_values_as_string.size(); ++i)
+                                                for(unsigned int i=0; i<_values_as_string.size(); ++i)
                                                 var_ptr[i] = _values_as_string[i][0];
-                                        }
-                                    });
-    LV::Type_Manager::register_type("unsigned int", {
-                                        [](const std::string& _val)
-                                        {
-                                            for(unsigned int i=0; i<_val.size(); ++i)
-                                            if(_val[i] < '0' || _val[i] > '9')
-                                            return false;
-                                            return true;
-                                        },
-                                        [](void* _variable_vptr, const LDS::Vector<std::string>& _values_as_string) { *((int*)_variable_vptr) = std::stoi(_values_as_string[0]); }
-                                    });
-    LV::Type_Manager::register_type("unsigned int*", {
-                                        [](const std::string& _val)
-                                        {
-                                            for(unsigned int i=0; i<_val.size(); ++i)
-                                            if(_val[i] < '0' || _val[i] > '9')
-                                            return false;
-                                            return true;
-                                        },
-                                        [](void* _variable_vptr, const LDS::Vector<std::string>& _values_as_string)
-                                        {
-                                            unsigned int** var_ptr_ptr = (unsigned int**)_variable_vptr;
+                                            }
+                                        });
+        LV::Type_Manager::register_type("unsigned int", {
+                                            [](const std::string& _val)
+                                            {
+                                                for(unsigned int i=0; i<_val.size(); ++i)
+                                                if(_val[i] < '0' || _val[i] > '9')
+                                                return false;
+                                                return true;
+                                            },
+                                            [](void* _variable_vptr, const LDS::Vector<std::string>& _values_as_string) { *((int*)_variable_vptr) = std::stoi(_values_as_string[0]); }
+                                        });
+        LV::Type_Manager::register_type("unsigned int*", {
+                                            [](const std::string& _val)
+                                            {
+                                                for(unsigned int i=0; i<_val.size(); ++i)
+                                                if(_val[i] < '0' || _val[i] > '9')
+                                                return false;
+                                                return true;
+                                            },
+                                            [](void* _variable_vptr, const LDS::Vector<std::string>& _values_as_string)
+                                            {
+                                                unsigned int** var_ptr_ptr = (unsigned int**)_variable_vptr;
 
-                                            if(*var_ptr_ptr == nullptr)
+                                                if(*var_ptr_ptr == nullptr)
                                                 *var_ptr_ptr = new unsigned int[_values_as_string.size()];
 
-                                            unsigned int* var_ptr = *var_ptr_ptr;
+                                                unsigned int* var_ptr = *var_ptr_ptr;
 
-                                            for(unsigned int i=0; i<_values_as_string.size(); ++i)
+                                                for(unsigned int i=0; i<_values_as_string.size(); ++i)
                                                 var_ptr[i] = std::stoi(_values_as_string[i]);
-                                        }
-                                    });
-    LV::Type_Manager::register_type("bool", {
-                                        [](const std::string& _val)
-                                        {
-                                            if(_val == "true" || _val == "false" || _val == "+" || _val == "-" || _val == "1" || _val == "0")
-                                            return true;
-                                            return false;
-                                        },
-                                        [](void* _variable_vptr, const LDS::Vector<std::string>& _values_as_string)
-                                        {
-                                            bool& var = *((bool*&)_variable_vptr);
-
-                                            if(_values_as_string[0] == "true" || _values_as_string[0] == "+" || _values_as_string[0] == "1")
-                                            var = true;
-                                            else if(_values_as_string[0] == "false" || _values_as_string[0] == "-" || _values_as_string[0] == "0")
-                                            var = false;
-                                        }
-                                    });
-    LV::Type_Manager::register_type("bool*", {
-                                        [](const std::string& _val)
-                                        {
-                                            if(_val == "true" || _val == "false" || _val == "+" || _val == "-" || _val == "1" || _val == "0")
-                                            return true;
-                                            return false;
-                                        },
-                                        [](void* _variable_vptr, const LDS::Vector<std::string>& _values_as_string)
-                                        {
-                                            bool** var_ptr_ptr = (bool**)_variable_vptr;
-
-                                            if(*var_ptr_ptr == nullptr)
-                                            *var_ptr_ptr = new bool[_values_as_string.size()];
-
-                                            bool* var_ptr = *var_ptr_ptr;
-
-                                            for(unsigned int i=0; i<_values_as_string.size(); ++i)
-                                            {
-                                                if(_values_as_string[i] == "true" || _values_as_string[i] == "+" || _values_as_string[i] == "1")
-                                                var_ptr[i] = true;
-                                                else if(_values_as_string[i] == "false" || _values_as_string[i] == "-" || _values_as_string[i] == "0")
-                                                var_ptr[i] = false;
                                             }
-                                        }
-                                    });
-    LV::Type_Manager::register_type("std::string", {
-                                        [](const std::string& /*_val*/) { return true; },
-                                        [](void* _variable_vptr, const LDS::Vector<std::string>& _values_as_string) {
-                                            *((std::string*)_variable_vptr) = _values_as_string[0];
-                                        }
-                                    });
-    LV::Type_Manager::register_type("float*", {
-                                        [](const std::string& _val)
-                                        {
-                                            if(_val == ".")
-                                            return false;
-
-                                            unsigned int dots_count = 0;
-                                            unsigned int i=0;
-                                            if(_val[0] == '+' || _val[0] == '-')
-                                            ++i;
-                                            for(; i<_val.size(); ++i)
+                                        });
+        LV::Type_Manager::register_type("bool", {
+                                            [](const std::string& _val)
                                             {
-                                                if(_val[i] == '.')
-                                                {
-                                                    ++dots_count;
-                                                    continue;
-                                                }
-                                                if(_val[i] < '0' || _val[i] > '9')
+                                                if(_val == "true" || _val == "false" || _val == "+" || _val == "-" || _val == "1" || _val == "0")
+                                                return true;
                                                 return false;
-                                            }
-
-                                            if(dots_count > 1)
-                                            return false;
-
-                                            return true;
-                                        },
-                                        [](void* _variable_vptr, const LDS::Vector<std::string>& _values_as_string)
-                                        {
-                                            float** var_ptr_ptr = (float**)_variable_vptr;
-
-                                            if(*var_ptr_ptr == nullptr)
-                                            *var_ptr_ptr = new float[_values_as_string.size()];
-
-                                            float* var_ptr = *var_ptr_ptr;
-
-                                            for(unsigned int i=0; i<_values_as_string.size(); ++i)
-                                            var_ptr[i] = std::stof(_values_as_string[i]);
-                                        }
-                                    });
-    LV::Type_Manager::register_type("std::string*", {
-                                        [](const std::string& /*_val*/)
-                                        {
-                                            return true;
-                                        },
-                                        [](void* _variable_vptr, const LDS::Vector<std::string>& _values_as_string)
-                                        {
-                                            std::string** var_ptr_ptr = (std::string**)_variable_vptr;
-
-                                            if(*var_ptr_ptr == nullptr)
-                                            *var_ptr_ptr = new std::string[_values_as_string.size()];
-
-                                            std::string* var_ptr = *var_ptr_ptr;
-
-                                            for(unsigned int i=0; i<_values_as_string.size(); ++i)
-                                            var_ptr[i] = _values_as_string[i];
-                                        }
-                                    });
-    LV::Type_Manager::register_type("glm::vec3", {
-                                        [](const std::string& _val)
-                                        {
-                                            if(_val == ".")
-                                            return false;
-
-                                            unsigned int dots_count = 0;
-                                            unsigned int i=0;
-                                            if(_val[0] == '+' || _val[0] == '-')
-                                            ++i;
-                                            for(; i<_val.size(); ++i)
+                                            },
+                                            [](void* _variable_vptr, const LDS::Vector<std::string>& _values_as_string)
                                             {
-                                                if(_val[i] == '.')
-                                                {
-                                                    ++dots_count;
-                                                    continue;
-                                                }
-                                                if(_val[i] < '0' || _val[i] > '9')
-                                                return false;
+                                                bool& var = *((bool*&)_variable_vptr);
+
+                                                if(_values_as_string[0] == "true" || _values_as_string[0] == "+" || _values_as_string[0] == "1")
+                                                var = true;
+                                                else if(_values_as_string[0] == "false" || _values_as_string[0] == "-" || _values_as_string[0] == "0")
+                                                var = false;
                                             }
-
-                                            if(dots_count > 1)
-                                            return false;
-
-                                            return true;
-                                        },
-                                        [](void* _variable_vptr, const LDS::Vector<std::string>& _values_as_string)
-                                        {
-                                            L_ASSERT(_values_as_string.size() == 3);
-
-                                            glm::vec3& vec = *((glm::vec3*)_variable_vptr);
-                                            for(unsigned int i=0; i<3; ++i)
-                                            vec[i] = std::stof(_values_as_string[i]);
-                                        }
-                                    });
-    LV::Type_Manager::register_type("float", {
-                                        [](const std::string& _val)
-                                        {
-                                            if(_val == ".")
-                                            return false;
-
-                                            unsigned int dots_count = 0;
-                                            unsigned int i=0;
-                                            if(_val[0] == '+' || _val[0] == '-')
-                                            ++i;
-                                            for(; i<_val.size(); ++i)
+                                        });
+        LV::Type_Manager::register_type("bool*", {
+                                            [](const std::string& _val)
                                             {
-                                                if(_val[i] == '.')
-                                                {
-                                                    ++dots_count;
-                                                    continue;
-                                                }
-                                                if(_val[i] < '0' || _val[i] > '9')
+                                                if(_val == "true" || _val == "false" || _val == "+" || _val == "-" || _val == "1" || _val == "0")
+                                                return true;
                                                 return false;
+                                            },
+                                            [](void* _variable_vptr, const LDS::Vector<std::string>& _values_as_string)
+                                            {
+                                                bool** var_ptr_ptr = (bool**)_variable_vptr;
+
+                                                if(*var_ptr_ptr == nullptr)
+                                                *var_ptr_ptr = new bool[_values_as_string.size()];
+
+                                                bool* var_ptr = *var_ptr_ptr;
+
+                                                for(unsigned int i=0; i<_values_as_string.size(); ++i)
+                                                {
+                                                    if(_values_as_string[i] == "true" || _values_as_string[i] == "+" || _values_as_string[i] == "1")
+                                                    var_ptr[i] = true;
+                                                    else if(_values_as_string[i] == "false" || _values_as_string[i] == "-" || _values_as_string[i] == "0")
+                                                    var_ptr[i] = false;
+                                                }
                                             }
+                                        });
+        LV::Type_Manager::register_type("std::string", {
+                                            [](const std::string& /*_val*/) { return true; },
+                                            [](void* _variable_vptr, const LDS::Vector<std::string>& _values_as_string) {
+                                                *((std::string*)_variable_vptr) = _values_as_string[0];
+                                            }
+                                        });
+        LV::Type_Manager::register_type("float*", {
+                                            [](const std::string& _val)
+                                            {
+                                                if(_val == ".")
+                                                return false;
 
-                                            if(dots_count > 1)
-                                            return false;
+                                                unsigned int dots_count = 0;
+                                                unsigned int i=0;
+                                                if(_val[0] == '+' || _val[0] == '-')
+                                                ++i;
+                                                for(; i<_val.size(); ++i)
+                                                {
+                                                    if(_val[i] == '.')
+                                                    {
+                                                        ++dots_count;
+                                                        continue;
+                                                    }
+                                                    if(_val[i] < '0' || _val[i] > '9')
+                                                    return false;
+                                                }
 
-                                            return true;
-                                        },
-                                        [](void* _variable_vptr, const LDS::Vector<std::string>& _values_as_string) { *((float*)_variable_vptr) = std::stof(_values_as_string[0]); }
-                                    });
+                                                if(dots_count > 1)
+                                                return false;
+
+                                                return true;
+                                            },
+                                            [](void* _variable_vptr, const LDS::Vector<std::string>& _values_as_string)
+                                            {
+                                                float** var_ptr_ptr = (float**)_variable_vptr;
+
+                                                if(*var_ptr_ptr == nullptr)
+                                                *var_ptr_ptr = new float[_values_as_string.size()];
+
+                                                float* var_ptr = *var_ptr_ptr;
+
+                                                for(unsigned int i=0; i<_values_as_string.size(); ++i)
+                                                var_ptr[i] = std::stof(_values_as_string[i]);
+                                            }
+                                        });
+        LV::Type_Manager::register_type("std::string*", {
+                                            [](const std::string& /*_val*/)
+                                            {
+                                                return true;
+                                            },
+                                            [](void* _variable_vptr, const LDS::Vector<std::string>& _values_as_string)
+                                            {
+                                                std::string** var_ptr_ptr = (std::string**)_variable_vptr;
+
+                                                if(*var_ptr_ptr == nullptr)
+                                                *var_ptr_ptr = new std::string[_values_as_string.size()];
+
+                                                std::string* var_ptr = *var_ptr_ptr;
+
+                                                for(unsigned int i=0; i<_values_as_string.size(); ++i)
+                                                var_ptr[i] = _values_as_string[i];
+                                            }
+                                        });
+        LV::Type_Manager::register_type("glm::vec3", {
+                                            [](const std::string& _val)
+                                            {
+                                                if(_val == ".")
+                                                return false;
+
+                                                unsigned int dots_count = 0;
+                                                unsigned int i=0;
+                                                if(_val[0] == '+' || _val[0] == '-')
+                                                ++i;
+                                                for(; i<_val.size(); ++i)
+                                                {
+                                                    if(_val[i] == '.')
+                                                    {
+                                                        ++dots_count;
+                                                        continue;
+                                                    }
+                                                    if(_val[i] < '0' || _val[i] > '9')
+                                                    return false;
+                                                }
+
+                                                if(dots_count > 1)
+                                                return false;
+
+                                                return true;
+                                            },
+                                            [](void* _variable_vptr, const LDS::Vector<std::string>& _values_as_string)
+                                            {
+                                                L_ASSERT(_values_as_string.size() == 3);
+
+                                                glm::vec3& vec = *((glm::vec3*)_variable_vptr);
+                                                for(unsigned int i=0; i<3; ++i)
+                                                vec[i] = std::stof(_values_as_string[i]);
+                                            }
+                                        });
+        LV::Type_Manager::register_type("float", {
+                                            [](const std::string& _val)
+                                            {
+                                                if(_val == ".")
+                                                return false;
+
+                                                unsigned int dots_count = 0;
+                                                unsigned int i=0;
+                                                if(_val[0] == '+' || _val[0] == '-')
+                                                ++i;
+                                                for(; i<_val.size(); ++i)
+                                                {
+                                                    if(_val[i] == '.')
+                                                    {
+                                                        ++dots_count;
+                                                        continue;
+                                                    }
+                                                    if(_val[i] < '0' || _val[i] > '9')
+                                                    return false;
+                                                }
+
+                                                if(dots_count > 1)
+                                                return false;
+
+                                                return true;
+                                            },
+                                            [](void* _variable_vptr, const LDS::Vector<std::string>& _values_as_string) { *((float*)_variable_vptr) = std::stof(_values_as_string[0]); }
+                                        });
+    }
+
     srand(time(nullptr));
 
     glm::vec3 cursor_position(0.0f, 0.0f, 0.0f);
 
 
-//    LST::File vertex_shader_file("Resources/Shaders/vertex_shader.shader");
-//    LST::File fragment_shader_file("Resources/Shaders/fragment_shader.shader");
+    //    LST::File vertex_shader_file("Resources/Shaders/vertex_shader.shader");
+    //    LST::File fragment_shader_file("Resources/Shaders/fragment_shader.shader");
 
     LST::File vertex_shader_file("Resources/Shaders/test/vertex_transform_component.shader");
     LST::File fragment_shader_file("Resources/Shaders/test/fragment_shader.shader");
 
     LV::MDL_Reader reader;
 
-    LR::Window_Controller::create_window(1200, 800, "Generic Space Shooter Game");
+    LR::Window_Controller::create_window(1200, 800, "Collision Test");
 
     glEnable(GL_SCISSOR_TEST);
 
@@ -599,14 +673,18 @@ int main()
 
 
     Test_Object_Stub test_object_stub;
-    test_object_stub.draw_module = new LR::Default_Draw_Module_Stub;
+    test_object_stub.draw_module = new Test_Draw_Module__Stub;
     test_object_stub.physics_module = new LPhys::Rigid_Body_2D__Stub;
     test_object_stub.assign_values(reader.get_stub("triangle"));
-    test_object_stub.init_childs(reader.get_stub("triangle"));
-    test_object_stub.on_values_assigned();
     test_object_stub.draw_module->renderer = &renderer;
-    test_object_stub.draw_module->shader_transform_component = v_shader_transform_component;
-    test_object_stub.draw_module->graphic_resources_manager = &graphics_resources_manager;
+    test_object_stub.draw_module->texture_stub.resources_manager = &graphics_resources_manager;
+    test_object_stub.draw_module->texture_stub.on_prepare_func = [&](const LR::Graphics_Component* _texture)
+    {
+//        LR::Graphics_Component__Texture* texture = (LR::Graphics_Component__Texture*)_texture;
+        v_shader_transform_component->prepare_texture_uniform();
+    };
+//    test_object_stub.draw_module->shader_transform_component = v_shader_transform_component;
+//    test_object_stub.draw_module->graphic_resources_manager = &graphics_resources_manager;
 //
 //    test_object_stub.scale = {20.0f, 20.0f, 1.0f};
 
@@ -622,13 +700,13 @@ int main()
     test_objects.push(test_object);
     objects_map.emplace(test_object->physics_module, test_object);
     collision_detector.register_object(test_object->physics_module);
-    test_object_stub.draw_module->texture_name = "ugly_texture";
+    test_object_stub.draw_module->texture_stub.picture_name = "ugly_texture";
     test_object = (Test_Object*)test_object_stub.construct();
     test_objects.push(test_object);
     objects_map.emplace(test_object->physics_module, test_object);
     collision_detector.register_object(test_object->physics_module);
 
-    test_object_stub.draw_module->texture_name = "quad_texture";
+    test_object_stub.draw_module->texture_stub.picture_name = "quad_texture";
 
     LEti::Object* collision_pointer = new LEti::Object;
     collision_pointer->current_state().set_scale({10, 10, 1});

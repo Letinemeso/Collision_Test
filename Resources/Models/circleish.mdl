@@ -304,51 +304,88 @@
 \
     ||draw_module||
     \
-	|coords_count|
+	||coords_stub||
 	\
-	    "18"
-	/
-	|coords|
-	\
-	    "0""1""0"
-	    "-2""0""0"
-	    "0""-1""0"
+	    |attribute_index|
+	    \
+		"0"
+	    /
+	    |floats_per_vertex|
+	    \
+		"3"
+	    /
+	    |data_size|
+	    \
+		"18"
+	    /
+	    |data|
+	    \
+		"0""1""0"
+		"-2""0""0"
+		"0""-1""0"
 
-	    "0""1""0"
-	    "0""-1""0"
-	    "2""0""0"
+		"0""1""0"
+		"0""-1""0"
+		"2""0""0"
+	    /
 	/
-	|colors_count|
+	||colors_stub||
 	\
-	    "24"
-	/
-	|colors|
-	\
-	    "1""1""1""1"
-	    "1""1""1""1"
-	    "1""1""1""1"
+	    |attribute_index|
+	    \
+		"1"
+	    /
+	    |floats_per_vertex|
+	    \
+		"4"
+	    /
+	    |data_size|
+	    \
+		"24"
+	    /
+	    |data|
+	    \
+		"1""1""1""1"
+		"1""1""1""1"
+		"1""1""1""1"
 
-	    "1""1""1""1"
-	    "1""1""1""1"
-	    "1""1""1""1"
+		"1""1""1""1"
+		"1""1""1""1"
+		"1""1""1""1"
+	    /
 	/
-	|tcoords_count|
+	||texture_stub||
 	\
-	    "12"
-	/
-	|tcoords|
-	\
-	    "0""101"
-	    "0""0"
-	    "101""50"
+	    |attribute_index|
+	    \
+		"2"
+	    /
+	    |floats_per_vertex|
+	    \
+		"2"
+	    /
+	    |data_size|
+	    \
+		"12"
+	    /
+	    |data|
+	    \
+		"0""101"
+		"0""0"
+		"101""50"
 
-	    "0""101"
-	    "0""0"
-	    "101""50"
-	/
-	|texture_name|
-	\
-	    "white_texture"
+		"0""101"
+		"0""0"
+		"101""50"
+	    /
+	    |texture_coords_in_pixels|
+	    \
+		"+"
+	    /
+	    |picture_name|
+	    \
+		"white_texture"
+	    /
 	/
     /
 
