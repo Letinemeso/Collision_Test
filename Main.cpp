@@ -655,7 +655,7 @@ int main()
     collision_detector.set_narrowest_phase(new LPhys::SAT_Narrowest_CD);
 
     LPhys::Collision_Resolver collision_resolver;
-    collision_resolver.add_resolution(new LPhys::Collision_Resolution__Rigid_Body_2D);
+    collision_resolver.add_resolution(LPhys::Rigid_Body_2D::get_estimated_history(), LPhys::Rigid_Body_2D::get_estimated_history(), new LPhys::Collision_Resolution__Rigid_Body_2D);
 
     reader.parse_file("Resources/Textures/textures");
 //    reader.parse_file("Resources/Models/triangle");
