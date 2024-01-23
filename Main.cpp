@@ -28,6 +28,8 @@
 //#include <Draw_Modules/Draw_Module__Text_Field.h>
 #include <Renderer/Renderer.h>
 
+#include <FS_Component__Crop_Area.h>
+
 
 
 #define DT LR::Window_Controller::get_dt()
@@ -589,14 +591,22 @@ int main()
     //    LST::File vertex_shader_file("Resources/Shaders/vertex_shader.shader");
     //    LST::File fragment_shader_file("Resources/Shaders/fragment_shader.shader");
 
-    LST::File vertex_shader_file("Resources/Shaders/test/vertex_transform_component.shader");
-    LST::File fragment_shader_file("Resources/Shaders/test/fragment_shader.shader");
+    LR::Window_Controller::create_window(1200, 800, "Collision Test");
 
     LV::MDL_Reader reader;
 
-    LR::Window_Controller::create_window(1200, 800, "Collision Test");
+    reader.parse_file("Resources/Textures/textures");
+    reader.parse_file("Resources/Models/circleish");
+    LR::Graphic_Resources_Manager graphics_resources_manager;
 
-    glEnable(GL_SCISSOR_TEST);
+    graphics_resources_manager.load_resources(reader.get_stub("resources"));
+
+
+
+
+
+    LST::File vertex_shader_file("Resources/Shaders/Base/vertex_transform_component.shader");
+    LST::File fragment_shader_file("Resources/Shaders/Base/fragment_shader.shader");
 
     LR::Shader_Transform_Component* v_shader_transform_component = new LR::Shader_Transform_Component;
     v_shader_transform_component->set_source(vertex_shader_file.extract_block());
@@ -629,6 +639,97 @@ int main()
     renderer.set_camera(&camera);
     renderer.set_shader_program(&shader_program);
 
+
+
+
+    LST::File gui_vertex_shader_file("Resources/Shaders/GUI/vertex_transform_component.shader");
+    LST::File gui_fragment_shader_crop_component_file("Resources/Shaders/GUI/fs_crop_area_component.shader");
+    LST::File gui_fragment_shader_file("Resources/Shaders/GUI/fragment_shader.shader");
+
+    LR::Shader_Transform_Component* gui_v_shader_transform_component = new LR::Shader_Transform_Component;
+    gui_v_shader_transform_component->set_source(gui_vertex_shader_file.extract_block());
+    gui_v_shader_transform_component->set_main_call("process_transform();");
+
+    LR::Vertex_Shader* gui_vertex_shader = new LR::Vertex_Shader;
+    gui_vertex_shader->set_glsl_version("330 core");
+    gui_vertex_shader->add_component(gui_v_shader_transform_component);
+    gui_vertex_shader->compile();
+
+    FS_Component__Crop_Area* gui_f_shader_crop_component = new FS_Component__Crop_Area;
+    gui_f_shader_crop_component->set_source(gui_fragment_shader_crop_component_file.extract_block());
+    gui_f_shader_crop_component->set_main_call("discard_outside();");
+
+    LR::Shader_Component* gui_f_shader_component = new LR::Shader_Component;
+    gui_f_shader_component->set_source(gui_fragment_shader_file.extract_block());
+    gui_f_shader_component->set_main_call("process_color();");
+
+    LR::Fragment_Shader* gui_fragment_shader = new LR::Fragment_Shader;
+    gui_fragment_shader->set_glsl_version("330 core");
+    gui_fragment_shader->add_component(gui_f_shader_crop_component);
+    gui_fragment_shader->add_component(gui_f_shader_component);
+    gui_fragment_shader->compile();
+
+    LR::Shader_Program gui_shader_program;
+    gui_shader_program.add_shader(gui_vertex_shader);
+    gui_shader_program.add_shader(gui_fragment_shader);
+    gui_shader_program.init();
+
+    LR::Camera_2D gui_camera;
+    gui_camera.set_view_scale(1.0f);
+    gui_camera.set_position({0, 0, 0});
+
+    LR::Renderer gui_renderer;
+    gui_renderer.set_camera(&gui_camera);
+    gui_renderer.set_shader_program(&gui_shader_program);
+
+    gui_f_shader_crop_component->reset_crop_area();
+
+    Test_Object_Stub gui_test_object_stub;
+    gui_test_object_stub.draw_module = new Test_Draw_Module__Stub;
+    gui_test_object_stub.physics_module = new LPhys::Rigid_Body_2D__Stub;
+    gui_test_object_stub.assign_values(reader.get_stub("triangle"));
+    gui_test_object_stub.draw_module->renderer = &gui_renderer;
+    gui_test_object_stub.draw_module->texture_stub.resources_manager = &graphics_resources_manager;
+    gui_test_object_stub.draw_module->texture_stub.picture_name = "quad_texture";
+    gui_test_object_stub.draw_module->texture_stub.on_prepare_func = [&](const LR::Graphics_Component* _texture)
+    {
+        glm::mat2x2 crop_area;
+        crop_area[0][0] = 600 - 10;
+        crop_area[0][1] = 600 + 10;
+        crop_area[1][0] = 400 - 10;
+        crop_area[1][1] = 400 + 10;
+        gui_f_shader_crop_component->set_crop_area_rect(crop_area);
+
+        gui_v_shader_transform_component->prepare_texture_uniform();
+
+//        gui_f_shader_crop_component->reset_crop_area();
+    };
+
+    Test_Object* gui_test_object = (Test_Object*)gui_test_object_stub.construct();
+    gui_test_object->current_state().set_scale({30, 60, 1});
+
+    gui_test_object_stub.draw_module->texture_stub.on_prepare_func = [&](const LR::Graphics_Component* _texture)
+    {
+        glm::mat2x2 crop_area;
+        crop_area[0][0] = 700 - 50;
+        crop_area[0][1] = 700 + 50;
+        crop_area[1][0] = 500 - 50;
+        crop_area[1][1] = 500 + 50;
+        gui_f_shader_crop_component->set_crop_area_rect(crop_area);
+
+        gui_v_shader_transform_component->prepare_texture_uniform();
+
+//        gui_f_shader_crop_component->reset_crop_area();
+    };
+
+    Test_Object* gui_test_object_2 = (Test_Object*)gui_test_object_stub.construct();
+    gui_test_object_2->current_state().set_scale({60, 60, 1});
+    gui_test_object_2->current_state().set_position({100, 100, 1});
+
+
+
+
+
 //    glm::mat4x4 test_crop_matrix =
 //    {
 //        0.0f, 0.0f, 0.0f, 0.0f,
@@ -657,12 +758,7 @@ int main()
     LPhys::Collision_Resolver collision_resolver;
     collision_resolver.add_resolution(LPhys::Rigid_Body_2D::get_estimated_history(), LPhys::Rigid_Body_2D::get_estimated_history(), new LPhys::Collision_Resolution__Rigid_Body_2D);
 
-    reader.parse_file("Resources/Textures/textures");
 //    reader.parse_file("Resources/Models/triangle");
-    reader.parse_file("Resources/Models/circleish");
-    LR::Graphic_Resources_Manager graphics_resources_manager;
-
-    graphics_resources_manager.load_resources(reader.get_stub("resources"));
 
     LEti::FPS_Timer timer;
     timer.set_max_dt(60.0f / 1000.0f);
@@ -680,13 +776,8 @@ int main()
     test_object_stub.draw_module->texture_stub.resources_manager = &graphics_resources_manager;
     test_object_stub.draw_module->texture_stub.on_prepare_func = [&](const LR::Graphics_Component* _texture)
     {
-//        LR::Graphics_Component__Texture* texture = (LR::Graphics_Component__Texture*)_texture;
         v_shader_transform_component->prepare_texture_uniform();
     };
-//    test_object_stub.draw_module->shader_transform_component = v_shader_transform_component;
-//    test_object_stub.draw_module->graphic_resources_manager = &graphics_resources_manager;
-//
-//    test_object_stub.scale = {20.0f, 20.0f, 1.0f};
 
 
     std::map<const LPhys::Physics_Module_2D*, Test_Object*> objects_map;
@@ -791,17 +882,17 @@ int main()
             Test_Object* object = test_objects[i];
             object->update_previous_state();
         }
+        gui_test_object->update_previous_state();
+        gui_test_object_2->update_previous_state();
 
         if (LR::Window_Controller::key_was_pressed(GLFW_KEY_K))
 		{
 		}
         if (LR::Window_Controller::is_key_down(GLFW_KEY_J))
-		{
-            //			flat_co.rotate_impulse(LEti::Math::HALF_PI * LR::Window_Controller::get_dt());
+        {
 		}
         if (LR::Window_Controller::is_key_down(GLFW_KEY_L))
-		{
-            //			flat_co.rotate_impulse(-LEti::Math::HALF_PI * LR::Window_Controller::get_dt());
+        {
 		}
 
         if(LR::Window_Controller::key_was_pressed(GLFW_KEY_R))
@@ -810,32 +901,9 @@ int main()
 		}
 
         if(LR::Window_Controller::key_was_pressed(GLFW_KEY_SPACE))
-		{
-//			reset_func();
+        {
 			launch_func();
 		}
-
-//		if (LR::Window_Controller::is_key_down(GLFW_KEY_W))
-//			sandclock_co.apply_linear_impulse({0.0f, 10.0f, 0.0f});
-//		if (LR::Window_Controller::is_key_down(GLFW_KEY_S))
-//			sandclock_co.apply_linear_impulse({0.0f, -10.0f, 0.0f});
-//		if (LR::Window_Controller::is_key_down(GLFW_KEY_A))
-//			sandclock_co.apply_linear_impulse({-10.0f, 0.0f, 0.0f});
-//		if (LR::Window_Controller::is_key_down(GLFW_KEY_D))
-//			sandclock_co.apply_linear_impulse({10.0f, 0.0f, 0.0f});
-//		if (LR::Window_Controller::is_key_down(GLFW_KEY_Q))
-//			sandclock_co.apply_rotation(LEti::Math::QUARTER_PI);
-//		if (LR::Window_Controller::is_key_down(GLFW_KEY_E))
-//			sandclock_co.apply_rotation(-LEti::Math::QUARTER_PI);
-
-//        if(LR::Window_Controller::mouse_wheel_rotation() != 0)
-//		{
-//			float additional_scale_per_rotation = 0.2f;
-
-//            additional_scale_per_rotation *= -(float)(LR::Window_Controller::mouse_wheel_rotation());
-
-//            camera.set_view_scale(camera.view_scale() + additional_scale_per_rotation);
-//		}
 
         for(unsigned int i=0; i<objects_amount; ++i)
         {
@@ -864,13 +932,13 @@ int main()
             }
         }
 
+        gui_test_object->update(timer.dt());
+        gui_test_object_2->update(timer.dt());
+
         for(unsigned int i=0; i<objects_amount; ++i)
         {
             Test_Object* object = test_objects[i];
-//            object->physics_module->apply_linear_impulse(glm::vec3(0.0f, -100.0f, 0.0f) * timer.dt());
         }
-
-//		LEti::Camera_2D::set_position(flat_co.get_pos());
 
         if(LR::Window_Controller::mouse_button_was_pressed(GLFW_MOUSE_BUTTON_1))
 		{
@@ -905,8 +973,7 @@ int main()
             cursor_position = camera.convert_window_coords(cursor_position);
 		}
 
-		collision_detector.update();
-//collision_pointer
+        collision_detector.update();
 
         collision_pointer->update_previous_state();
 
