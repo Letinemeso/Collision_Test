@@ -19,6 +19,7 @@ private:
     Objects_List m_objects_list;
 
     LEti::Object* m_held_object = nullptr;
+    glm::vec3 m_holding_point_offset = {0.0f, 0.0f, 0.0f};
 
     LPhys::Collision_Detector m_collision_detector__objects;
     LPhys::Collision_Resolver m_collision_resolver__objects;

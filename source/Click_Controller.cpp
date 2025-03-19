@@ -133,6 +133,11 @@ void Click_Controller::M_process_object_selection()
         return;
 
     m_held_object = M_clicked_on_object();
+    if(!m_held_object)
+        return;
+
+    glm::vec3 clicked_at = m_camera->convert_window_coords({ LR::Window_Controller::get_cursor_position().x, LR::Window_Controller::get_cursor_position().y, 0.0f });
+    m_holding_point_offset = m_held_object->current_state().position() - clicked_at;
 }
 
 void Click_Controller::M_process_object_movement()
@@ -141,7 +146,7 @@ void Click_Controller::M_process_object_movement()
         return;
 
     glm::vec3 clicked_at = m_camera->convert_window_coords({ LR::Window_Controller::get_cursor_position().x, LR::Window_Controller::get_cursor_position().y, 0.0f });
-    m_held_object->current_state().set_position(clicked_at);
+    m_held_object->current_state().set_position(clicked_at + m_holding_point_offset);
 }
 
 void Click_Controller::M_process_object_creation()
