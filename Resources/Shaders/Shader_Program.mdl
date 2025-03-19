@@ -1,0 +1,12 @@
+||Shader_Program__Default||
+\
+
+    |type|
+    \
+        "LR::Shader_Program_Stub"
+    /
+
+    <<<Vertex_Shader>>>
+    <<<Fragment_Shader>>>
+
+/

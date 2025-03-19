@@ -1,0 +1,11 @@
+|Shader_Manager|
+\
+
+    |type|
+    \
+        "LR::Shader_Manager_Stub"
+    /
+
+    <<<Shader_Program>>>
+
+/

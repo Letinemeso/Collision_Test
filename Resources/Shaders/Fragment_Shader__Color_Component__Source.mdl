@@ -1,0 +1,12 @@
+"
+
+in vec4 fs_in_colors;
+
+out vec4 result_color;
+
+void process_color()
+{
+    result_color = fs_in_colors;
+}
+
+"

@@ -1,0 +1,29 @@
+||Shader_Component__Transform||
+\
+
+    |type|
+    \
+        "LR::Shader_Transform_Component_Stub"
+    /
+
+    |projection_matrix_uniform_name|
+    \
+        "projection_matrix"
+    /
+
+    |transform_matrix_uniform_name|
+    \
+        "transform_matrix"
+    /
+
+    |source|
+    \
+        <<<Vertex_Shader__Transform_Component__Source>>>
+    /
+
+    |main_function_name|
+    \
+        "process_transform();"
+    /
+
+/

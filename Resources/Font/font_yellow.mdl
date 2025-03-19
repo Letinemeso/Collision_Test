@@ -1,12 +1,9 @@
-|font_yellow|
-\
-    |picture_path|
-    \
-        "Resources/Font/font_yellow.png"
-    /
-
     || ||
     \
+        |type|
+        \
+            "LR::Letter_Data"
+        /
         |pos_x|
         \
             "0"
@@ -27,6 +24,10 @@
 
     ||,||
     \
+        |type|
+        \
+            "LR::Letter_Data"
+        /
         |pos_x|
         \
             "0"
@@ -47,6 +48,10 @@
 
     ||!||
     \
+        |type|
+        \
+            "LR::Letter_Data"
+        /
         |pos_x|
         \
             "100"
@@ -67,6 +72,10 @@
 
     ||?||
     \
+        |type|
+        \
+            "LR::Letter_Data"
+        /
         |pos_x|
         \
             "200"
@@ -87,6 +96,10 @@
 
     ||*||
     \
+        |type|
+        \
+            "LR::Letter_Data"
+        /
         |pos_x|
         \
             "300"
@@ -107,6 +120,10 @@
 
     ||/||
     \
+        |type|
+        \
+            "LR::Letter_Data"
+        /
         |pos_x|
         \
             "400"
@@ -127,6 +144,10 @@
 
     ||+||
     \
+        |type|
+        \
+            "LR::Letter_Data"
+        /
         |pos_x|
         \
             "500"
@@ -147,6 +168,10 @@
 
     ||-||
     \
+        |type|
+        \
+            "LR::Letter_Data"
+        /
         |pos_x|
         \
             "600"
@@ -167,6 +192,10 @@
 
     ||5||
     \
+        |type|
+        \
+            "LR::Letter_Data"
+        /
         |pos_x|
         \
             "0"
@@ -187,6 +216,10 @@
 
     ||6||
     \
+        |type|
+        \
+            "LR::Letter_Data"
+        /
         |pos_x|
         \
             "100"
@@ -207,6 +240,10 @@
 
     ||7||
     \
+        |type|
+        \
+            "LR::Letter_Data"
+        /
         |pos_x|
         \
             "200"
@@ -227,6 +264,10 @@
 
     ||8||
     \
+        |type|
+        \
+            "LR::Letter_Data"
+        /
         |pos_x|
         \
             "300"
@@ -247,6 +288,10 @@
 
     ||9||
     \
+        |type|
+        \
+            "LR::Letter_Data"
+        /
         |pos_x|
         \
             "400"
@@ -267,6 +312,10 @@
 
     ||0||
     \
+        |type|
+        \
+            "LR::Letter_Data"
+        /
         |pos_x|
         \
             "500"
@@ -287,6 +336,10 @@
 
     ||.||
     \
+        |type|
+        \
+            "LR::Letter_Data"
+        /
         |pos_x|
         \
             "600"
@@ -307,6 +360,10 @@
 
     ||x||
     \
+        |type|
+        \
+            "LR::Letter_Data"
+        /
         |pos_x|
         \
             "0"
@@ -327,6 +384,10 @@
 
     ||y||
     \
+        |type|
+        \
+            "LR::Letter_Data"
+        /
         |pos_x|
         \
             "100"
@@ -347,6 +408,10 @@
 
     ||z||
     \
+        |type|
+        \
+            "LR::Letter_Data"
+        /
         |pos_x|
         \
             "200"
@@ -367,6 +432,10 @@
 
     ||1||
     \
+        |type|
+        \
+            "LR::Letter_Data"
+        /
         |pos_x|
         \
             "300"
@@ -387,6 +456,10 @@
 
     ||2||
     \
+        |type|
+        \
+            "LR::Letter_Data"
+        /
         |pos_x|
         \
             "400"
@@ -407,6 +480,10 @@
 
     ||3||
     \
+        |type|
+        \
+            "LR::Letter_Data"
+        /
         |pos_x|
         \
             "500"
@@ -427,6 +504,10 @@
 
     ||4||
     \
+        |type|
+        \
+            "LR::Letter_Data"
+        /
         |pos_x|
         \
             "600"
@@ -447,6 +528,10 @@
 
     ||q||
     \
+        |type|
+        \
+            "LR::Letter_Data"
+        /
         |pos_x|
         \
             "0"
@@ -467,6 +552,10 @@
 
     ||r||
     \
+        |type|
+        \
+            "LR::Letter_Data"
+        /
         |pos_x|
         \
             "100"
@@ -487,6 +576,10 @@
 
     ||s||
     \
+        |type|
+        \
+            "LR::Letter_Data"
+        /
         |pos_x|
         \
             "200"
@@ -507,6 +600,10 @@
 
     ||t||
     \
+        |type|
+        \
+            "LR::Letter_Data"
+        /
         |pos_x|
         \
             "300"
@@ -527,6 +624,10 @@
 
     ||u||
     \
+        |type|
+        \
+            "LR::Letter_Data"
+        /
         |pos_x|
         \
             "400"
@@ -547,6 +648,10 @@
 
     ||v||
     \
+        |type|
+        \
+            "LR::Letter_Data"
+        /
         |pos_x|
         \
             "500"
@@ -567,6 +672,10 @@
 
     ||w||
     \
+        |type|
+        \
+            "LR::Letter_Data"
+        /
         |pos_x|
         \
             "600"
@@ -587,6 +696,10 @@
 
     ||j||
     \
+        |type|
+        \
+            "LR::Letter_Data"
+        /
         |pos_x|
         \
             "0"
@@ -607,6 +720,10 @@
 
     ||k||
     \
+        |type|
+        \
+            "LR::Letter_Data"
+        /
         |pos_x|
         \
             "100"
@@ -627,6 +744,10 @@
 
     ||l||
     \
+        |type|
+        \
+            "LR::Letter_Data"
+        /
         |pos_x|
         \
             "200"
@@ -647,6 +768,10 @@
 
     ||m||
     \
+        |type|
+        \
+            "LR::Letter_Data"
+        /
         |pos_x|
         \
             "300"
@@ -667,6 +792,10 @@
 
     ||n||
     \
+        |type|
+        \
+            "LR::Letter_Data"
+        /
         |pos_x|
         \
             "400"
@@ -687,6 +816,10 @@
 
     ||o||
     \
+        |type|
+        \
+            "LR::Letter_Data"
+        /
         |pos_x|
         \
             "500"
@@ -707,6 +840,10 @@
 
     ||p||
     \
+        |type|
+        \
+            "LR::Letter_Data"
+        /
         |pos_x|
         \
             "600"
@@ -727,6 +864,10 @@
 
     ||c||
     \
+        |type|
+        \
+            "LR::Letter_Data"
+        /
         |pos_x|
         \
             "0"
@@ -747,6 +888,10 @@
 
     ||d||
     \
+        |type|
+        \
+            "LR::Letter_Data"
+        /
         |pos_x|
         \
             "100"
@@ -767,6 +912,10 @@
 
     ||e||
     \
+        |type|
+        \
+            "LR::Letter_Data"
+        /
         |pos_x|
         \
             "200"
@@ -787,6 +936,10 @@
 
     ||f||
     \
+        |type|
+        \
+            "LR::Letter_Data"
+        /
         |pos_x|
         \
             "300"
@@ -807,6 +960,10 @@
 
     ||g||
     \
+        |type|
+        \
+            "LR::Letter_Data"
+        /
         |pos_x|
         \
             "400"
@@ -827,6 +984,10 @@
 
     ||h||
     \
+        |type|
+        \
+            "LR::Letter_Data"
+        /
         |pos_x|
         \
             "500"
@@ -847,6 +1008,10 @@
 
     ||i||
     \
+        |type|
+        \
+            "LR::Letter_Data"
+        /
         |pos_x|
         \
             "600"
@@ -867,6 +1032,10 @@
 
     ||V||
     \
+        |type|
+        \
+            "LR::Letter_Data"
+        /
         |pos_x|
         \
             "0"
@@ -887,6 +1056,10 @@
 
     ||W||
     \
+        |type|
+        \
+            "LR::Letter_Data"
+        /
         |pos_x|
         \
             "100"
@@ -907,6 +1080,10 @@
 
     ||X||
     \
+        |type|
+        \
+            "LR::Letter_Data"
+        /
         |pos_x|
         \
             "200"
@@ -927,6 +1104,10 @@
 
     ||Y||
     \
+        |type|
+        \
+            "LR::Letter_Data"
+        /
         |pos_x|
         \
             "300"
@@ -947,6 +1128,10 @@
 
     ||Z||
     \
+        |type|
+        \
+            "LR::Letter_Data"
+        /
         |pos_x|
         \
             "400"
@@ -967,6 +1152,10 @@
 
     ||a||
     \
+        |type|
+        \
+            "LR::Letter_Data"
+        /
         |pos_x|
         \
             "500"
@@ -987,6 +1176,10 @@
 
     ||b||
     \
+        |type|
+        \
+            "LR::Letter_Data"
+        /
         |pos_x|
         \
             "600"
@@ -1007,6 +1200,10 @@
 
     ||O||
     \
+        |type|
+        \
+            "LR::Letter_Data"
+        /
         |pos_x|
         \
             "0"
@@ -1027,6 +1224,10 @@
 
     ||P||
     \
+        |type|
+        \
+            "LR::Letter_Data"
+        /
         |pos_x|
         \
             "100"
@@ -1047,6 +1248,10 @@
 
     ||Q||
     \
+        |type|
+        \
+            "LR::Letter_Data"
+        /
         |pos_x|
         \
             "200"
@@ -1067,6 +1272,10 @@
 
     ||R||
     \
+        |type|
+        \
+            "LR::Letter_Data"
+        /
         |pos_x|
         \
             "300"
@@ -1087,6 +1296,10 @@
 
     ||S||
     \
+        |type|
+        \
+            "LR::Letter_Data"
+        /
         |pos_x|
         \
             "400"
@@ -1107,6 +1320,10 @@
 
     ||T||
     \
+        |type|
+        \
+            "LR::Letter_Data"
+        /
         |pos_x|
         \
             "500"
@@ -1127,6 +1344,10 @@
 
     ||U||
     \
+        |type|
+        \
+            "LR::Letter_Data"
+        /
         |pos_x|
         \
             "600"
@@ -1147,6 +1368,10 @@
 
     ||H||
     \
+        |type|
+        \
+            "LR::Letter_Data"
+        /
         |pos_x|
         \
             "0"
@@ -1167,6 +1392,10 @@
 
     ||I||
     \
+        |type|
+        \
+            "LR::Letter_Data"
+        /
         |pos_x|
         \
             "100"
@@ -1187,6 +1416,10 @@
 
     ||J||
     \
+        |type|
+        \
+            "LR::Letter_Data"
+        /
         |pos_x|
         \
             "200"
@@ -1207,6 +1440,10 @@
 
     ||K||
     \
+        |type|
+        \
+            "LR::Letter_Data"
+        /
         |pos_x|
         \
             "300"
@@ -1227,6 +1464,10 @@
 
     ||L||
     \
+        |type|
+        \
+            "LR::Letter_Data"
+        /
         |pos_x|
         \
             "400"
@@ -1247,6 +1488,10 @@
 
     ||M||
     \
+        |type|
+        \
+            "LR::Letter_Data"
+        /
         |pos_x|
         \
             "500"
@@ -1267,6 +1512,10 @@
 
     ||N||
     \
+        |type|
+        \
+            "LR::Letter_Data"
+        /
         |pos_x|
         \
             "600"
@@ -1287,6 +1536,10 @@
 
     ||A||
     \
+        |type|
+        \
+            "LR::Letter_Data"
+        /
         |pos_x|
         \
             "0"
@@ -1307,6 +1560,10 @@
 
     ||B||
     \
+        |type|
+        \
+            "LR::Letter_Data"
+        /
         |pos_x|
         \
             "100"
@@ -1327,6 +1584,10 @@
 
     ||C||
     \
+        |type|
+        \
+            "LR::Letter_Data"
+        /
         |pos_x|
         \
             "200"
@@ -1347,6 +1608,10 @@
 
     ||D||
     \
+        |type|
+        \
+            "LR::Letter_Data"
+        /
         |pos_x|
         \
             "300"
@@ -1367,6 +1632,10 @@
 
     ||E||
     \
+        |type|
+        \
+            "LR::Letter_Data"
+        /
         |pos_x|
         \
             "400"
@@ -1387,6 +1656,10 @@
 
     ||F||
     \
+        |type|
+        \
+            "LR::Letter_Data"
+        /
         |pos_x|
         \
             "500"
@@ -1407,6 +1680,10 @@
 
     ||G||
     \
+        |type|
+        \
+            "LR::Letter_Data"
+        /
         |pos_x|
         \
             "600"
@@ -1424,4 +1701,3 @@
             "100"
         /
     /
-/

@@ -1,0 +1,36 @@
+[submodule "L_Utility"]
+	path = L_Utility
+	url = https://github.com/Letinemeso/L_Utility.git
+        branch = master
+[submodule "L_Variable"]
+	path = L_Variable
+        url = https://github.com/Letinemeso/L_Variable.git
+        branch = master
+[submodule "LEti_Engine"]
+	path = LEti_Engine
+	url = https://github.com/Letinemeso/LEti_Engine.git
+        branch = master
+[submodule "L_Renderer"]
+	path = L_Renderer
+	url = https://github.com/Letinemeso/L_Renderer.git
+        branch = master
+[submodule "L_Physics"]
+	path = L_Physics
+	url = https://github.com/Letinemeso/L_Physics.git
+        branch = master
+[submodule "L_Engine_Modules_Dump"]
+	path = L_Engine_Modules_Dump
+	url = https://github.com/Letinemeso/L_Engine_Modules_Dump.git
+        branch = master
+[submodule "L_GUI"]
+	path = L_GUI
+	url = https://github.com/Letinemeso/L_GUI.git
+        branch = master
+[submodule "L_Gamedev_Lib"]
+	path = L_Gamedev_Lib
+	url = https://github.com/Letinemeso/L_Gamedev_Lib.git
+        branch = master
+[submodule "L_Sound"]
+        path = L_Sound
+        url = https://github.com/Letinemeso/L_Sound.git
+        branch = master
