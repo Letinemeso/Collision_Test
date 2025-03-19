@@ -383,10 +383,10 @@ int main()
     //  ~Objects
 
     //  App logic
+
     fps_timer.set_target_fps(72);
 
-    fps_timer.set_on_tick(
-    [&](float _dt)
+    fps_timer.set_on_tick([&](float _dt)
     {
         LR::Window_Controller::update();
 
@@ -404,6 +404,8 @@ int main()
         if(LR::Window_Controller::key_was_pressed(GLFW_KEY_ESCAPE))
             break;
     }
+
+    //  ~App logic
 
 
     delete shader_manager;
