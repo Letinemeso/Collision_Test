@@ -23,6 +23,9 @@
 #include <Draw_Modules/Draw_Module.h>
 #include <Window/Window_Controller.h>
 #include <glew.h>
+#include <glfw3.h>
+
+#include <Click_Controller.h>
 
 
 void register_basic_types()
@@ -367,15 +370,14 @@ int main()
 
     //  Objects
 
-    LEti::Object* object = nullptr;
+    Click_Controller click_controller;
+    click_controller.inject_camera(&camera);
 
     {
         LV::MDL_Reader reader;
-        reader.parse_file("Resources/Models/Models");
+        reader.parse_file("Resources/Models/Objects");
 
-        LEti::Object_Stub* stub = (LEti::Object_Stub*)object_constructor.construct(reader.get_stub("Boring_Square"));
-        object = LEti::Object_Stub::construct_from(stub);
-        delete stub;
+        click_controller.set_object_stub((LEti::Object_Stub*)object_constructor.construct(reader.get_stub("Boring_Square")));
     }
 
     //  ~Objects
@@ -384,20 +386,23 @@ int main()
     fps_timer.set_target_fps(72);
 
     fps_timer.set_on_tick(
-        [&](float _dt)
-        {
-            LR::Window_Controller::update();
+    [&](float _dt)
+    {
+        LR::Window_Controller::update();
 
-            glClear(GL_COLOR_BUFFER_BIT);
+        glClear(GL_COLOR_BUFFER_BIT);
 
-            object->update(_dt);
+        click_controller.update(_dt);
 
-            LR::Window_Controller::swap_buffers();
-        });
+        LR::Window_Controller::swap_buffers();
+    });
 
     while(!LR::Window_Controller::window_should_close())
     {
         fps_timer.tick();
+
+        if(LR::Window_Controller::key_was_pressed(GLFW_KEY_ESCAPE))
+            break;
     }
 
 
