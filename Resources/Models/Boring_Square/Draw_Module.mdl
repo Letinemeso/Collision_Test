@@ -15,6 +15,11 @@
         "GL_LINES"
     /
 
+    |draw_on_update|
+    \
+        "-"
+    /
+
     ||Graphics_Component_Stub__coords||
     \
         |type|

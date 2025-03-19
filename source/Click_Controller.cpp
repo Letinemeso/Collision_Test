@@ -2,12 +2,15 @@
 
 #include <Window/Window_Controller.h>
 #include <glfw3.h>
+#include <Draw_Modules/Draw_Module.h>
 
 #include <Collision_Detection/Broad_Phase/Binary_Space_Partitioner.h>
 #include <Collision_Detection/Narrow_Phase/Dynamic_Narrow_CD.h>
 #include <Collision_Detection/Narrow_Phase/Narrow_Phase__Model_Vs_Point.h>
 #include <Collision_Resolution/Collision_Resolution__Physics_Module_2D.h>
 #include <Modules/Physics_Module__Point.h>
+
+#include <Control_Module.h>
 
 
 Click_Controller::Click_Controller()
@@ -66,6 +69,35 @@ LEti::Object* Click_Controller::M_clicked_on_object()
     return module->parent_object();
 }
 
+
+void Click_Controller::M_process_movement_application()
+{
+    if(m_held_object)
+        return;
+
+    if(!LR::Window_Controller::is_key_down(GLFW_KEY_LEFT_CONTROL))
+        return;
+
+    if(!LR::Window_Controller::mouse_button_was_pressed(GLFW_MOUSE_BUTTON_1))
+        return;
+
+    LEti::Object* clicked_on = M_clicked_on_object();
+    if(!clicked_on)
+        return;
+
+    Control_Module* cm = clicked_on->get_module_of_type<Control_Module>();
+    if(cm)
+    {
+        clicked_on->remove_module(cm);
+        delete cm;
+        return;
+    }
+    else
+    {
+        cm = new Control_Module;
+        clicked_on->add_module(cm);
+    }
+}
 
 void Click_Controller::M_process_object_selection()
 {
@@ -146,6 +178,7 @@ void Click_Controller::update(float _dt)
         object->update_previous_state();
     }
 
+    M_process_movement_application();
     M_process_object_selection();
     M_process_object_movement();
     M_process_object_creation();
@@ -159,4 +192,13 @@ void Click_Controller::update(float _dt)
 
     m_collision_detector__objects.update();
     m_collision_resolver__objects.resolve_all(m_collision_detector__objects.found_collisions(), _dt);
+
+    for(Objects_List::Iterator it = m_objects_list.begin(); !it.end_reached(); ++it)
+    {
+        LEti::Object* object = *it;
+        object->process_logic_for_modules_of_type<LR::Draw_Module>([](LR::Draw_Module* _module)
+        {
+            _module->draw();
+        });
+    }
 }
