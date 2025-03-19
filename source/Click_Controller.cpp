@@ -96,7 +96,7 @@ void Click_Controller::M_process_movement_application()
     else
     {
         cm = new Control_Module;
-        clicked_on->add_module(cm);
+        clicked_on->add_module(cm, false);
     }
 }
 
