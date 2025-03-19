@@ -4,7 +4,7 @@
         branch = master
 [submodule "L_Variable"]
 	path = L_Variable
-        url = https://github.com/Letinemeso/L_Variable.git
+	url = https://github.com/Letinemeso/L_Variable.git
         branch = master
 [submodule "LEti_Engine"]
 	path = LEti_Engine
@@ -31,6 +31,6 @@
 	url = https://github.com/Letinemeso/L_Gamedev_Lib.git
         branch = master
 [submodule "L_Sound"]
-        path = L_Sound
-        url = https://github.com/Letinemeso/L_Sound.git
+	path = L_Sound
+	url = https://github.com/Letinemeso/L_Sound.git
         branch = master
