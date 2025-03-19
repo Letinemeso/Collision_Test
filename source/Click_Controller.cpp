@@ -65,7 +65,7 @@ LEti::Object* Click_Controller::M_clicked_on_object()
 
     const LPhys::Intersection_Data& id = *found_collisions.begin();
 
-    LPhys::Physics_Module_2D* module = (LPhys::Physics_Module_2D*)(id.first->get_actual_type() == LPhys::Physics_Module_2D::get_estimated_type() ? id.first : id.second);
+    LPhys::Physics_Module_2D* module = (LPhys::Physics_Module_2D*)(LV::cast_variable<LPhys::Physics_Module_2D>(id.first) ? id.first : id.second);
     return module->parent_object();
 }
 
@@ -128,6 +128,9 @@ void Click_Controller::M_process_object_movement()
 void Click_Controller::M_process_object_creation()
 {
     if(m_held_object)
+        return;
+
+    if(LR::Window_Controller::is_key_down(GLFW_KEY_LEFT_CONTROL))
         return;
 
     if(!LR::Window_Controller::mouse_button_was_pressed(GLFW_MOUSE_BUTTON_1))

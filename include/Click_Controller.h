@@ -15,7 +15,6 @@ private:
 
     LEti::Object_Stub* m_object_stub = nullptr;
 
-private:
     using Objects_List = LDS::List<LEti::Object*>;
     Objects_List m_objects_list;
 

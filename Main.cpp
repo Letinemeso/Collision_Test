@@ -26,6 +26,7 @@
 #include <glfw3.h>
 
 #include <Click_Controller.h>
+#include <Maybe_Immovable_Physics_Module.h>
 
 
 void register_basic_types()
@@ -330,6 +331,8 @@ int main()
     object_constructor.register_type<LR::Shader_Stub>();
     object_constructor.register_type<LR::Shader_Component_Stub>();
     object_constructor.register_type<LR::Shader_Transform_Component_Stub>();
+
+    object_constructor.register_type<Maybe_Immovable_Physics_Module_Stub>();
 
     //  ~initialization
 

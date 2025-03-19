@@ -2,7 +2,7 @@
 \
     |type|
     \
-        "LPhys::Physics_Module_2D_Stub"
+        "Maybe_Immovable_Physics_Module_Stub"
     /
 
     |collision_permissions|
