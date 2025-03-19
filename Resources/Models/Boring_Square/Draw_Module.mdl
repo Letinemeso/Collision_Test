@@ -1,0 +1,71 @@
+||Module__Draw_Module||
+\
+    |type|
+    \
+        "LR::Draw_Module_Stub"
+    /
+
+    |rendering_shader_id|
+    \
+        "Shader_Program__Default"
+    /
+
+    ||Graphics_Component_Stub__coords||
+    \
+        |type|
+        \
+            "LR::Graphics_Component_Stub"
+        /
+        |layout_index|
+        \
+            "0"
+        /
+        |floats_per_vertex|
+        \
+            "3"
+        /
+        |data_size|
+        \
+            "18"
+        /
+        |data|
+        \
+            "5"     "5"       "0"
+            "-5"    "5"       "0"
+            "-5"    "-5"      "0"
+
+            "5"     "5"       "0"
+            "-5"    "-5"      "0"
+            "5"     "-5"      "0"
+        /
+    /
+
+    ||Graphics_Component_Stub__colors||
+    \
+        |type|
+        \
+            "LR::Graphics_Component_Stub"
+        /
+        |layout_index|
+        \
+            "1"
+        /
+        |floats_per_vertex|
+        \
+            "4"
+        /
+        |data_size|
+        \
+            "24"
+        /
+        |data|
+        \
+            "1""1""1""1"
+            "1""1""1""1"
+            "1""1""1""1"
+            "1""1""1""1"
+            "1""1""1""1"
+            "1""1""1""1"
+        /
+    /
+/

@@ -346,12 +346,12 @@ int main()
 
     //  Other rendering stuff
     {
+        LR::Window_Controller::create_window(1200, 800, "Collision_Test");
+
         camera.set_position({0.0f, 0.0f, 0.0f});
         camera.set_view_scale(1.0f);
 
         renderer.set_camera(&camera);
-
-        LR::Window_Controller::create_window(1200, 800, "Collision_Test");
     }
     //  ~Other rendering stuff
 
@@ -365,6 +365,21 @@ int main()
     }
     //  ~Shader Manager
 
+    //  Objects
+
+    LEti::Object* object = nullptr;
+
+    {
+        LV::MDL_Reader reader;
+        reader.parse_file("Resources/Models/Models");
+
+        LEti::Object_Stub* stub = (LEti::Object_Stub*)object_constructor.construct(reader.get_stub("Boring_Square"));
+        object = LEti::Object_Stub::construct_from(stub);
+        delete stub;
+    }
+
+    //  ~Objects
+
     //  App logic
     fps_timer.set_target_fps(72);
 
@@ -375,7 +390,7 @@ int main()
 
             glClear(GL_COLOR_BUFFER_BIT);
 
-            // m_current_game_state->update(_dt);
+            object->update(_dt);
 
             LR::Window_Controller::swap_buffers();
         });

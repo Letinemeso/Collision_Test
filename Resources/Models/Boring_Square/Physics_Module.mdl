@@ -1,0 +1,27 @@
+||Module__Physics_Module||
+\
+    |type|
+    \
+        "LPhys::Physics_Module_2D_Stub"
+    /
+
+    |collision_permissions|
+    \
+        "+" "+" "-"
+        "-" "+" "+"
+    /
+    |coords_count|
+    \
+        "18"
+    /
+    |coords|
+    \
+        "5"     "5"       "0"
+        "-5"    "5"       "0"
+        "-5"    "-5"      "0"
+
+        "5"     "5"       "0"
+        "-5"    "-5"      "0"
+        "5"     "-5"      "0"
+    /
+/
