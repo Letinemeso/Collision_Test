@@ -37,6 +37,7 @@ private:
     LEti::Object* M_clicked_on_object();
 
     void M_process_movement_application();
+    void M_process_movability_setting();
     void M_process_object_selection();
     void M_process_object_movement();
     void M_process_object_creation();

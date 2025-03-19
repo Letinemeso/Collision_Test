@@ -7,10 +7,11 @@
 #include <Collision_Detection/Broad_Phase/Binary_Space_Partitioner.h>
 #include <Collision_Detection/Narrow_Phase/Dynamic_Narrow_CD.h>
 #include <Collision_Detection/Narrow_Phase/Narrow_Phase__Model_Vs_Point.h>
-#include <Collision_Resolution/Collision_Resolution__Physics_Module_2D.h>
 #include <Modules/Physics_Module__Point.h>
 
 #include <Control_Module.h>
+#include <Collision_Resolution.h>
+#include <Maybe_Immovable_Physics_Module.h>
 
 
 Click_Controller::Click_Controller()
@@ -36,7 +37,7 @@ Click_Controller::Click_Controller()
         np->set_precision(5);
         m_collision_detector__objects.set_narrow_phase(np);
 
-        m_collision_resolver__objects.set_resolution(new LPhys::Collision_Resolution__Physics_Module_2D);
+        m_collision_resolver__objects.set_resolution(new Collision_Resolution);
     }
 }
 
@@ -99,6 +100,26 @@ void Click_Controller::M_process_movement_application()
     }
 }
 
+void Click_Controller::M_process_movability_setting()
+{
+    if(m_held_object)
+        return;
+
+    if(!LR::Window_Controller::is_key_down(GLFW_KEY_M))
+        return;
+
+    if(!LR::Window_Controller::mouse_button_was_pressed(GLFW_MOUSE_BUTTON_1))
+        return;
+
+    LEti::Object* clicked_on = M_clicked_on_object();
+    if(!clicked_on)
+        return;
+
+    Maybe_Immovable_Physics_Module* pm = clicked_on->get_module_of_type<Maybe_Immovable_Physics_Module>();
+    L_ASSERT(pm);
+    pm->set_movable(!pm->movable());
+}
+
 void Click_Controller::M_process_object_selection()
 {
     if(m_held_object)
@@ -118,8 +139,6 @@ void Click_Controller::M_process_object_movement()
 {
     if(!m_held_object)
         return;
-
-    // L_ASSERT(LR::Window_Controller::is_key_down(GLFW_MOUSE_BUTTON_1));
 
     glm::vec3 clicked_at = m_camera->convert_window_coords({ LR::Window_Controller::get_cursor_position().x, LR::Window_Controller::get_cursor_position().y, 0.0f });
     m_held_object->current_state().set_position(clicked_at);
@@ -182,6 +201,7 @@ void Click_Controller::update(float _dt)
     }
 
     M_process_movement_application();
+    M_process_movability_setting();
     M_process_object_selection();
     M_process_object_movement();
     M_process_object_creation();
