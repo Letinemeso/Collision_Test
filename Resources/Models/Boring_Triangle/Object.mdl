@@ -1,4 +1,4 @@
-|Corner__Left_Top_Alt|
+|Boring_Triangle|
 \
     |type|
     \
@@ -15,7 +15,7 @@
     /
     |scale|
     \
-        "15""15""1"
+        "5""5""1"
     /
 
     <<<Draw_Module>>>

@@ -1,0 +1,23 @@
+||Module__Physics_Module||
+\
+    |type|
+    \
+        "Maybe_Immovable_Physics_Module_Stub"
+    /
+
+    |collision_permissions|
+    \
+        "+" "+" "+"
+        "+" "+" "+"
+    /
+    |coords|
+    \
+        "0"     "5"       "0"
+        "-5"    "0"      "0"
+        "0"     "0"      "0"
+
+        "5"     "0"       "0"
+        "0"    "0"       "0"
+        "0"    "-5"      "0"
+    /
+/

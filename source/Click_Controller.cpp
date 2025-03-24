@@ -88,6 +88,17 @@ LEti::Object* Click_Controller::M_clicked_on_object()
 }
 
 
+void Click_Controller::M_process_object_rotation()
+{
+    if(!m_held_object)
+        return;
+
+    if(!LR::Window_Controller::key_was_pressed(GLFW_KEY_R))
+        return;
+
+    m_held_object->current_state().rotate({ 0.0f, 0.0f, LEti::Math::HALF_PI });
+}
+
 void Click_Controller::M_process_movement_application()
 {
     if(m_held_object)
@@ -241,6 +252,7 @@ void Click_Controller::update(float _dt)
         object->update_previous_state();
     }
 
+    M_process_object_rotation();
     M_process_movement_application();
     M_process_movability_setting();
     M_process_object_selection();
