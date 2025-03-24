@@ -380,7 +380,11 @@ int main()
         LV::MDL_Reader reader;
         reader.parse_file("Resources/Models/Objects");
 
-        click_controller.set_object_stub((LEti::Object_Stub*)object_constructor.construct(reader.get_stub("Boring_Square")));
+        Click_Controller::Stubs_List stubs;
+        for(auto it = reader.stubs().iterator(); !it.end_reached(); ++it)
+            stubs.push_back({ it.key(), (LEti::Object_Stub*)object_constructor.construct(*it) });
+
+        click_controller.set_object_stubs((Click_Controller::Stubs_List&&)stubs);
     }
 
     //  ~Objects

@@ -6,8 +6,8 @@
 
 #include <Collision_Detection/Broad_Phase/Binary_Space_Partitioner.h>
 #include <Collision_Detection/Narrow_Phase/Dynamic_Narrow_CD.h>
-#include <Collision_Detection/Narrow_Phase/Narrow_Phase__Model_Vs_Point.h>
-#include <Modules/Physics_Module__Point.h>
+#include <Collision_Detection/Narrow_Phase/Narrow_Phase__Model_Vs_Ray.h>
+#include <Modules/Physics_Module__Ray.h>
 
 #include <Control_Module.h>
 #include <Collision_Resolution.h>
@@ -16,17 +16,21 @@
 
 Click_Controller::Click_Controller()
 {
-    LPhys::Physics_Module__Point* point_pm = new LPhys::Physics_Module__Point;
-    m_point_object.add_module(point_pm);
+    L_CREATE_LOG_LEVEL("Click_Controller");
+
+    LPhys::Physics_Module__Ray* ray_pm = new LPhys::Physics_Module__Ray;
+    ray_pm->set_start({0.0f, 0.0f, 1.0f});
+    ray_pm->set_direction({0.0f, 0.0f, -1.0f});
+    m_point_object.add_module(ray_pm);
 
     {
         LPhys::Binary_Space_Partitioner* bp = new LPhys::Binary_Space_Partitioner;
         bp->set_precision(2);
         m_collision_detector__click.set_broad_phase(bp);
-        LPhys::Narrow_Phase__Model_Vs_Point* np = new LPhys::Narrow_Phase__Model_Vs_Point;
+        LPhys::Narrow_Phase__Model_Vs_Ray* np = new LPhys::Narrow_Phase__Model_Vs_Ray;
         m_collision_detector__click.set_narrow_phase(np);
 
-        m_collision_detector__click.register_module(point_pm);
+        m_collision_detector__click.register_module(ray_pm);
     }
 
     {
@@ -43,10 +47,23 @@ Click_Controller::Click_Controller()
 
 Click_Controller::~Click_Controller()
 {
+    L_REMOVE_LOG_LEVEL("Click_Controller");
+
+    for(Stubs_List::Iterator it = m_object_stubs.begin(); !it.end_reached(); ++it)
+        delete it->stub;
     for(Objects_List::Iterator it = m_objects_list.begin(); !it.end_reached(); ++it)
         delete *it;
+}
 
-    delete m_object_stub;
+
+
+void Click_Controller::set_object_stubs(Stubs_List&& _stubs)
+{
+    for(Stubs_List::Iterator it = m_object_stubs.begin(); !it.end_reached(); ++it)
+        delete it->stub;
+
+    m_object_stubs = (Stubs_List&&)_stubs;
+    m_object_stub_it = m_object_stubs.begin();
 }
 
 
@@ -149,7 +166,31 @@ void Click_Controller::M_process_object_movement()
     m_held_object->current_state().set_position(clicked_at + m_holding_point_offset);
 }
 
-void Click_Controller::M_process_object_creation()
+void Click_Controller::M_process_object_stub_selection()
+{
+    Stubs_List::Iterator it_before_selection = m_object_stub_it;
+
+    if(LR::Window_Controller::mouse_wheel_rotation() > 0 && !m_object_stub_it.begin_reached())
+        --m_object_stub_it;
+
+    if(LR::Window_Controller::mouse_wheel_rotation() < 0 && !m_object_stub_it.end_reached())
+        ++m_object_stub_it;
+
+    if(it_before_selection == m_object_stub_it)
+        return;
+
+    L_LOG("Click_Controller", "---------------------");
+    for(Stubs_List::Iterator it = m_object_stubs.begin(); !it.end_reached(); ++it)
+    {
+        if(it == m_object_stub_it)
+            L_LOG("Click_Controller", "* " + it->name);
+        else
+            L_LOG("Click_Controller", "  " + it->name);
+    }
+    L_LOG("Click_Controller", "---------------------");
+}
+
+void Click_Controller::M_process_object_removal_or_creation()
 {
     if(m_held_object)
         return;
@@ -157,42 +198,37 @@ void Click_Controller::M_process_object_creation()
     if(LR::Window_Controller::is_key_down(GLFW_KEY_LEFT_CONTROL))
         return;
 
-    if(!LR::Window_Controller::mouse_button_was_pressed(GLFW_MOUSE_BUTTON_1))
-        return;
-
-    glm::vec3 clicked_at = m_camera->convert_window_coords({ LR::Window_Controller::get_cursor_position().x, LR::Window_Controller::get_cursor_position().y, 0.0f });
-    LEti::Object* object = LEti::Object_Stub::construct_from(m_object_stub);
-    object->current_state().set_position(clicked_at);
-    object->update(0.0f);
-    object->update_previous_state();
-    m_objects_list.push_back(object);
-
-    object->process_logic_for_modules_of_type<LPhys::Physics_Module_2D>([this](LPhys::Physics_Module_2D* _module)
-    {
-        m_collision_detector__objects.register_module(_module);
-    });
-}
-
-void Click_Controller::M_process_object_removal()
-{
-    if(m_held_object)
-        return;
-
     if(!LR::Window_Controller::mouse_button_was_pressed(GLFW_MOUSE_BUTTON_2))
         return;
 
     LEti::Object* clicked_on = M_clicked_on_object();
-    if(!clicked_on)
-        return;
-
-    clicked_on->process_logic_for_modules_of_type<LPhys::Physics_Module_2D>([this](LPhys::Physics_Module_2D* _module)
+    if(clicked_on)
     {
-        m_collision_detector__objects.unregister_module(_module);
-    });
+        clicked_on->process_logic_for_modules_of_type<LPhys::Physics_Module_2D>([this](LPhys::Physics_Module_2D* _module)
+        {
+            m_collision_detector__objects.unregister_module(_module);
+        });
 
-    Objects_List::Iterator object_it = m_objects_list.find(clicked_on);
-    L_ASSERT(object_it.is_ok());
-    m_objects_list.erase(object_it);
+        Objects_List::Iterator object_it = m_objects_list.find(clicked_on);
+        L_ASSERT(object_it.is_ok());
+        m_objects_list.erase(object_it);
+    }
+    else
+    {
+        L_ASSERT(m_object_stub_it.is_ok());
+
+        glm::vec3 clicked_at = m_camera->convert_window_coords({ LR::Window_Controller::get_cursor_position().x, LR::Window_Controller::get_cursor_position().y, 0.0f });
+        LEti::Object* object = LEti::Object_Stub::construct_from(m_object_stub_it->stub);
+        object->current_state().set_position(clicked_at);
+        object->update(0.0f);
+        object->update_previous_state();
+        m_objects_list.push_back(object);
+
+        object->process_logic_for_modules_of_type<LPhys::Physics_Module_2D>([this](LPhys::Physics_Module_2D* _module)
+        {
+            m_collision_detector__objects.register_module(_module);
+        });
+    }
 }
 
 
@@ -209,8 +245,8 @@ void Click_Controller::update(float _dt)
     M_process_movability_setting();
     M_process_object_selection();
     M_process_object_movement();
-    M_process_object_creation();
-    M_process_object_removal();
+    M_process_object_stub_selection();
+    M_process_object_removal_or_creation();
 
     for(Objects_List::Iterator it = m_objects_list.begin(); !it.end_reached(); ++it)
     {

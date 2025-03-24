@@ -1,0 +1,24 @@
+|Corner__Left_Top|
+\
+    |type|
+    \
+        "LEti::Object_Stub"
+    /
+
+    |position|
+    \
+        "0""0""0"
+    /
+    |rotation|
+    \
+        "0""0""0"
+    /
+    |scale|
+    \
+        "5""5""1"
+    /
+
+    <<<Draw_Module>>>
+    <<<Physics_Module>>>
+
+/

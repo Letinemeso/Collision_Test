@@ -34,10 +34,6 @@
         \
             "3"
         /
-        |data_size|
-        \
-            "36"
-        /
         |data|
         \
             "5"     "5"       "0"
@@ -73,10 +69,6 @@
         |floats_per_vertex|
         \
             "4"
-        /
-        |data_size|
-        \
-            "48"
         /
         |data|
         \
