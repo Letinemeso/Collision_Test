@@ -38,7 +38,7 @@ Click_Controller::Click_Controller()
         bp->set_precision(2);
         m_collision_detector__objects.set_broad_phase(bp);
         LPhys::Dynamic_Narrow_CD* np = new LPhys::Dynamic_Narrow_CD;
-        np->set_precision(5);
+        np->set_precision(0);
         m_collision_detector__objects.set_narrow_phase(np);
 
         m_collision_resolver__objects.set_resolution(new Collision_Resolution);
