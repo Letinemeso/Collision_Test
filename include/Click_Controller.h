@@ -34,6 +34,7 @@ private:
     LPhys::Collision_Resolver m_collision_resolver__objects;
     LPhys::Collision_Detector m_collision_detector__click;
     LEti::Object m_point_object;
+    bool m_resolve_collisions = true;
 
 public:
     Click_Controller();
@@ -55,6 +56,7 @@ private:
     void M_process_object_movement();
     void M_process_object_stub_selection();
     void M_process_object_removal_or_creation();
+    void M_process_enable_resolution();
 
 public:
     void update(float _dt);

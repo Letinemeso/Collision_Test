@@ -93,10 +93,10 @@ void Click_Controller::M_process_object_rotation()
     if(!m_held_object)
         return;
 
-    if(!LR::Window_Controller::key_was_pressed(GLFW_KEY_R))
-        return;
-
-    m_held_object->current_state().rotate({ 0.0f, 0.0f, LEti::Math::HALF_PI });
+    if(LR::Window_Controller::key_was_pressed(GLFW_KEY_Q))
+        m_held_object->current_state().rotate({ 0.0f, 0.0f, LEti::Math::HALF_PI });
+    if(LR::Window_Controller::key_was_pressed(GLFW_KEY_E))
+        m_held_object->current_state().rotate({ 0.0f, 0.0f, -LEti::Math::HALF_PI });
 }
 
 void Click_Controller::M_process_movement_application()
@@ -242,6 +242,14 @@ void Click_Controller::M_process_object_removal_or_creation()
     }
 }
 
+void Click_Controller::M_process_enable_resolution()
+{
+    if(!LR::Window_Controller::key_was_pressed(GLFW_KEY_R))
+        return;
+
+    m_resolve_collisions = !m_resolve_collisions;
+}
+
 
 
 void Click_Controller::update(float _dt)
@@ -259,6 +267,7 @@ void Click_Controller::update(float _dt)
     M_process_object_movement();
     M_process_object_stub_selection();
     M_process_object_removal_or_creation();
+    M_process_enable_resolution();
 
     for(Objects_List::Iterator it = m_objects_list.begin(); !it.end_reached(); ++it)
     {
@@ -267,7 +276,8 @@ void Click_Controller::update(float _dt)
     }
 
     m_collision_detector__objects.update();
-    m_collision_resolver__objects.resolve_all(m_collision_detector__objects.found_collisions(), _dt);
+    if(m_resolve_collisions)
+        m_collision_resolver__objects.resolve_all(m_collision_detector__objects.found_collisions(), _dt);
 
     for(Objects_List::Iterator it = m_objects_list.begin(); !it.end_reached(); ++it)
     {

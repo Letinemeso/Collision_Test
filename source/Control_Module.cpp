@@ -32,10 +32,18 @@ void Control_Module::update(float _dt)
         movement_vec.x += 1.0f;
     }
 
+    if(LR::Window_Controller::is_key_down(GLFW_KEY_1))      //  diagonal movement for test
+    {
+        has_movement = true;
+        movement_vec.x += 1.0f;
+        movement_vec.y += 1.0f;
+    }
+
     if(!has_movement)
         return;
 
     LEti::Math::shrink_vector_to_1(movement_vec);
 
     transformation_data()->move(movement_vec * m_speed * _dt);
+    // transformation_data()->move(movement_vec * m_speed * 0.2f);
 }
