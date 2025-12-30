@@ -43,6 +43,7 @@ using namespace Shardis;
 // LEti::Object* terrain_obj = nullptr;
 
 
+bool disable_update_on_collision = false;
 bool update_enabled = true;
 LEti::Object* collision_indicator = nullptr;
 
@@ -126,7 +127,8 @@ void Application::M_init_objects_controller()
 
         ext_physics_terrain->on_collision = [&](const LPhys::Intersection_Data& _id)
         {
-            update_enabled = false;
+            if(disable_update_on_collision)
+                update_enabled = false;
             collision_indicator->current_state().set_position(_id.point);
         };
 
@@ -379,7 +381,8 @@ void Application::M_on_components_initialized()
     LR::Shader_Program* sp = m_shader_manager->get_shader_program("Shader_Program__Final_Shader");
     LR::Shader* shader = sp->get_shader_of_type(LR::Shader_Type::Fragment);
     Fragment_Shader_Light_Component* light_controller = shader->get_shader_component_of_type<Fragment_Shader_Light_Component>();
-    light_controller->add_light_source( {0.0f, 10.0f, 0.0f}, {1.0f, 1.0f, 1.0f}, 500.0f );
+    light_controller->add_light_source( {-10.0f, 10.0f, -10.0f}, {1.0f, 1.0f, 1.0f}, 50.0f );
+    light_controller->add_light_source( {10.0f, 10.0f, 10.0f}, {1.0f, 1.0f, 1.0f}, 50.0f );
 
     // LEti::Object_Stub* fx_object_stub = m_object_stubs->get_object<LEti::Object_Stub>("Shards_Splash_FX");
     // LEti::Object* fx_object = LEti::Object_Stub::construct_from(fx_object_stub);
@@ -414,6 +417,9 @@ void Application::M_update_game(float _dt)
     }
 
     if(LR::Window_Controller::instance().key_was_pressed(GLFW_KEY_P))
+        disable_update_on_collision = !disable_update_on_collision;
+
+    if(LR::Window_Controller::instance().key_was_pressed(GLFW_KEY_Q))
         update_enabled = !update_enabled;
 
     if(LR::Window_Controller::instance().key_was_pressed(GLFW_KEY_M))
@@ -426,7 +432,7 @@ void Application::M_update_game(float _dt)
 
     collision_indicator->update_previous_state();
 
-    if(LR::Window_Controller::instance().key_was_pressed(GLFW_KEY_O))
+    if(LR::Window_Controller::instance().key_was_pressed(GLFW_KEY_E))
     {
         const LEti::Object_Stub* stub = m_object_stubs->get_object<LEti::Object_Stub>("Model_Test_Entity");
         LEti::Object* object = LEti::Object_Stub::construct_from(stub);
@@ -435,7 +441,8 @@ void Application::M_update_game(float _dt)
         if(pm)
         {
             pm->set_velocity( m_ingame_camera.settings().direction * 3.0f );
-            pm->set_angular_velocity( m_ingame_camera.settings().top * 10.0f );
+            // pm->set_angular_velocity( m_ingame_camera.settings().top * 10.0f );
+            pm->set_angular_velocity( { LEti::Math::random_number_float(-10.0f, 10.0f), LEti::Math::random_number_float(-10.0f, 10.0f), LEti::Math::random_number_float(-10.0f, 10.0f) } );
             pm->set_center_of_mass_position( m_ingame_camera.settings().position + ( m_ingame_camera.settings().direction * 3.0f ) );
         }
 

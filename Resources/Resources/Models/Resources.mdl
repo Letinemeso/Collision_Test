@@ -31,6 +31,17 @@
         "../Resources/Resources/Models/Shard.obj"
     /
 /
+||Shard_Big_Model||
+\
+    |type|
+    \
+        "LMD::Model_Stub"
+    /
+    |file_path|
+    \
+        "../Resources/Resources/Models/Shard_Big.obj"
+    /
+/
 ||Ground_Model||
 \
     |type|

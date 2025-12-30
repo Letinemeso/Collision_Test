@@ -39,7 +39,7 @@
 
             |model_name|
             \
-                "Shard_Model"
+                "Player_Capsule_Model"
             /
 
             |data_extraction_type|
@@ -73,7 +73,7 @@
 
             |model_name|
             \
-                "Shard_Model"
+                "Player_Capsule_Model"
             /
 
             |data_extraction_type|
@@ -124,7 +124,7 @@
 
             |model_name|
             \
-                "Shard_Model"
+                "Player_Capsule_Model"
             /
 
             |data_extraction_type|

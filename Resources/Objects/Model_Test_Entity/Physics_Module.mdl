@@ -12,7 +12,7 @@
 
     |restitution|
     \
-        "1.0"
+        "0.7"
     /
 
     ||data_provider||
@@ -24,7 +24,7 @@
 
         |model_name|
         \
-            "Shard_Model"
+            "Player_Capsule_Model"
         /
 
         |data_extraction_type|
