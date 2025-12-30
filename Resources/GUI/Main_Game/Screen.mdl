@@ -1,0 +1,17 @@
+|Screen|
+\
+    |type|
+    \
+        "LGui::Screen_Stub"
+    /
+
+    |default_tag|
+    \
+        "Main_Game_UI"
+    /
+
+    #<<<../../../Debug/GUI_Physical_Model_Renderer_Draw_Module>>>#
+
+    <<<Health_Bar/Model>>>
+    <<<Damage_Indicator/Model>>>
+/

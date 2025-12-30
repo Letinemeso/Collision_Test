@@ -1,0 +1,17 @@
+||Shader_Component__Positions_Data||
+\
+    |type|
+    \
+        "LR::Shader_Component_Stub__SSBO__Vec3"
+    /
+
+    |binding_index|
+    \
+        "1"
+    /
+
+    |data_name|
+    \
+        "position"
+    /
+/

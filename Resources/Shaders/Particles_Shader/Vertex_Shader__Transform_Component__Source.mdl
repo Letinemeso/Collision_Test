@@ -1,0 +1,63 @@
+"
+
+layout(location = 0) in vec3 vs_in_pos;
+
+out vec3 fs_in_position;
+
+uniform mat4 projection_matrix;
+uniform mat4 transform_matrix;
+
+
+mat4 rotation_matrix_from_euler_angles(vec3 _angles)
+{
+    float sy = sin(_angles.y);
+    float cy = cos(_angles.y);
+    float sx = sin(_angles.x);
+    float cx = cos(_angles.x);
+    float sz = sin(_angles.z);
+    float cz = cos(_angles.z);
+
+    return mat4(
+        cy*cz + sy*sx*sz,   -cy*sz + sy*sx*cz,   sy*cx, 0.0f,
+        cx*sz,               cx*cz,              -sx, 0.0f,
+        -sy*cz + cy*sx*sz,   sy*sz + cy*sx*cz,   cy*cx, 0.0f,
+        0.0f, 0.0f, 0.0f, 1.0f
+    );
+}
+
+vec3 rotate_vector(vec3 _vector, vec3 _angles)
+{
+    mat4 rotation_matrix = rotation_matrix_from_euler_angles(_angles);
+    return (rotation_matrix * vec4(_vector, 1.0f)).xyz;
+}
+
+
+void process_transform()
+{
+    float remaining_lifetime = get_lifetime_with_offset_0(gl_InstanceID);
+
+    if(remaining_lifetime <= 0.0f)
+    {
+        fs_in_position = vec3(0.0f, 0.0f, 0.0f);
+        gl_Position = vec4(0.0f, 0.0f, 0.0f, 0.0f);
+        return;
+    }
+
+    float lifetime_ratio = remaining_lifetime / get_lifetime_with_offset_1(gl_InstanceID);
+
+    vec3 raw_position_scaled = vs_in_pos * lifetime_ratio;
+
+    vec3 angles = get_rotation(gl_InstanceID);
+    raw_position_scaled = rotate_vector(raw_position_scaled, angles);
+
+    vec4 world_pos = transform_matrix * vec4(raw_position_scaled, 1.0f);
+
+    vec3 particle_position = get_position(gl_InstanceID);
+    for(uint i = 0; i < 3; ++i)
+        world_pos[i] += particle_position[i];
+
+    fs_in_position = world_pos.xyz;
+    gl_Position = projection_matrix * world_pos;
+}
+
+"

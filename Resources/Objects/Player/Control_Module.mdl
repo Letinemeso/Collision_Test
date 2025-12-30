@@ -1,0 +1,64 @@
+||Module__control_module||
+\
+    |type|
+    \
+        "Shardis::Player_Control_Module_Stub"
+    /
+
+    |movement_speed|
+    \
+        "0.2"
+    /
+
+    |jump_impulse_strength|
+    \
+        "0.4"
+    /
+
+    |mid_air_movement_speed_multiplier|
+    \
+        "0.15"
+    /
+
+    |dash_cooldown|
+    \
+        "0.75"
+    /
+
+    |dash_duration|
+    \
+        "0.3"
+    /
+
+    |dash_impulse|
+    \
+        "0.4"
+    /
+
+    |thrust_prepare_duration|
+    \
+        "1.0"
+    /
+
+    |thrust_impulse|
+    \
+        "1.4"
+    /
+
+    |max_thrust_camera_decrement|
+    \
+        "1.5"
+    /
+
+    |camera_vertical_offset|
+    \
+        "2.8"
+    /
+
+    |weapon_name|
+    \
+        "Generic_Test_Weapon"
+    /
+
+    <<<Attack/Model>>>
+/

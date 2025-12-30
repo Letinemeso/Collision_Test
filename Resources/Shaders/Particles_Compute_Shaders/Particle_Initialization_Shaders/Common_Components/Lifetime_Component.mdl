@@ -1,0 +1,19 @@
+||Shader_Component__Lifetime||
+\
+
+    |type|
+    \
+        "LR::Shader_Component_Stub"
+    /
+
+    |source|
+    \
+        <<<Lifetime_Component__Source>>>
+    /
+
+    |main_function_name|
+    \
+        "initialize_time();"
+    /
+
+/

@@ -1,0 +1,14 @@
+||Shader_Program__Main_Game_UI||
+\
+
+    |type|
+    \
+        "LR::Shader_Program_Stub"
+    /
+
+    <<<Draw_Rule>>>
+
+    <<<Vertex_Shader>>>
+    <<<Fragment_Shader>>>
+
+/

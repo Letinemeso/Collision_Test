@@ -1,0 +1,45 @@
+"
+
+layout(std430, binding = 2) buffer velocity_buffer
+{
+    float velocity_data[];      //  vec3
+};
+
+uint current_velocity_buffer_offset_index()
+{
+    return current_particle_index() * 3;
+}
+
+
+float max_velocity = 3.0f;
+
+vec3 calculate_particle_velocity()
+{
+    vec3 result = vec3(0.0f, 0.0f, 0.0f);
+
+    uint seed = random_number();
+    result.x = limit_random_number_float(seed, -max_velocity, max_velocity);
+
+    seed = next_random_number(seed);
+    result.y += limit_random_number_float(seed, max_velocity * 0.35f, max_velocity);
+
+    seed = next_random_number(seed);
+    result.z += limit_random_number_float(seed, -max_velocity, max_velocity);
+
+    return result;
+}
+
+void initialize_velocities()
+{
+    uint index = current_velocity_buffer_offset_index();
+    if(index > velocity_data.length())
+        return;
+
+    vec3 random_velocity = calculate_particle_velocity();
+
+    velocity_data[index] = random_velocity.x;
+    velocity_data[index + 1] = random_velocity.y;
+    velocity_data[index + 2] = random_velocity.z;
+}
+
+"

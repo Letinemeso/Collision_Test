@@ -1,0 +1,18 @@
+||Model_Test_Entity||
+\
+    |type|
+    \
+        "LEti::Object_Stub"
+    /
+
+    |scale|
+    \
+        "10""10""10"
+    /
+
+    #<<<Health_Module>>>#
+    #<<<Type_Module>>>#
+    #<<<Gravity_Module>>>#
+    <<<Physics_Module>>>
+    <<<Draw_Module>>>
+/

@@ -1,0 +1,30 @@
+||Module__physics_module||
+\
+    |type|
+    \
+        "LPhys::Physics_Module_Stub__Mesh"
+    /
+
+    |is_static|
+    \
+        "+"
+    /
+
+    ||data_provider||
+    \
+        |type|
+        \
+            "LMD::Model_Data_Provider"
+        /
+
+        |model_name|
+        \
+            "Ground_Model"
+        /
+
+        |data_extraction_type|
+        \
+            "Geometry"
+        /
+    /
+/

@@ -1,0 +1,144 @@
+||draw_module__attack||
+\
+    |type|
+    \
+        "LMD::Draw_Module_Stub__Vertex_Animation"
+    /
+
+    |rendering_shader_id|
+    \
+        "Shader_Program__Vertex_Animation"
+    /
+
+    |draw_layer|
+    \
+        "Default"
+    /
+
+    |animation_name|
+    \
+        "Crystalis_Attack"
+    /
+
+    |frame_durations|
+    \
+        "0.18"
+        "0.18"
+        "0.18"
+        "0.1"
+        "0.15"
+        "0.2"
+    /
+
+    |times_to_repeat|
+    \
+        "0"
+    /
+
+    ||Graphics_Component_Stub__coords||
+    \
+        |type|
+        \
+            "LR::Graphics_Component_Stub__Default"
+        /
+        |binding_point_index|
+        \
+            "0"
+        /
+
+        ||data_provider||
+        \
+            |type|
+            \
+                "LMD::Model_Data_Provider"
+            /
+
+            |model_name|
+            \
+                "Crystalis_Attack"
+            /
+
+            |data_extraction_type|
+            \
+                "Geometry"
+            /
+        /
+    /
+
+    ||Graphics_Component_Stub__texture||
+    \
+        |type|
+        \
+            "LR::Graphics_Component_Stub__Texture"
+        /
+        |binding_point_index|
+        \
+            "1"
+        /
+
+        ||data_provider||
+        \
+            |type|
+            \
+                "LMD::Model_Data_Provider"
+            /
+
+            |model_name|
+            \
+                "Crystalis_Attack"
+            /
+
+            |data_extraction_type|
+            \
+                "Texture"
+            /
+        /
+        |texture_coords_in_pixels|
+        \
+            "-"
+        /
+
+        ||texture_stub||
+        \
+            |type|
+            \
+                "LR::Texture_Stub__Preloaded"
+            /
+
+            |texture_resource_name|
+            \
+                "Garnet_Texture"
+            /
+        /
+    /
+
+    ||Graphics_Component_Stub__normals||
+    \
+        |type|
+        \
+            "LR::Graphics_Component_Stub__Default"
+        /
+        |binding_point_index|
+        \
+            "2"
+        /
+
+        ||data_provider||
+        \
+            |type|
+            \
+                "LMD::Model_Data_Provider"
+            /
+
+            |model_name|
+            \
+                "Crystalis_Attack"
+            /
+
+            |data_extraction_type|
+            \
+                "Normals"
+            /
+        /
+    /
+/

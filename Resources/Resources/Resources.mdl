@@ -1,0 +1,12 @@
+|Resources|
+\
+    |type|
+    \
+        "LEti::Resources_Manager_Stub"
+    /
+
+    <<<Font/Resources>>>
+    <<<Textures/Resources>>>
+    <<<Models/Resources>>>
+
+/

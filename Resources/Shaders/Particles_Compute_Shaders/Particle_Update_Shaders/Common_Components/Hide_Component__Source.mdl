@@ -1,0 +1,17 @@
+"
+
+void process_hide()
+{
+    if(should_be_alive())
+        return;
+
+    uint coords_offset_index = current_coords_buffer_offset_index();
+    if (coords_offset_index >= coords_data.length())
+        return;
+
+    uint coords_per_particle = calculate_coords_per_particle();
+    for(uint i = 0; i < coords_per_particle; ++i)
+        coords_data[coords_offset_index + i] = 0.0f;
+}
+
+"

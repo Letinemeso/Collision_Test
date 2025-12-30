@@ -1,0 +1,19 @@
+||Shader_Component__Shrink||
+\
+
+    |type|
+    \
+        "LR::Shader_Component_Stub"
+    /
+
+    |source|
+    \
+        <<<Shrink_Component__Source>>>
+    /
+
+    |main_function_name|
+    \
+        "process_shrink();"
+    /
+
+/

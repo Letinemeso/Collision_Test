@@ -1,0 +1,50 @@
+||Module__AI||
+\
+    |type|
+    \
+        "Shardis::Crystalis_AI_Stub"
+    /
+
+    |movement_speed|
+    \
+        "0.2"
+    /
+    |attack_distance|
+    \
+        "6.0"
+    /
+    |attack_damage|
+    \
+        "10"
+    /
+    |attack_frame|
+    \
+        "4"
+    /
+
+    |min_stagger|
+    \
+        "10"
+    /
+    |effective_stagger|
+    \
+        "50"
+    /
+    |stagger_duration|
+    \
+        "2"
+    /
+
+    |expected_attack_frequency|
+    \
+        "40"
+    /
+    |min_distance_to_teleport|
+    \
+        "60"
+    /
+
+    <<<Draw_Modules/Draw_Module__Walk>>>
+    <<<Draw_Modules/Draw_Module__Attack>>>
+    <<<Draw_Modules/Draw_Module__Stagger>>>
+/

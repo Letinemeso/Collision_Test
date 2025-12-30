@@ -1,0 +1,76 @@
+"
+
+#define MAX_LIGHT_SOURCES 64
+
+uniform sampler2D fp_in_positions;
+uniform sampler2D fp_in_normals;
+
+uniform float min_light_ratio;
+
+struct Light_Source_Data
+{
+    vec3 color;
+    vec3 point;
+    float max_light_spread_distance;
+};
+
+uniform int relevant_light_sources_amount;
+uniform Light_Source_Data light_source_data[MAX_LIGHT_SOURCES];
+
+
+void set_color(vec3 _color)
+{
+    for(uint i = 0; i < 3; ++i)
+        result_color[i] *= _color[i];
+}
+
+
+vec3 mix_color(vec3 _color_1, vec3 _color_2)
+{
+    for(uint i = 0; i < 3; ++i)
+    {
+        if(_color_1[i] < _color_2[i])
+            _color_1[i] = _color_2[i];
+    }
+
+    return _color_1;
+}
+
+
+void process_light()
+{
+    vec3 pixel_position = texture(fp_in_positions, fs_in_texture_coords).xyz;
+    vec3 pixel_normal = texture(fp_in_normals, fs_in_texture_coords).xyz;
+
+    vec3 result_light_ratio = vec3(min_light_ratio);
+
+    for(uint i = 0; i < relevant_light_sources_amount; ++i)
+    {
+        vec3 light_to_pixel_vec = light_source_data[i].point - pixel_position;
+        float distance = length(light_to_pixel_vec);
+
+        if(distance < 0.0001f)
+            continue;
+
+        float max_distance = light_source_data[i].max_light_spread_distance;
+        if(distance >= max_distance)
+            continue;
+
+        light_to_pixel_vec /= distance;
+
+        float ratio = dot(light_to_pixel_vec, pixel_normal);
+        if(ratio <= 0.0f)
+            continue;
+
+        float distance_ratio = 1.0f - distance / max_distance;
+
+        ratio *= distance_ratio;
+
+        vec3 shaded_color = light_source_data[i].color * ratio;
+        result_light_ratio = mix_color(result_light_ratio, shaded_color);
+    }
+
+    set_color(result_light_ratio);
+}
+
+"

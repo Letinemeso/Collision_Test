@@ -1,0 +1,25 @@
+||Module__physics_module||
+\
+    |type|
+    \
+        "LPhys::Physics_Module_Stub__Mesh"
+    /
+
+    ||data_provider||
+    \
+        |type|
+        \
+            "LMD::Model_Data_Provider"
+        /
+
+        |model_name|
+        \
+            "Crystalis_Hull_Model"
+        /
+
+        |data_extraction_type|
+        \
+            "Geometry"
+        /
+    /
+/

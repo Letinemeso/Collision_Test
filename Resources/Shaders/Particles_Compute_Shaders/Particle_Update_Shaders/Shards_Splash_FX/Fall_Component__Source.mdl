@@ -1,0 +1,12 @@
+"
+
+void process_fall()
+{
+    uint index = current_velocity_buffer_offset_index();
+    if(index > velocity_data.length())
+        return;
+
+    velocity_data[index + 1] -= 9.8f * dt;
+}
+
+"

@@ -1,0 +1,22 @@
+||Shader_Component__Time_Data||
+\
+    |type|
+    \
+        "LR::Shader_Component_Stub__SSBO__Float"
+    /
+
+    |binding_index|
+    \
+        "0"
+    /
+
+    |data_name|
+    \
+        "lifetime"
+    /
+
+    |generate_accessors|
+    \
+        "2"
+    /
+/

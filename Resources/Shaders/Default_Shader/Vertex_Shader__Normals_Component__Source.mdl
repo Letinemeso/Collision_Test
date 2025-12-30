@@ -1,0 +1,14 @@
+"
+
+layout(location = 2) in vec3 vs_in_normal;
+
+out vec3 fs_in_normal;
+
+
+void process_normals()
+{
+    vec4 rotated_normal = rotation_matrix_uniform * vec4(vs_in_normal, 1.0f);
+    fs_in_normal = rotated_normal.xyz;
+}
+
+"

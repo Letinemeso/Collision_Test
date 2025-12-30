@@ -1,0 +1,110 @@
+||Health_Bar_Texture_0||
+\
+    |type|
+    \
+        "LR::Picture_Stub"
+    /
+    |image_file_path|
+    \
+        "../Resources/Resources/Textures/GUI/Main_Game/Health_Bar/Health_Bar_0.png"
+    /
+/
+||Health_Bar_Texture_1||
+\
+    |type|
+    \
+        "LR::Picture_Stub"
+    /
+    |image_file_path|
+    \
+        "../Resources/Resources/Textures/GUI/Main_Game/Health_Bar/Health_Bar_1.png"
+    /
+/
+||Health_Bar_Texture_2||
+\
+    |type|
+    \
+        "LR::Picture_Stub"
+    /
+    |image_file_path|
+    \
+        "../Resources/Resources/Textures/GUI/Main_Game/Health_Bar/Health_Bar_2.png"
+    /
+/
+||Health_Bar_Texture_3||
+\
+    |type|
+    \
+        "LR::Picture_Stub"
+    /
+    |image_file_path|
+    \
+        "../Resources/Resources/Textures/GUI/Main_Game/Health_Bar/Health_Bar_3.png"
+    /
+/
+||Health_Bar_Texture_4||
+\
+    |type|
+    \
+        "LR::Picture_Stub"
+    /
+    |image_file_path|
+    \
+        "../Resources/Resources/Textures/GUI/Main_Game/Health_Bar/Health_Bar_4.png"
+    /
+/
+||Health_Bar_Texture_5||
+\
+    |type|
+    \
+        "LR::Picture_Stub"
+    /
+    |image_file_path|
+    \
+        "../Resources/Resources/Textures/GUI/Main_Game/Health_Bar/Health_Bar_5.png"
+    /
+/
+||Health_Bar_Texture_6||
+\
+    |type|
+    \
+        "LR::Picture_Stub"
+    /
+    |image_file_path|
+    \
+        "../Resources/Resources/Textures/GUI/Main_Game/Health_Bar/Health_Bar_6.png"
+    /
+/
+||Health_Bar_Texture_7||
+\
+    |type|
+    \
+        "LR::Picture_Stub"
+    /
+    |image_file_path|
+    \
+        "../Resources/Resources/Textures/GUI/Main_Game/Health_Bar/Health_Bar_7.png"
+    /
+/
+||Health_Bar_Texture_8||
+\
+    |type|
+    \
+        "LR::Picture_Stub"
+    /
+    |image_file_path|
+    \
+        "../Resources/Resources/Textures/GUI/Main_Game/Health_Bar/Health_Bar_8.png"
+    /
+/
+||Health_Bar_Texture_9||
+\
+    |type|
+    \
+        "LR::Picture_Stub"
+    /
+    |image_file_path|
+    \
+        "../Resources/Resources/Textures/GUI/Main_Game/Health_Bar/Health_Bar_9.png"
+    /
+/

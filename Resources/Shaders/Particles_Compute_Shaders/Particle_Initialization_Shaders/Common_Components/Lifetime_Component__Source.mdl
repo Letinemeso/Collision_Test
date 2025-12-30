@@ -1,0 +1,13 @@
+"
+
+uniform float expected_lifetime;
+
+void initialize_time()
+{
+    set_remaining_time(expected_lifetime);
+    set_expected_time(expected_lifetime);
+}
+
+
+
+"

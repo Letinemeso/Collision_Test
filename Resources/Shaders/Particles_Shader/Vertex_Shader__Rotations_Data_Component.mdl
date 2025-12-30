@@ -1,0 +1,17 @@
+||Shader_Component__Rotations_Data||
+\
+    |type|
+    \
+        "LR::Shader_Component_Stub__SSBO__Vec3"
+    /
+
+    |binding_index|
+    \
+        "3"
+    /
+
+    |data_name|
+    \
+        "rotation"
+    /
+/

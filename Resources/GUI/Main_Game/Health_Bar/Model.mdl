@@ -1,0 +1,54 @@
+||GUI_object__Health_Bar||
+\
+    |type|
+    \
+        "LGui::UI_Object_Stub"
+    /
+
+    |tags|
+    \
+        "Main_Game_UI"
+    /
+
+    <<<Health_Bar_Module>>>
+    <<<Autoscale_Module>>>
+
+    #||Module__physics_module||
+    \
+        |type|
+        \
+            "LGui::Physics_Module_Stub__GUI"
+        /
+
+        |collision_permissions|
+        \
+            "+" "+" "-"
+            "-" "+" "+"
+        /
+        |coords|
+        \
+            "21"    "21"    "0"
+            "-21"   "21"    "0"
+            "-21"   "-21"   "0"
+
+            "21"    "21"    "0"
+            "-21"   "-21"   "0"
+            "21"    "-21"   "0"
+        /
+
+        |on_hover_action_name|
+        \
+            ""
+        /
+
+        |on_pressed_action_name|
+        \
+            "GUI_Action__Link_Selection_Cancel"
+        /
+
+        |on_released_action_name|
+        \
+            ""
+        /
+    /#
+/

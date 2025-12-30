@@ -1,0 +1,17 @@
+||Shader_Component__process_additional_data||
+\
+    |type|
+    \
+        "LR::Shader_Component_Stub"
+    /
+
+    |source|
+    \
+        <<<Fragment_Shader__Process_Additional_Data_Component__Source>>>
+    /
+
+    |main_function_name|
+    \
+        "process_additional_data();"
+    /
+/

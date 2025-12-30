@@ -1,0 +1,32 @@
+||Simple_Font_White_Texture||
+\
+    |type|
+    \
+        "LR::Picture_Stub"
+    /
+    |image_file_path|
+    \
+        "../Resources/Resources/Font/Simple_Font_White.png"
+    /
+/
+||Simple_Font_Red_Texture||
+\
+    |type|
+    \
+        "LR::Picture_Stub"
+    /
+    |image_file_path|
+    \
+        "../Resources/Resources/Font/Simple_Font_Red.png"
+    /
+/
+
+||Simple_Font||
+\
+    |type|
+    \
+        "LR::Font_Stub"
+    /
+
+    <<<Simple_Font>>>
+/

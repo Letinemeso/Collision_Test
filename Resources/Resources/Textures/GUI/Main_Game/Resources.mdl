@@ -1,0 +1,17 @@
+<<<Health_Bar/Resources>>>
+
+||Damag_Indicator_Animation||
+\
+    |type|
+    \
+        "LMD::Animation_Stub"
+    /
+    |image_file_path|
+    \
+        "../Resources/Resources/Textures/GUI/Main_Game/Damag_Indicator_Animation.png"
+    /
+    |frames_amount|
+    \
+        "5"
+    /
+/

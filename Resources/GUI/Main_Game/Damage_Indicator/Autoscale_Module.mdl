@@ -1,0 +1,27 @@
+||Module__Autoscale_Module||
+\
+    |type|
+    \
+        "LGui::Autoscale_Module_Stub"
+    /
+
+    |intended_window_size|
+    \
+        "1920" "1080"
+    /
+
+    |offset|
+    \
+        "960" "540"
+    /
+
+    |offset_scale_type|
+    \
+        "Both"
+    /
+
+    |scale_type|
+    \
+        "Both"
+    /
+/

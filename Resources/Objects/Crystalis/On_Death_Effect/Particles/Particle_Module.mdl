@@ -1,0 +1,57 @@
+||Module__Particles||
+\
+    |type|
+    \
+        "LMD::Draw_Module_Stub__Particle"
+    /
+
+    |draw_layer|
+    \
+        "Default"
+    /
+
+    |rendering_shader_id|
+    \
+        "Shader_Program__Particles"
+    /
+
+    |particle_initialization_compute_shader|
+    \
+        "Shader_Program__Initialization__Shards_Splash_FX"
+    /
+
+    |compute_shader_id|
+    \
+        "Shader_Program__Update__Shards_Splash_FX"
+    /
+
+    |max_particles_amount|
+    \
+        "60"
+    /
+    |autostart_emission|
+    \
+        "-"
+    /
+    |initial_particles_amount|
+    \
+        "60"
+    /
+
+    ||draw_call||
+    \
+        |type|
+        \
+            "LR::Draw_Call_Stub__Instanced"
+        /
+
+        |instances_amount|
+        \
+            "60"
+        /
+    /
+
+    <<<Uniforms_Setup>>>
+    <<<Graphics_Components>>>
+    <<<Compute_Components>>>
+/

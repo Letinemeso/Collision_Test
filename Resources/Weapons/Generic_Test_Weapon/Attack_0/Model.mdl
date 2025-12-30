@@ -1,0 +1,12 @@
+||Attack__0||
+\
+    |type|
+    \
+        "LEti::Object_Stub"
+    /
+
+    <<<Type_Module>>>
+    <<<Attack_Module>>>
+    #<<<Draw_Module>>>#
+    <<<Physics_Module>>>
+/

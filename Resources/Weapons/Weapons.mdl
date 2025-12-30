@@ -1,0 +1,9 @@
+|Weapons|
+\
+    |type|
+    \
+        "LMD::Objects_Storage"
+    /
+
+    <<<Generic_Test_Weapon/Weapon>>>
+/

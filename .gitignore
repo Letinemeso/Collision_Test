@@ -7,7 +7,6 @@
 *.core
 *.moc
 *.o
-*.obj
 *.orig
 *.rej
 *.so
@@ -27,7 +26,6 @@ Makefile*
 *.prl
 *.app
 moc_*.cpp
-ui_*.h
 qrc_*.cpp
 Thumbs.db
 *.res
@@ -71,13 +69,17 @@ Thumbs.db
 *.dll
 *.exe
 
-build/
-CMakeLists.txt.user
+build*/
+CMakeLists.txt.user*
 .qmake.stash
 .qtc_clangd/
+.vs/
 
 CMakeCache.txt
 CMakeFiles/
 cmake_install.cmake
+CMakeSettings.json
+
+leaks.xml
 
 Saves/

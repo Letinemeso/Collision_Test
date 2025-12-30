@@ -1,0 +1,43 @@
+"
+
+layout(std430, binding = 1) buffer Position_Buffer
+{
+    float position_data[];      //  vec3
+};
+
+uint current_position_buffer_offset_index()
+{
+    return current_particle_index() * 3;
+}
+
+uniform vec3 max_offset;
+
+
+vec3 calculate_particle_position()
+{
+    vec3 result = module_position;
+
+    uint seed = random_number();
+    for(uint i = 0; i < 3; ++i)
+    {
+        result[i] += limit_random_number_float(seed, -max_offset[i], max_offset[i]);
+        seed = next_random_number(seed);
+    }
+
+    return result;
+}
+
+void initialize_position()
+{
+    uint index = current_position_buffer_offset_index();
+    if(index > position_data.length())
+        return;
+
+    vec3 random_position = calculate_particle_position();
+
+    position_data[index] = random_position.x;
+    position_data[index + 1] = random_position.y;
+    position_data[index + 2] = random_position.z;
+}
+
+"

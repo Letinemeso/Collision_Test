@@ -1,0 +1,44 @@
+||Module__attack||
+\
+    |type|
+    \
+        "Shardis::Attack_Module_Stub"
+    /
+
+    |damage|
+    \
+        "20.01"
+    /
+
+    |damage_frequency|
+    \
+        "1.0"
+    /
+
+    |knockback|
+    \
+        "0.5"
+    /
+
+    |stagger|
+    \
+        "60"
+    /
+
+    |offsets|
+    \
+        "-0.1" "-0.1" "0.0"
+        "0.1" "-0.5" "0.0"
+    /
+
+    |rotations|
+    \
+        "0.0" "-1.1" "0.0"
+        "0.0" "1.1" "0.0"
+    /
+
+    |attack_speed|
+    \
+        "0.35"
+    /
+/

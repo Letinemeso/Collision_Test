@@ -1,0 +1,22 @@
+||Shader__Fragment||
+\
+
+    |type|
+    \
+        "LR::Shader_Stub"
+    /
+
+    |shader_type|
+    \
+        "Fragment"
+    /
+
+    |glsl_version|
+    \
+        "430"
+    /
+
+    <<<../Common/Default_Fragment_Shader/Fragment_Shader__Texture_Coords_Component>>>
+    <<<Fragment_Shader__Light_Component>>>
+
+/

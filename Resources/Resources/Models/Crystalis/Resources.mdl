@@ -1,0 +1,26 @@
+<<<Walk_Animation/Animation>>>
+<<<Attack_Animation/Animation>>>
+<<<Stagger_Animation/Animation>>>
+
+||Crystalis_Model||
+\
+    |type|
+    \
+        "LMD::Model_Stub"
+    /
+    |file_path|
+    \
+        "../Resources/Resources/Models/Crystalis/Crystalis.obj"
+    /
+/
+||Crystalis_Hull_Model||
+\
+    |type|
+    \
+        "LMD::Model_Stub"
+    /
+    |file_path|
+    \
+        "../Resources/Resources/Models/Crystalis/Crystalis_Hull.obj"
+    /
+/

@@ -1,0 +1,24 @@
+||Player||
+\
+    |type|
+    \
+        "LEti::Object_Stub"
+    /
+
+    <<<Health_Module>>>
+    <<<Type_Module>>>
+    <<<Light_Source_Module>>>
+    <<<Gravity_Module>>>
+    <<<Control_Module>>>
+    <<<Physics_Module>>>
+
+    |position|
+    \
+        "0" "3" "0"
+    /
+
+    |scale|
+    \
+        "1" "1" "1"
+    /
+/

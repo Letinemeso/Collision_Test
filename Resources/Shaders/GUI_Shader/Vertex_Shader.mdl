@@ -1,0 +1,20 @@
+||Shader__Vertex||
+\
+    |type|
+    \
+        "LR::Shader_Stub"
+    /
+
+    |shader_type|
+    \
+        "Vertex"
+    /
+
+    |glsl_version|
+    \
+        "430"
+    /
+
+    <<<Vertex_Shader__Transform_Component>>>
+    <<<Vertex_Shader__Texture_Coords_Component>>>
+/

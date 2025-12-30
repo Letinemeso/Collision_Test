@@ -1,0 +1,14 @@
+||Shader_Program__Final_Shader||
+\
+
+    |type|
+    \
+        "LR::Shader_Program_Stub"
+    /
+
+    <<<Draw_Rule>>>
+
+    <<<Vertex_Shader>>>
+    <<<Fragment_Shader>>>
+
+/

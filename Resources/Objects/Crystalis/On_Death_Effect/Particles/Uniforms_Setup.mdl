@@ -1,0 +1,35 @@
+||Initialization_Compute_Uniform_Setter_Stub__expected_lifetime||
+\
+    |type|
+    \
+        "LR::Uniform_Setter_Stub__Float"
+    /
+
+    |uniform_name|
+    \
+        "expected_lifetime"
+    /
+
+    |value|
+    \
+        "0.5"
+    /
+/
+
+||Initialization_Compute_Uniform_Setter_Stub__max_offset||
+\
+    |type|
+    \
+        "LR::Uniform_Setter_Stub__Vec3"
+    /
+
+    |uniform_name|
+    \
+        "max_offset"
+    /
+
+    |value|
+    \
+        "0.6" "0.6" "0.6"
+    /
+/

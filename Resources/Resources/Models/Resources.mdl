@@ -1,0 +1,47 @@
+||Player_Capsule_Model||
+\
+    |type|
+    \
+        "LMD::Model_Stub"
+    /
+    |file_path|
+    \
+        "../Resources/Resources/Models/Player_Capsule.obj"
+    /
+/
+||Attack_Area_Model||
+\
+    |type|
+    \
+        "LMD::Model_Stub"
+    /
+    |file_path|
+    \
+        "../Resources/Resources/Models/Attack_Area.obj"
+    /
+/
+||Shard_Model||
+\
+    |type|
+    \
+        "LMD::Model_Stub"
+    /
+    |file_path|
+    \
+        "../Resources/Resources/Models/Shard.obj"
+    /
+/
+||Ground_Model||
+\
+    |type|
+    \
+        "LMD::Model_Stub"
+    /
+    |file_path|
+    \
+        "../Resources/Resources/Models/Ground.obj"
+    /
+/
+
+<<<Crystalis/Resources>>>
+<<<First_Person_Animations/Resources>>>

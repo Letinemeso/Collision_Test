@@ -1,0 +1,22 @@
+||attack_entity||
+\
+    |type|
+    \
+        "LEti::Object_Stub"
+    /
+
+    <<<Type_Module>>>
+    <<<Attack_Module>>>
+    <<<Draw_Module>>>
+    <<<Physics_Module>>>
+
+    |position|
+    \
+        "0" "3" "0"
+    /
+
+    |scale|
+    \
+        "1" "1" "1"
+    /
+/

@@ -1,0 +1,38 @@
+||Sodalite_Texture||
+\
+    |type|
+    \
+        "LR::Texture_Stub__Default"
+    /
+
+    ||picture||
+    \
+        |type|
+        \
+            "LR::Picture_Stub"
+        /
+        |image_file_path|
+        \
+            "../Resources/Resources/Textures/Minerals/Sodalite.png"
+        /
+    /
+/
+||Garnet_Texture||
+\
+    |type|
+    \
+        "LR::Texture_Stub__Default"
+    /
+
+    ||picture||
+    \
+        |type|
+        \
+            "LR::Picture_Stub"
+        /
+        |image_file_path|
+        \
+            "../Resources/Resources/Textures/Minerals/Garnet.png"
+        /
+    /
+/

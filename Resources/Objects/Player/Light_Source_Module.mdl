@@ -1,0 +1,22 @@
+||Module__light_source||
+\
+    |type|
+    \
+        "Shardis::Light_Source_Module_Stub"
+    /
+
+    |light_color|
+    \
+        "1.0" "1.0" "1.0"
+    /
+
+    |max_light_distance|
+    \
+        "50.0"
+    /
+
+    |additional_offset|
+    \
+        "0.0" "3.0" "0.0"
+    /
+/

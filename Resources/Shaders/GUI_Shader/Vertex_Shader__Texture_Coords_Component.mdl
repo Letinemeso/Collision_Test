@@ -1,0 +1,19 @@
+||Shader_Component__Texture_Coords||
+\
+
+    |type|
+    \
+        "LR::Shader_Component_Stub"
+    /
+
+    |source|
+    \
+        <<<Vertex_Shader__Texture_Coords_Component__Source>>>
+    /
+
+    |main_function_name|
+    \
+        "process_texture_coords();"
+    /
+
+/

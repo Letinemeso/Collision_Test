@@ -1,0 +1,137 @@
+|Geometry_Rendering_Helper|
+\
+    |type|
+    \
+        "LEti::Object_Stub"
+    /
+
+    ||Module__Main_Game_Render_Area||
+    \
+        |type|
+        \
+            "LR::Draw_Module_Stub"
+        /
+
+        |rendering_shader_id|
+        \
+            "Shader_Program__Final_Shader"
+        /
+
+        ||Graphics_Uniform_Setter_Stub__positions_texture||
+        \
+            |type|
+            \
+                "LR::Uniform_Setter_Stub__Int"
+            /
+
+            |uniform_name|
+            \
+                "fp_in_positions"
+            /
+
+            |value|
+            \
+                "1"
+            /
+        /
+
+        ||Graphics_Uniform_Setter_Stub__normals_texture||
+        \
+            |type|
+            \
+                "LR::Uniform_Setter_Stub__Int"
+            /
+
+            |uniform_name|
+            \
+                "fp_in_normals"
+            /
+
+            |value|
+            \
+                "2"
+            /
+        /
+
+        ||Graphics_Component_Stub__coords||
+        \
+            |type|
+            \
+                "LR::Graphics_Component_Stub__Default"
+            /
+            |layout_index|
+            \
+                "0"
+            /
+            |floats_per_vertex|
+            \
+                "2"
+            /
+            |data|
+            \
+                "1"     "1"
+                "-1"    "1"
+                "-1"    "-1"
+
+                "1"     "1"
+                "-1"    "-1"
+                "1"     "-1"
+            /
+        /
+
+        ||Graphics_Component_Stub__main_game_prerender||
+        \
+            |type|
+            \
+                "LR::Graphics_Component_Stub__Texture"
+            /
+            |layout_index|
+            \
+                "1"
+            /
+            |floats_per_vertex|
+            \
+                "2"
+            /
+            |data|
+            \
+                "1""1"
+                "0""1"
+                "0""0"
+
+                "1""1"
+                "0""0"
+                "1""0"
+            /
+            |texture_coords_in_pixels|
+            \
+                "-"
+            /
+            ||texture_stub||
+            \
+                |type|
+                \
+                    "LR::Texture_Stub__Frame_Buffer"
+                /
+
+                |clear_depth_bit|
+                \
+                    "+"
+                /
+
+                |draw_area_width|
+                \
+                    "1920"
+                /
+                |draw_area_height|
+                \
+                    "1080"
+                /
+                |color_attachments|
+                \
+                    "0" "1" "2"
+                /
+            /
+        /
+    /
+/

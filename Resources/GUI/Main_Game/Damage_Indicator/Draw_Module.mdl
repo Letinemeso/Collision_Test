@@ -1,0 +1,98 @@
+||indicator_draw_module||
+\
+    |type|
+    \
+        "LR::Draw_Module_Stub"
+    /
+
+    |rendering_shader_id|
+    \
+        "Shader_Program__Main_Game_UI"
+    /
+
+    |draw_layer|
+    \
+        "Main_Game_UI"
+    /
+
+    ||Graphics_Component_Stub__coords||
+    \
+        |type|
+        \
+            "LR::Graphics_Component_Stub__Default"
+        /
+        |layout_index|
+        \
+            "0"
+        /
+        |floats_per_vertex|
+        \
+            "2"
+        /
+        |data|
+        \
+            "174"    "21"
+            "0"   "21"
+            "0"   "-21"
+
+            "174"    "21"
+            "0"   "-21"
+            "174"    "-21"
+        /
+    /
+
+    ||Graphics_Component_Stub__texture||
+    \
+        |type|
+        \
+            "LMD::Graphics_Component_Stub__Animation"
+        /
+        |layout_index|
+        \
+            "1"
+        /
+        |floats_per_vertex|
+        \
+            "2"
+        /
+        |data|
+        \
+            "174"    "42"
+            "0"   "42"
+            "0"   "0"
+
+            "174"    "42"
+            "0"   "0"
+            "174"    "0"
+        /
+        |texture_coords_in_pixels|
+        \
+            "+"
+        /
+        |expected_texture_size|
+        \
+            "174" "42"
+        /
+
+        |animation_name|
+        \
+            "Damag_Indicator_Animation"
+        /
+        |frames_per_second|
+        \
+            "12"
+        /
+        |times_to_repeat|
+        \
+            "1"
+        /
+
+        ||texture_settings||
+        \
+            |bind_index|
+            \
+                "0"
+            /
+        /
+    /
+/

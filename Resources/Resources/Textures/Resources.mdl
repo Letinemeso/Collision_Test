@@ -1,0 +1,46 @@
+||Debug_Plug_Quad||
+\
+    |type|
+    \
+        "LR::Picture_Stub"
+    /
+    |image_file_path|
+    \
+        "../Resources/Resources/Textures/Debug_Plug_Quad.png"
+    /
+/
+||Crystals_Texture||
+\
+    |type|
+    \
+        "LR::Picture_Stub"
+    /
+    |image_file_path|
+    \
+        "../Resources/Resources/Textures/Crystals.png"
+    /
+/
+
+||Ground_Texture||
+\
+    |type|
+    \
+        "LR::Texture_Stub__Default"
+    /
+
+    ||picture||
+    \
+        |type|
+        \
+            "LR::Picture_Stub"
+        /
+        |image_file_path|
+        \
+            "../Resources/Resources/Textures/Ground.png"
+        /
+    /
+/
+
+<<<Minerals/Resources>>>
+
+<<<GUI/Resources>>>

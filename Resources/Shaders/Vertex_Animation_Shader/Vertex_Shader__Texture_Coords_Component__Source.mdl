@@ -1,0 +1,29 @@
+"
+
+layout(std430, binding = 1) buffer Vertex_Data__Texture_Coords
+{
+    float texture_coords[];
+};
+
+vec2 get_texture_coords()
+{
+    vec2 result = vec2(0.0f, 0.0f);
+    for(uint i = 0; i < 2; ++i)
+    {
+        result[i] += texture_coords[vertex_index * 2 + i] * (1.0f - mix_ratio);
+        result[i] += texture_coords[next_frame_vertex_index * 2 + i] * mix_ratio;
+    }
+
+    return result;
+}
+
+out vec2 fs_in_texture_coords;
+
+
+
+void process_texture_coords()
+{
+    fs_in_texture_coords = get_texture_coords();
+}
+
+"

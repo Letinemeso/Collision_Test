@@ -1,0 +1,35 @@
+||Module__physics_module||
+\
+    |type|
+    \
+        "LMD::Physics_Module_Stub__Rigid_Body"
+    /
+
+    |mass|
+    \
+        "1.0"
+    /
+
+    |restitution|
+    \
+        "0.9"
+    /
+
+    ||data_provider||
+    \
+        |type|
+        \
+            "LMD::Model_Data_Provider"
+        /
+
+        |model_name|
+        \
+            "Shard_Model"
+        /
+
+        |data_extraction_type|
+        \
+            "Geometry"
+        /
+    /
+/

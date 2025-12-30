@@ -1,0 +1,15 @@
+"
+
+layout(location = 2) in vec3 vs_in_normal;
+
+out vec3 fs_in_normal;
+
+
+void process_normals()
+{
+    mat4 rotation_matrix = rotation_matrix_from_euler_angles(get_rotation(gl_InstanceID));
+    vec4 rotated_normal = rotation_matrix * vec4(vs_in_normal, 1.0f);
+    fs_in_normal = rotated_normal.xyz;
+}
+
+"

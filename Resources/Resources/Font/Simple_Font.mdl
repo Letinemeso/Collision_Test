@@ -1,0 +1,1825 @@
+||_||
+\
+    |type|
+    \
+        "LR::Letter_Data"
+    /
+    |pos_x|
+    \
+        "0"
+    /
+    |pos_y|
+    \
+        "9"
+    /
+    |size_x|
+    \
+        "6"
+    /
+    |size_y|
+    \
+        "9"
+    /
+/
+
+||.||
+\
+    |type|
+    \
+        "LR::Letter_Data"
+    /
+    |pos_x|
+    \
+        "6"
+    /
+    |pos_y|
+    \
+        "9"
+    /
+    |size_x|
+    \
+        "3"
+    /
+    |size_y|
+    \
+        "9"
+    /
+/
+
+||,||
+\
+    |type|
+    \
+        "LR::Letter_Data"
+    /
+    |pos_x|
+    \
+        "9"
+    /
+    |pos_y|
+    \
+        "9"
+    /
+    |size_x|
+    \
+        "3"
+    /
+    |size_y|
+    \
+        "9"
+    /
+/
+
+||!||
+\
+    |type|
+    \
+        "LR::Letter_Data"
+    /
+    |pos_x|
+    \
+        "12"
+    /
+    |pos_y|
+    \
+        "9"
+    /
+    |size_x|
+    \
+        "3"
+    /
+    |size_y|
+    \
+        "9"
+    /
+/
+
+||?||
+\
+    |type|
+    \
+        "LR::Letter_Data"
+    /
+    |pos_x|
+    \
+        "15"
+    /
+    |pos_y|
+    \
+        "9"
+    /
+    |size_x|
+    \
+        "5"
+    /
+    |size_y|
+    \
+        "9"
+    /
+/
+
+||*||
+\
+    |type|
+    \
+        "LR::Letter_Data"
+    /
+    |pos_x|
+    \
+        "20"
+    /
+    |pos_y|
+    \
+        "9"
+    /
+    |size_x|
+    \
+        "5"
+    /
+    |size_y|
+    \
+        "9"
+    /
+/
+
+||/||
+\
+    |type|
+    \
+        "LR::Letter_Data"
+    /
+    |pos_x|
+    \
+        "25"
+    /
+    |pos_y|
+    \
+        "9"
+    /
+    |size_x|
+    \
+        "5"
+    /
+    |size_y|
+    \
+        "9"
+    /
+/
+
+||+||
+\
+    |type|
+    \
+        "LR::Letter_Data"
+    /
+    |pos_x|
+    \
+        "30"
+    /
+    |pos_y|
+    \
+        "9"
+    /
+    |size_x|
+    \
+        "5"
+    /
+    |size_y|
+    \
+        "9"
+    /
+/
+
+||-||
+\
+    |type|
+    \
+        "LR::Letter_Data"
+    /
+    |pos_x|
+    \
+        "35"
+    /
+    |pos_y|
+    \
+        "9"
+    /
+    |size_x|
+    \
+        "5"
+    /
+    |size_y|
+    \
+        "9"
+    /
+/
+
+||(||
+\
+    |type|
+    \
+        "LR::Letter_Data"
+    /
+    |pos_x|
+    \
+        "40"
+    /
+    |pos_y|
+    \
+        "9"
+    /
+    |size_x|
+    \
+        "4"
+    /
+    |size_y|
+    \
+        "9"
+    /
+/
+
+||)||
+\
+    |type|
+    \
+        "LR::Letter_Data"
+    /
+    |pos_x|
+    \
+        "44"
+    /
+    |pos_y|
+    \
+        "9"
+    /
+    |size_x|
+    \
+        "4"
+    /
+    |size_y|
+    \
+        "9"
+    /
+/
+
+||:||
+\
+    |type|
+    \
+        "LR::Letter_Data"
+    /
+    |pos_x|
+    \
+        "48"
+    /
+    |pos_y|
+    \
+        "9"
+    /
+    |size_x|
+    \
+        "3"
+    /
+    |size_y|
+    \
+        "9"
+    /
+/
+
+||%||
+\
+    |type|
+    \
+        "LR::Letter_Data"
+    /
+    |pos_x|
+    \
+        "51"
+    /
+    |pos_y|
+    \
+        "9"
+    /
+    |size_x|
+    \
+        "5"
+    /
+    |size_y|
+    \
+        "9"
+    /
+/
+
+||1||
+\
+    |type|
+    \
+        "LR::Letter_Data"
+    /
+    |pos_x|
+    \
+        "56"
+    /
+    |pos_y|
+    \
+        "9"
+    /
+    |size_x|
+    \
+        "5"
+    /
+    |size_y|
+    \
+        "9"
+    /
+/
+
+||2||
+\
+    |type|
+    \
+        "LR::Letter_Data"
+    /
+    |pos_x|
+    \
+        "61"
+    /
+    |pos_y|
+    \
+        "9"
+    /
+    |size_x|
+    \
+        "6"
+    /
+    |size_y|
+    \
+        "9"
+    /
+/
+
+||3||
+\
+    |type|
+    \
+        "LR::Letter_Data"
+    /
+    |pos_x|
+    \
+        "67"
+    /
+    |pos_y|
+    \
+        "9"
+    /
+    |size_x|
+    \
+        "6"
+    /
+    |size_y|
+    \
+        "9"
+    /
+/
+
+||4||
+\
+    |type|
+    \
+        "LR::Letter_Data"
+    /
+    |pos_x|
+    \
+        "73"
+    /
+    |pos_y|
+    \
+        "9"
+    /
+    |size_x|
+    \
+        "6"
+    /
+    |size_y|
+    \
+        "9"
+    /
+/
+
+||5||
+\
+    |type|
+    \
+        "LR::Letter_Data"
+    /
+    |pos_x|
+    \
+        "79"
+    /
+    |pos_y|
+    \
+        "9"
+    /
+    |size_x|
+    \
+        "6"
+    /
+    |size_y|
+    \
+        "9"
+    /
+/
+
+||6||
+\
+    |type|
+    \
+        "LR::Letter_Data"
+    /
+    |pos_x|
+    \
+        "85"
+    /
+    |pos_y|
+    \
+        "9"
+    /
+    |size_x|
+    \
+        "6"
+    /
+    |size_y|
+    \
+        "9"
+    /
+/
+
+||7||
+\
+    |type|
+    \
+        "LR::Letter_Data"
+    /
+    |pos_x|
+    \
+        "91"
+    /
+    |pos_y|
+    \
+        "9"
+    /
+    |size_x|
+    \
+        "6"
+    /
+    |size_y|
+    \
+        "9"
+    /
+/
+
+||8||
+\
+    |type|
+    \
+        "LR::Letter_Data"
+    /
+    |pos_x|
+    \
+        "97"
+    /
+    |pos_y|
+    \
+        "9"
+    /
+    |size_x|
+    \
+        "6"
+    /
+    |size_y|
+    \
+        "9"
+    /
+/
+
+||9||
+\
+    |type|
+    \
+        "LR::Letter_Data"
+    /
+    |pos_x|
+    \
+        "103"
+    /
+    |pos_y|
+    \
+        "9"
+    /
+    |size_x|
+    \
+        "6"
+    /
+    |size_y|
+    \
+        "9"
+    /
+/
+
+||0||
+\
+    |type|
+    \
+        "LR::Letter_Data"
+    /
+    |pos_x|
+    \
+        "109"
+    /
+    |pos_y|
+    \
+        "9"
+    /
+    |size_x|
+    \
+        "6"
+    /
+    |size_y|
+    \
+        "9"
+    /
+/
+
+|| ||
+\
+    |type|
+    \
+        "LR::Letter_Data"
+    /
+    |pos_x|
+    \
+        "115"
+    /
+    |pos_y|
+    \
+        "9"
+    /
+    |size_x|
+    \
+        "4"
+    /
+    |size_y|
+    \
+        "9"
+    /
+/
+
+
+||a||
+\
+    |type|
+    \
+        "LR::Letter_Data"
+    /
+    |pos_x|
+    \
+        "0"
+    /
+    |pos_y|
+    \
+        "18"
+    /
+    |size_x|
+    \
+        "7"
+    /
+    |size_y|
+    \
+        "9"
+    /
+/
+
+||b||
+\
+    |type|
+    \
+        "LR::Letter_Data"
+    /
+    |pos_x|
+    \
+        "7"
+    /
+    |pos_y|
+    \
+        "18"
+    /
+    |size_x|
+    \
+        "6"
+    /
+    |size_y|
+    \
+        "9"
+    /
+/
+
+||c||
+\
+    |type|
+    \
+        "LR::Letter_Data"
+    /
+    |pos_x|
+    \
+        "13"
+    /
+    |pos_y|
+    \
+        "18"
+    /
+    |size_x|
+    \
+        "6"
+    /
+    |size_y|
+    \
+        "9"
+    /
+/
+
+||d||
+\
+    |type|
+    \
+        "LR::Letter_Data"
+    /
+    |pos_x|
+    \
+        "18"
+    /
+    |pos_y|
+    \
+        "18"
+    /
+    |size_x|
+    \
+        "6"
+    /
+    |size_y|
+    \
+        "9"
+    /
+/
+
+||e||
+\
+    |type|
+    \
+        "LR::Letter_Data"
+    /
+    |pos_x|
+    \
+        "24"
+    /
+    |pos_y|
+    \
+        "18"
+    /
+    |size_x|
+    \
+        "6"
+    /
+    |size_y|
+    \
+        "9"
+    /
+/
+
+||f||
+\
+    |type|
+    \
+        "LR::Letter_Data"
+    /
+    |pos_x|
+    \
+        "30"
+    /
+    |pos_y|
+    \
+        "18"
+    /
+    |size_x|
+    \
+        "6"
+    /
+    |size_y|
+    \
+        "9"
+    /
+/
+
+||g||
+\
+    |type|
+    \
+        "LR::Letter_Data"
+    /
+    |pos_x|
+    \
+        "36"
+    /
+    |pos_y|
+    \
+        "18"
+    /
+    |size_x|
+    \
+        "6"
+    /
+    |size_y|
+    \
+        "9"
+    /
+/
+
+||h||
+\
+    |type|
+    \
+        "LR::Letter_Data"
+    /
+    |pos_x|
+    \
+        "42"
+    /
+    |pos_y|
+    \
+        "18"
+    /
+    |size_x|
+    \
+        "6"
+    /
+    |size_y|
+    \
+        "9"
+    /
+/
+
+||i||
+\
+    |type|
+    \
+        "LR::Letter_Data"
+    /
+    |pos_x|
+    \
+        "48"
+    /
+    |pos_y|
+    \
+        "18"
+    /
+    |size_x|
+    \
+        "3"
+    /
+    |size_y|
+    \
+        "9"
+    /
+/
+
+||j||
+\
+    |type|
+    \
+        "LR::Letter_Data"
+    /
+    |pos_x|
+    \
+        "51"
+    /
+    |pos_y|
+    \
+        "18"
+    /
+    |size_x|
+    \
+        "5"
+    /
+    |size_y|
+    \
+        "9"
+    /
+/
+
+||k||
+\
+    |type|
+    \
+        "LR::Letter_Data"
+    /
+    |pos_x|
+    \
+        "56"
+    /
+    |pos_y|
+    \
+        "18"
+    /
+    |size_x|
+    \
+        "5"
+    /
+    |size_y|
+    \
+        "9"
+    /
+/
+
+||l||
+\
+    |type|
+    \
+        "LR::Letter_Data"
+    /
+    |pos_x|
+    \
+        "61"
+    /
+    |pos_y|
+    \
+        "18"
+    /
+    |size_x|
+    \
+        "4"
+    /
+    |size_y|
+    \
+        "9"
+    /
+/
+
+||m||
+\
+    |type|
+    \
+        "LR::Letter_Data"
+    /
+    |pos_x|
+    \
+        "65"
+    /
+    |pos_y|
+    \
+        "18"
+    /
+    |size_x|
+    \
+        "7"
+    /
+    |size_y|
+    \
+        "9"
+    /
+/
+
+||n||
+\
+    |type|
+    \
+        "LR::Letter_Data"
+    /
+    |pos_x|
+    \
+        "72"
+    /
+    |pos_y|
+    \
+        "18"
+    /
+    |size_x|
+    \
+        "5"
+    /
+    |size_y|
+    \
+        "9"
+    /
+/
+
+||o||
+\
+    |type|
+    \
+        "LR::Letter_Data"
+    /
+    |pos_x|
+    \
+        "77"
+    /
+    |pos_y|
+    \
+        "18"
+    /
+    |size_x|
+    \
+        "6"
+    /
+    |size_y|
+    \
+        "9"
+    /
+/
+
+||p||
+\
+    |type|
+    \
+        "LR::Letter_Data"
+    /
+    |pos_x|
+    \
+        "83"
+    /
+    |pos_y|
+    \
+        "18"
+    /
+    |size_x|
+    \
+        "6"
+    /
+    |size_y|
+    \
+        "9"
+    /
+/
+
+||q||
+\
+    |type|
+    \
+        "LR::Letter_Data"
+    /
+    |pos_x|
+    \
+        "89"
+    /
+    |pos_y|
+    \
+        "18"
+    /
+    |size_x|
+    \
+        "6"
+    /
+    |size_y|
+    \
+        "9"
+    /
+/
+
+||r||
+\
+    |type|
+    \
+        "LR::Letter_Data"
+    /
+    |pos_x|
+    \
+        "95"
+    /
+    |pos_y|
+    \
+        "18"
+    /
+    |size_x|
+    \
+        "6"
+    /
+    |size_y|
+    \
+        "9"
+    /
+/
+
+||s||
+\
+    |type|
+    \
+        "LR::Letter_Data"
+    /
+    |pos_x|
+    \
+        "101"
+    /
+    |pos_y|
+    \
+        "18"
+    /
+    |size_x|
+    \
+        "6"
+    /
+    |size_y|
+    \
+        "9"
+    /
+/
+
+||t||
+\
+    |type|
+    \
+        "LR::Letter_Data"
+    /
+    |pos_x|
+    \
+        "107"
+    /
+    |pos_y|
+    \
+        "18"
+    /
+    |size_x|
+    \
+        "5"
+    /
+    |size_y|
+    \
+        "9"
+    /
+/
+
+||u||
+\
+    |type|
+    \
+        "LR::Letter_Data"
+    /
+    |pos_x|
+    \
+        "112"
+    /
+    |pos_y|
+    \
+        "18"
+    /
+    |size_x|
+    \
+        "6"
+    /
+    |size_y|
+    \
+        "9"
+    /
+/
+
+||v||
+\
+    |type|
+    \
+        "LR::Letter_Data"
+    /
+    |pos_x|
+    \
+        "118"
+    /
+    |pos_y|
+    \
+        "18"
+    /
+    |size_x|
+    \
+        "7"
+    /
+    |size_y|
+    \
+        "9"
+    /
+/
+
+||w||
+\
+    |type|
+    \
+        "LR::Letter_Data"
+    /
+    |pos_x|
+    \
+        "125"
+    /
+    |pos_y|
+    \
+        "18"
+    /
+    |size_x|
+    \
+        "7"
+    /
+    |size_y|
+    \
+        "9"
+    /
+/
+
+||x||
+\
+    |type|
+    \
+        "LR::Letter_Data"
+    /
+    |pos_x|
+    \
+        "132"
+    /
+    |pos_y|
+    \
+        "18"
+    /
+    |size_x|
+    \
+        "5"
+    /
+    |size_y|
+    \
+        "9"
+    /
+/
+
+||y||
+\
+    |type|
+    \
+        "LR::Letter_Data"
+    /
+    |pos_x|
+    \
+        "137"
+    /
+    |pos_y|
+    \
+        "18"
+    /
+    |size_x|
+    \
+        "5"
+    /
+    |size_y|
+    \
+        "9"
+    /
+/
+
+||z||
+\
+    |type|
+    \
+        "LR::Letter_Data"
+    /
+    |pos_x|
+    \
+        "142"
+    /
+    |pos_y|
+    \
+        "18"
+    /
+    |size_x|
+    \
+        "5"
+    /
+    |size_y|
+    \
+        "9"
+    /
+/
+
+
+||A||
+\
+    |type|
+    \
+        "LR::Letter_Data"
+    /
+    |pos_x|
+    \
+        "0"
+    /
+    |pos_y|
+    \
+        "27"
+    /
+    |size_x|
+    \
+        "7"
+    /
+    |size_y|
+    \
+        "9"
+    /
+/
+
+||B||
+\
+    |type|
+    \
+        "LR::Letter_Data"
+    /
+    |pos_x|
+    \
+        "7"
+    /
+    |pos_y|
+    \
+        "27"
+    /
+    |size_x|
+    \
+        "6"
+    /
+    |size_y|
+    \
+        "9"
+    /
+/
+
+||C||
+\
+    |type|
+    \
+        "LR::Letter_Data"
+    /
+    |pos_x|
+    \
+        "13"
+    /
+    |pos_y|
+    \
+        "27"
+    /
+    |size_x|
+    \
+        "6"
+    /
+    |size_y|
+    \
+        "9"
+    /
+/
+
+||D||
+\
+    |type|
+    \
+        "LR::Letter_Data"
+    /
+    |pos_x|
+    \
+        "19"
+    /
+    |pos_y|
+    \
+        "27"
+    /
+    |size_x|
+    \
+        "6"
+    /
+    |size_y|
+    \
+        "9"
+    /
+/
+
+||E||
+\
+    |type|
+    \
+        "LR::Letter_Data"
+    /
+    |pos_x|
+    \
+        "25"
+    /
+    |pos_y|
+    \
+        "27"
+    /
+    |size_x|
+    \
+        "6"
+    /
+    |size_y|
+    \
+        "9"
+    /
+/
+
+||F||
+\
+    |type|
+    \
+        "LR::Letter_Data"
+    /
+    |pos_x|
+    \
+        "31"
+    /
+    |pos_y|
+    \
+        "27"
+    /
+    |size_x|
+    \
+        "6"
+    /
+    |size_y|
+    \
+        "9"
+    /
+/
+
+||G||
+\
+    |type|
+    \
+        "LR::Letter_Data"
+    /
+    |pos_x|
+    \
+        "37"
+    /
+    |pos_y|
+    \
+        "27"
+    /
+    |size_x|
+    \
+        "6"
+    /
+    |size_y|
+    \
+        "9"
+    /
+/
+
+||H||
+\
+    |type|
+    \
+        "LR::Letter_Data"
+    /
+    |pos_x|
+    \
+        "43"
+    /
+    |pos_y|
+    \
+        "27"
+    /
+    |size_x|
+    \
+        "6"
+    /
+    |size_y|
+    \
+        "9"
+    /
+/
+
+||I||
+\
+    |type|
+    \
+        "LR::Letter_Data"
+    /
+    |pos_x|
+    \
+        "49"
+    /
+    |pos_y|
+    \
+        "27"
+    /
+    |size_x|
+    \
+        "5"
+    /
+    |size_y|
+    \
+        "9"
+    /
+/
+
+||J||
+\
+    |type|
+    \
+        "LR::Letter_Data"
+    /
+    |pos_x|
+    \
+        "54"
+    /
+    |pos_y|
+    \
+        "27"
+    /
+    |size_x|
+    \
+        "6"
+    /
+    |size_y|
+    \
+        "9"
+    /
+/
+
+||K||
+\
+    |type|
+    \
+        "LR::Letter_Data"
+    /
+    |pos_x|
+    \
+        "60"
+    /
+    |pos_y|
+    \
+        "27"
+    /
+    |size_x|
+    \
+        "6"
+    /
+    |size_y|
+    \
+        "9"
+    /
+/
+
+||L||
+\
+    |type|
+    \
+        "LR::Letter_Data"
+    /
+    |pos_x|
+    \
+        "66"
+    /
+    |pos_y|
+    \
+        "27"
+    /
+    |size_x|
+    \
+        "5"
+    /
+    |size_y|
+    \
+        "9"
+    /
+/
+
+||M||
+\
+    |type|
+    \
+        "LR::Letter_Data"
+    /
+    |pos_x|
+    \
+        "71"
+    /
+    |pos_y|
+    \
+        "27"
+    /
+    |size_x|
+    \
+        "7"
+    /
+    |size_y|
+    \
+        "9"
+    /
+/
+
+||N||
+\
+    |type|
+    \
+        "LR::Letter_Data"
+    /
+    |pos_x|
+    \
+        "78"
+    /
+    |pos_y|
+    \
+        "27"
+    /
+    |size_x|
+    \
+        "7"
+    /
+    |size_y|
+    \
+        "9"
+    /
+/
+
+||O||
+\
+    |type|
+    \
+        "LR::Letter_Data"
+    /
+    |pos_x|
+    \
+        "85"
+    /
+    |pos_y|
+    \
+        "27"
+    /
+    |size_x|
+    \
+        "7"
+    /
+    |size_y|
+    \
+        "9"
+    /
+/
+
+||P||
+\
+    |type|
+    \
+        "LR::Letter_Data"
+    /
+    |pos_x|
+    \
+        "92"
+    /
+    |pos_y|
+    \
+        "27"
+    /
+    |size_x|
+    \
+        "6"
+    /
+    |size_y|
+    \
+        "9"
+    /
+/
+
+||Q||
+\
+    |type|
+    \
+        "LR::Letter_Data"
+    /
+    |pos_x|
+    \
+        "98"
+    /
+    |pos_y|
+    \
+        "27"
+    /
+    |size_x|
+    \
+        "7"
+    /
+    |size_y|
+    \
+        "9"
+    /
+/
+
+||R||
+\
+    |type|
+    \
+        "LR::Letter_Data"
+    /
+    |pos_x|
+    \
+        "105"
+    /
+    |pos_y|
+    \
+        "27"
+    /
+    |size_x|
+    \
+        "6"
+    /
+    |size_y|
+    \
+        "9"
+    /
+/
+
+||S||
+\
+    |type|
+    \
+        "LR::Letter_Data"
+    /
+    |pos_x|
+    \
+        "111"
+    /
+    |pos_y|
+    \
+        "27"
+    /
+    |size_x|
+    \
+        "6"
+    /
+    |size_y|
+    \
+        "9"
+    /
+/
+
+||T||
+\
+    |type|
+    \
+        "LR::Letter_Data"
+    /
+    |pos_x|
+    \
+        "117"
+    /
+    |pos_y|
+    \
+        "27"
+    /
+    |size_x|
+    \
+        "7"
+    /
+    |size_y|
+    \
+        "9"
+    /
+/
+
+||U||
+\
+    |type|
+    \
+        "LR::Letter_Data"
+    /
+    |pos_x|
+    \
+        "124"
+    /
+    |pos_y|
+    \
+        "27"
+    /
+    |size_x|
+    \
+        "7"
+    /
+    |size_y|
+    \
+        "9"
+    /
+/
+
+||V||
+\
+    |type|
+    \
+        "LR::Letter_Data"
+    /
+    |pos_x|
+    \
+        "131"
+    /
+    |pos_y|
+    \
+        "27"
+    /
+    |size_x|
+    \
+        "7"
+    /
+    |size_y|
+    \
+        "9"
+    /
+/
+
+||W||
+\
+    |type|
+    \
+        "LR::Letter_Data"
+    /
+    |pos_x|
+    \
+        "138"
+    /
+    |pos_y|
+    \
+        "27"
+    /
+    |size_x|
+    \
+        "11"
+    /
+    |size_y|
+    \
+        "9"
+    /
+/
+
+||X||
+\
+    |type|
+    \
+        "LR::Letter_Data"
+    /
+    |pos_x|
+    \
+        "149"
+    /
+    |pos_y|
+    \
+        "27"
+    /
+    |size_x|
+    \
+        "7"
+    /
+    |size_y|
+    \
+        "9"
+    /
+/
+
+||Y||
+\
+    |type|
+    \
+        "LR::Letter_Data"
+    /
+    |pos_x|
+    \
+        "156"
+    /
+    |pos_y|
+    \
+        "27"
+    /
+    |size_x|
+    \
+        "6"
+    /
+    |size_y|
+    \
+        "9"
+    /
+/
+
+||Z||
+\
+    |type|
+    \
+        "LR::Letter_Data"
+    /
+    |pos_x|
+    \
+        "162"
+    /
+    |pos_y|
+    \
+        "27"
+    /
+    |size_x|
+    \
+        "7"
+    /
+    |size_y|
+    \
+        "9"
+    /
+/

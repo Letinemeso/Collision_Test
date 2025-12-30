@@ -1,0 +1,25 @@
+||Crystalis||
+\
+    |type|
+    \
+        "LEti::Object_Stub"
+    /
+
+    <<<Health_Module>>>
+    <<<Type_Module>>>
+    <<<Gravity_Module>>>
+    <<<AI_Module>>>
+    <<<Physics_Module>>>
+    <<<On_Death_Effect/On_Death_Effect_Module>>>
+    <<<On_Damaged_Effect/On_Damaged_Effect_Module>>>
+
+    |position|
+    \
+        "0" "0" "0"
+    /
+
+    |scale|
+    \
+        "1" "1" "1"
+    /
+/

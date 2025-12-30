@@ -1,0 +1,136 @@
+||Module__draw_module||
+\
+    |type|
+    \
+        "LR::Draw_Module_Stub"
+    /
+
+    |rendering_shader_id|
+    \
+        "Shader_Program__Default"
+    /
+
+    |draw_layer|
+    \
+        "Default"
+    /
+
+    ||Graphics_Component_Stub__coords||
+    \
+        |type|
+        \
+            "LR::Graphics_Component_Stub__Default"
+        /
+        |layout_index|
+        \
+            "0"
+        /
+        |floats_per_vertex|
+        \
+            "3"
+        /
+
+        ||data_provider||
+        \
+            |type|
+            \
+                "LMD::Model_Data_Provider"
+            /
+
+            |model_name|
+            \
+                "Player_Capsule_Model"
+            /
+
+            |data_extraction_type|
+            \
+                "Geometry"
+            /
+        /
+    /
+
+    ||Graphics_Component_Stub__texture||
+    \
+        |type|
+        \
+            "LR::Graphics_Component_Stub__Texture"
+        /
+        |layout_index|
+        \
+            "1"
+        /
+        |floats_per_vertex|
+        \
+            "2"
+        /
+
+        ||data_provider||
+        \
+            |type|
+            \
+                "LMD::Model_Data_Provider"
+            /
+
+            |model_name|
+            \
+                "Player_Capsule_Model"
+            /
+
+            |data_extraction_type|
+            \
+                "Texture"
+            /
+        /
+        |texture_coords_in_pixels|
+        \
+            "-"
+        /
+
+        ||texture_stub||
+        \
+            |type|
+            \
+                "LR::Texture_Stub__Preloaded"
+            /
+
+            |texture_resource_name|
+            \
+                "Garnet_Texture"
+            /
+        /
+    /
+
+    ||Graphics_Component_Stub__normals||
+    \
+        |type|
+        \
+            "LR::Graphics_Component_Stub__Default"
+        /
+        |layout_index|
+        \
+            "2"
+        /
+        |floats_per_vertex|
+        \
+            "3"
+        /
+
+        ||data_provider||
+        \
+            |type|
+            \
+                "LMD::Model_Data_Provider"
+            /
+
+            |model_name|
+            \
+                "Player_Capsule_Model"
+            /
+
+            |data_extraction_type|
+            \
+                "Normals"
+            /
+        /
+    /
+/

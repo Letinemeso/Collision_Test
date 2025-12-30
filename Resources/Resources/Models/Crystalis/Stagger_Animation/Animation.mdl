@@ -1,0 +1,41 @@
+||Crystalis_Stagger||
+\
+    |type|
+    \
+        "LMD::Vertex_Animation_Stub"
+    /
+
+    ||Frame_0||
+    \
+        |type|
+        \
+            "LMD::Model_Stub"
+        /
+        |file_path|
+        \
+            "../Resources/Resources/Models/Crystalis/Stagger_Animation/Stagger_0.obj"
+        /
+    /
+    ||Frame_1||
+    \
+        |type|
+        \
+            "LMD::Model_Stub"
+        /
+        |file_path|
+        \
+            "../Resources/Resources/Models/Crystalis/Stagger_Animation/Stagger_1.obj"
+        /
+    /
+    ||Frame_2||
+    \
+        |type|
+        \
+            "LMD::Model_Stub"
+        /
+        |file_path|
+        \
+            "../Resources/Resources/Models/Crystalis/Stagger_Animation/Stagger_2.obj"
+        /
+    /
+/

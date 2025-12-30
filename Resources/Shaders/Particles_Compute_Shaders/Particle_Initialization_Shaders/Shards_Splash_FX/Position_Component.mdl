@@ -1,0 +1,19 @@
+||Shader_Component__Position||
+\
+
+    |type|
+    \
+        "LR::Shader_Component_Stub"
+    /
+
+    |source|
+    \
+        <<<Position_Component__Source>>>
+    /
+
+    |main_function_name|
+    \
+        "initialize_position();"
+    /
+
+/

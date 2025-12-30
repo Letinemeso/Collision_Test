@@ -1,0 +1,22 @@
+||Module__gravity||
+\
+    |type|
+    \
+        "Shardis::Velocity_Module_Stub"
+    /
+
+    |direction|
+    \
+        "0" "-1" "0"
+    /
+
+    |velocity|
+    \
+        "0.98"
+    /
+
+    |max_impulse|
+    \
+        "2.0"
+    /
+/

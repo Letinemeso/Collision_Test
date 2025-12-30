@@ -1,0 +1,119 @@
+||Graphics_Component_Stub__time||
+\
+    |type|
+    \
+        "LR::Graphics_Component_Stub__Default"
+    /
+    |binding_point_index|
+    \
+        "0"
+    /
+    |required_compute_shader_invocations|
+    \
+        "60"
+    /
+
+    ||reconstructor_stub||
+    \
+        |type|
+        \
+            "LMD::Graphics_Component_Reconstructor_Stub__Buffer_Resizer"
+        /
+
+        |default_data|
+        \
+            "-9999.9" "-9999.9"
+        /
+    /
+/
+
+||Graphics_Component_Stub__position||
+\
+    |type|
+    \
+        "LR::Graphics_Component_Stub__Default"
+    /
+    |binding_point_index|
+    \
+        "1"
+    /
+
+    ||reconstructor_stub||
+    \
+        |type|
+        \
+            "LMD::Graphics_Component_Reconstructor_Stub__Buffer_Resizer"
+        /
+
+        |default_data|
+        \
+            "0" "0" "0"
+        /
+    /
+/
+
+||Graphics_Component_Stub__velocity||
+\
+    |type|
+    \
+        "LR::Graphics_Component_Stub__Default"
+    /
+    |binding_point_index|
+    \
+        "2"
+    /
+
+    ||reconstructor_stub||
+    \
+        |type|
+        \
+            "LMD::Graphics_Component_Reconstructor_Stub__Buffer_Resizer"
+        /
+
+        |default_data|
+        \
+            "0" "0" "0"
+        /
+    /
+/
+
+||Graphics_Component_Stub__rotation||
+\
+    |type|
+    \
+        "LR::Graphics_Component_Stub__Default"
+    /
+    |binding_point_index|
+    \
+        "3"
+    /
+
+    ||reconstructor_stub||
+    \
+        |type|
+        \
+            "LMD::Graphics_Component_Reconstructor_Stub__Buffer_Resizer"
+        /
+
+        |default_data|
+        \
+            "0" "0" "0"
+        /
+    /
+/
+
+||Graphics_Component_Stub__counter||
+\
+    |type|
+    \
+        "LMD::Graphics_Component_Stub__Particles_Amount_Reader"
+    /
+    |binding_point_index|
+    \
+        "15"
+    /
+    |update_frequency|
+    \
+        "0.1"
+    /
+/

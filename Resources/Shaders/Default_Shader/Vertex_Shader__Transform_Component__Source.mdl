@@ -1,0 +1,19 @@
+"
+
+layout(location = 0) in vec3 vs_in_pos;
+
+out vec3 fs_in_position;
+
+uniform mat4 projection_matrix;
+uniform mat4 transform_matrix;
+
+
+void process_transform()
+{
+    vec4 world_pos = transform_matrix * vec4(vs_in_pos, 1.0f);
+
+    fs_in_position = world_pos.xyz;
+    gl_Position = projection_matrix * world_pos;
+}
+
+"

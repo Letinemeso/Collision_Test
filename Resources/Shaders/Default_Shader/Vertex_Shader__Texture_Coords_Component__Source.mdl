@@ -1,0 +1,14 @@
+"
+
+layout(location = 1) in vec2 vs_in_tex_coords;
+
+out vec2 fs_in_texture_coords;
+
+
+
+void process_texture_coords()
+{
+    fs_in_texture_coords = vs_in_tex_coords;
+}
+
+"

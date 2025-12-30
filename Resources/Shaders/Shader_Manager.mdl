@@ -1,11 +1,17 @@
 |Shader_Manager|
 \
-
     |type|
     \
         "LR::Shader_Manager_Stub"
     /
 
-    <<<Shader_Program>>>
+    <<<Default_Shader/Shader_Program>>>
+    <<<Final_Shader/Shader_Program>>>
+    <<<Vertex_Animation_Shader/Shader_Program>>>
+    <<<Particles_Shader/Shader_Program>>>
 
+    <<<Particles_Compute_Shaders/Particle_Initialization_Shaders/Shards_Splash_FX/Shader_Program>>>
+    <<<Particles_Compute_Shaders/Particle_Update_Shaders/Shards_Splash_FX/Shader_Program>>>
+
+    <<<GUI_Shader/Shader_Program>>>
 /

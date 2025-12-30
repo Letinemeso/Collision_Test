@@ -1,0 +1,17 @@
+||Shader_Component__light||
+\
+    |type|
+    \
+        "Shardis::Fragment_Shader_Light_Component_Stub"
+    /
+
+    |source|
+    \
+        <<<Fragment_Shader__Light_Component__Source>>>
+    /
+
+    |main_function_name|
+    \
+        "process_light();"
+    /
+/

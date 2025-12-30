@@ -1,0 +1,12 @@
+||Shader_Component__Rotation_Matrix||
+\
+    |type|
+    \
+        "LR::Shader_Rotation_Matrix_Component_Stub"
+    /
+
+    |uniform_name|
+    \
+        "rotation_matrix_uniform"
+    /
+/

@@ -1,0 +1,24 @@
+||Shader__Vertex||
+\
+    |type|
+    \
+        "LR::Shader_Stub"
+    /
+
+    |shader_type|
+    \
+        "Vertex"
+    /
+
+    |glsl_version|
+    \
+        "430"
+    /
+
+    <<<Vertex_Shader__Time_Data_Component>>>
+    <<<Vertex_Shader__Positions_Data_Component>>>
+    <<<Vertex_Shader__Rotations_Data_Component>>>
+    <<<Vertex_Shader__Transform_Component>>>
+    <<<Vertex_Shader__Texture_Coords_Component>>>
+    <<<Vertex_Shader__Normals_Component>>>
+/

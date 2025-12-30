@@ -1,0 +1,17 @@
+||Module__health||
+\
+    |type|
+    \
+        "Shardis::Health_Module_Stub"
+    /
+
+    |base_health|
+    \
+        "100"
+    /
+
+    |health|
+    \
+        "100"
+    /
+/

@@ -1,0 +1,17 @@
+||draw_rule||
+\
+    |type|
+    \
+        "LR::Draw_Rule_Stub"
+    /
+
+    |active_attribute_arrays|
+    \
+        "0" "1"
+    /
+
+    |floats_per_vertex|
+    \
+        "2" "2"
+    /
+/

@@ -1,0 +1,26 @@
+||Ground||
+\
+    |type|
+    \
+        "LEti::Object_Stub"
+    /
+
+    <<<Type_Module>>>
+    <<<Draw_Module>>>
+    <<<Physics_Module>>>
+
+    |position|
+    \
+        "0" "0" "0"
+    /
+
+    #|scale|
+    \
+        "10" "10" "10"
+    /#
+
+    |scale|
+    \
+        "1" "1" "1"
+    /
+/

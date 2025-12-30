@@ -1,0 +1,19 @@
+||Shader_Component__Velocity||
+\
+
+    |type|
+    \
+        "LR::Shader_Component_Stub"
+    /
+
+    |source|
+    \
+        <<<Velocity_Component__Source>>>
+    /
+
+    |main_function_name|
+    \
+        "initialize_velocities();"
+    /
+
+/

@@ -1,0 +1,11 @@
+||Shader_Program__Update__Shards_Splash_FX||
+\
+
+    |type|
+    \
+        "LR::Shader_Program_Stub"
+    /
+
+    <<<Compute_Shader>>>
+
+/

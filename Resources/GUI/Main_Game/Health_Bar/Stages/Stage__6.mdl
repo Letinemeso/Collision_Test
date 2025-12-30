@@ -1,0 +1,89 @@
+||Stage_Draw_Module__6||
+\
+    |type|
+    \
+        "LR::Draw_Module_Stub"
+    /
+
+    |rendering_shader_id|
+    \
+        "Shader_Program__Main_Game_UI"
+    /
+
+    |draw_layer|
+    \
+        "Main_Game_UI"
+    /
+
+    ||Graphics_Component_Stub__coords||
+    \
+        |type|
+        \
+            "LR::Graphics_Component_Stub__Default"
+        /
+        |layout_index|
+        \
+            "0"
+        /
+        |floats_per_vertex|
+        \
+            "2"
+        /
+        |data|
+        \
+            "226"    "86"
+            "-226"   "86"
+            "-226"   "-86"
+
+            "226"    "86"
+            "-226"   "-86"
+            "226"    "-86"
+        /
+    /
+
+    ||Graphics_Component_Stub__texture||
+    \
+        |type|
+        \
+            "LR::Graphics_Component_Stub__Texture"
+        /
+        |layout_index|
+        \
+            "1"
+        /
+        |floats_per_vertex|
+        \
+            "2"
+        /
+        |data|
+        \
+            "452"   "172"
+            "0"     "172"
+            "0"     "0"
+
+            "452"   "172"
+            "0"     "0"
+            "452"   "0"
+        /
+        |expected_texture_size|
+        \
+            "452" "172"
+        /
+        |texture_coords_in_pixels|
+        \
+            "+"
+        /
+        ||texture_stub||
+        \
+            |type|
+            \
+                "LR::Texture_Stub__Default"
+            /
+
+            |picture_name|
+            \
+                "Health_Bar_Texture_6"
+            /
+        /
+    /
+/

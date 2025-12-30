@@ -1,0 +1,29 @@
+||Shader__Compute||
+\
+
+    |type|
+    \
+        "LR::Shader_Stub"
+    /
+
+    |shader_type|
+    \
+        "Compute"
+    /
+
+    |glsl_version|
+    \
+        "430"
+    /
+
+    <<<../Common_Components/Settings_Component>>>
+    <<<../Common_Components/Time_Component>>>
+    <<<../Common_Components/Counter_Component>>>
+    <<<../Common_Components/RNG_Component>>>
+    <<<../Common_Components/Position_Getter_Component>>>
+    <<<Position_Component>>>
+    <<<Velocity_Component>>>
+    <<<Rotation_Component>>>
+    <<<../Common_Components/Lifetime_Component>>>
+
+/

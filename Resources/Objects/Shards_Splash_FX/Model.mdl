@@ -1,0 +1,10 @@
+||Shards_Splash_FX||
+\
+    |type|
+    \
+        "LEti::Object_Stub"
+    /
+
+    #<<<Draw_Module>>>#
+    <<<Particles/Particle_Module>>>
+/

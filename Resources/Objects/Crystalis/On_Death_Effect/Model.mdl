@@ -1,0 +1,22 @@
+||effect_stub||
+\
+    |type|
+    \
+        "LEti::Object_Stub"
+    /
+
+    <<<Particles/Particle_Module>>>
+
+    ||Module__expiration||
+    \
+        |type|
+        \
+            "LMD::Expiration_Module_Stub"
+        /
+
+        |expiration_time|
+        \
+            "0.5"
+        /
+    /
+/

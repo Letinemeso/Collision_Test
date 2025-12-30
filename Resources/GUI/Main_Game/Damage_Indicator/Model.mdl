@@ -1,0 +1,16 @@
+||GUI_object__Damage_Indicator||
+\
+    |type|
+    \
+        "LGui::UI_Object_Stub"
+    /
+
+    |tags|
+    \
+        "Main_Game_UI"
+    /
+
+    <<<Autoscale_Module>>>
+    <<<Indicator_Module>>>
+    #<<<Draw_Module>>>#
+/

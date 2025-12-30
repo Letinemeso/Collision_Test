@@ -1,0 +1,28 @@
+||Shader__Compute||
+\
+
+    |type|
+    \
+        "LR::Shader_Stub"
+    /
+
+    |shader_type|
+    \
+        "Compute"
+    /
+
+    |glsl_version|
+    \
+        "430"
+    /
+
+    <<<../Common_Components/Settings_Component>>>
+    <<<../Common_Components/Dt_Component>>>
+    <<<../Common_Components/Time_Component>>>
+    <<<../Common_Components/Counter_Component>>>
+    <<<../Common_Components/Transform_Component>>>
+    <<<Fall_Component>>>
+
+    #<<<Shrink_Component>>>#
+
+/

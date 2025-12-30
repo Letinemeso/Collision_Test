@@ -1,0 +1,122 @@
+|Terrain_Object|
+\
+    |type|
+    \
+        "LEti::Object_Stub"
+    /
+
+    ||Module__draw_module||
+    \
+        |type|
+        \
+            "LR::Draw_Module_Stub"
+        /
+
+        |rendering_shader_id|
+        \
+            "Shader_Program__Default"
+        /
+
+        |draw_layer|
+        \
+            "Default"
+        /
+
+        ||Graphics_Component_Stub__coords||
+        \
+            |type|
+            \
+                "LR::Graphics_Component_Stub__Default"
+            /
+            |layout_index|
+            \
+                "0"
+            /
+            |floats_per_vertex|
+            \
+                "3"
+            /
+        /
+
+        ||Graphics_Component_Stub__texture||
+        \
+            |type|
+            \
+                "LR::Graphics_Component_Stub__Texture"
+            /
+            |layout_index|
+            \
+                "1"
+            /
+            |floats_per_vertex|
+            \
+                "2"
+            /
+
+            |texture_coords_in_pixels|
+            \
+                "-"
+            /
+
+            ||texture_stub||
+            \
+                |type|
+                \
+                    "LR::Texture_Stub__Preloaded"
+                /
+
+                |texture_resource_name|
+                \
+                    "Ground_Texture"
+                /
+            /
+        /
+
+        ||Graphics_Component_Stub__normals||
+        \
+            |type|
+            \
+                "LR::Graphics_Component_Stub__Default"
+            /
+            |layout_index|
+            \
+                "2"
+            /
+            |floats_per_vertex|
+            \
+                "3"
+            /
+        /
+    /
+
+    ||Module__physics_module||
+    \
+        |type|
+        \
+            "LPhys::Physics_Module_Stub__Mesh"
+        /
+
+        |is_static|
+        \
+            "+"
+        /
+
+        |cache_polygons_borders|
+        \
+            "+"
+        /
+    /
+
+    ||Module__type||
+    \
+        |type|
+        \
+            "Shardis::Type_Module_Stub"
+        /
+
+        |object_type|
+        \
+            "Terrain"
+        /
+    /
+/
