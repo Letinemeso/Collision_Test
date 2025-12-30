@@ -1,0 +1,14 @@
+||Collision_Indicator||
+\
+    |type|
+    \
+        "LEti::Object_Stub"
+    /
+
+    |scale|
+    \
+        "1""1""1"
+    /
+
+    <<<Draw_Module>>>
+/

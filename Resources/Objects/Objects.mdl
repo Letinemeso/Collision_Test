@@ -9,6 +9,7 @@
     #<<<Crystalis/Model>>>#
     #<<<Player/Model>>>#
     <<<Model_Test_Entity/Model>>>
+    <<<Collision_Indicator/Model>>>
 
     <<<Shards_Splash_FX/Model>>>
 /

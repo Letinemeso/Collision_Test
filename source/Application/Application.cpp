@@ -36,11 +36,15 @@
 #include <Controllers/Objects_Controller_Extensions/Objects_Controller_Extension__Entity_Stabilizer.h>
 #include <Controllers/Objects_Controller_Extensions/Objects_Controller_Extension__Entity_Proximity_Checker.h>
 #include <Controllers/Objects_Controller_Extensions/Objects_Controller_Extension__Gravity_Applier.h>
+#include <Controllers/Objects_Controller_Extensions/Objects_Controller_Extension__Physics.h>
 
 using namespace Shardis;
 
 // LEti::Object* terrain_obj = nullptr;
 
+
+bool update_enabled = true;
+LEti::Object* collision_indicator = nullptr;
 
 Application::Application()
 {
@@ -118,7 +122,13 @@ void Application::M_init_objects_controller()
     m_objects_controller->add_extension(new Objects_Controller_Extension__Gravity_Applier);
 
     {
-        LMD::Objects_Controller_Extension__Physics* ext_physics_terrain = new LMD::Objects_Controller_Extension__Physics;
+        Objects_Controller_Extension__Physics* ext_physics_terrain = new Objects_Controller_Extension__Physics;
+
+        ext_physics_terrain->on_collision = [&](const LPhys::Intersection_Data& _id)
+        {
+            update_enabled = false;
+            collision_indicator->current_state().set_position(_id.point);
+        };
 
         LPhys::Binary_Space_Partitioner* bp = new LPhys::Binary_Space_Partitioner;
         bp->set_precision(2);
@@ -170,6 +180,10 @@ void Application::M_init_objects_controller()
         narrow->set_intersection_detector(intersection_detector);
 
         ext_physics_entities->collision_detector().set_narrow_phase(narrow);
+
+        // LMD::Collision_Resolution__Rigid_Body_3D* rigid_body_resolution = new LMD::Collision_Resolution__Rigid_Body_3D;
+        // // rigid_body_resolution->set_impulse_ratio_after_collision(0.9f);
+        // ext_physics_entities->collision_resolver().add_resolution(rigid_body_resolution);
 
         ext_physics_entities->collision_resolver().add_resolution(new Collision_Resolution);
 
@@ -344,6 +358,10 @@ void Application::M_on_components_initialized()
     L_ASSERT(test_object_stub);
     LEti::Object_Stub* terrain_stub = m_object_stubs->get_object<LEti::Object_Stub>("Ground");
     L_ASSERT(terrain_stub);
+    LEti::Object_Stub* indicator_stub = m_object_stubs->get_object<LEti::Object_Stub>("Collision_Indicator");
+    L_ASSERT(indicator_stub);
+
+    collision_indicator = LEti::Object_Stub::construct_from(indicator_stub);
 
     LEti::Object* terrain_obj = LEti::Object_Stub::construct_from(terrain_stub);
     m_objects_controller->add_object(terrain_obj);
@@ -395,7 +413,18 @@ void Application::M_update_game(float _dt)
         LR::Window_Controller::instance().set_window_should_close(true);
     }
 
-    m_objects_controller->update_previous_state();
+    if(LR::Window_Controller::instance().key_was_pressed(GLFW_KEY_P))
+        update_enabled = !update_enabled;
+
+    if(LR::Window_Controller::instance().key_was_pressed(GLFW_KEY_M))
+    {
+        m_ingame_camera.settings().position = collision_indicator->current_state().position() - (m_ingame_camera.settings().direction * 2.0f);
+    }
+
+    if(update_enabled)
+        m_objects_controller->update_previous_state();
+
+    collision_indicator->update_previous_state();
 
     if(LR::Window_Controller::instance().key_was_pressed(GLFW_KEY_O))
     {
@@ -417,8 +446,10 @@ void Application::M_update_game(float _dt)
 
     m_camera_controller.update(_dt);
 
-    // terrain_obj->update(_dt);
-    m_objects_controller->update(_dt);
+    if(update_enabled)
+        m_objects_controller->update(_dt);
+
+    collision_indicator->update(_dt);
 
     m_renderer_helper->update(_dt);
 }
