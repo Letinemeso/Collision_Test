@@ -18,5 +18,7 @@
 
     <<<../Common/Default_Fragment_Shader/Fragment_Shader__Texture_Coords_Component>>>
     <<<Fragment_Shader__Light_Component>>>
+    <<<Fragment_Shader__Brightness_Uniform_Component>>>
+    <<<Fragment_Shader__Brightness_Component>>>
 
 /

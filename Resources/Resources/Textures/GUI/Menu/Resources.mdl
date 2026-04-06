@@ -1,0 +1,14 @@
+<<<Buttons/Resources>>>
+<<<Icons/Resources>>>
+
+||Black_Background_Mask||
+\
+    |type|
+    \
+        "LR::Picture_Stub"
+    /
+    |image_file_path|
+    \
+        "../Resources/Resources/Textures/GUI/Menu/Black_Background_Mask.png"
+    /
+/

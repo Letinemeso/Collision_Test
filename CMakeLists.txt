@@ -1,15 +1,15 @@
 cmake_minimum_required(VERSION 3.5)
 
-project(Shardis LANGUAGES CXX)
+project(Collision_Test LANGUAGES CXX)
 
 set(CMAKE_CXX_STANDARD 17)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 set(CMAKE_EXPORT_COMPILE_COMMANDS ON)
 
 FILE(GLOB_RECURSE LibFiles "include/*.h")
-add_custom_target(_Shardis_include SOURCES ${LibFiles})
+add_custom_target(_Collision_Test_include SOURCES ${LibFiles})
 FILE(GLOB_RECURSE Models "Resources/*")
-add_custom_target(Shardis_models SOURCES ${Models})
+add_custom_target(Collision_Test_models SOURCES ${Models})
 
 file(GLOB_RECURSE Sources "source/*.cpp")
 
@@ -21,7 +21,7 @@ if(MSVC)
     add_compile_options(/bigobj)
 endif(MSVC)
 
-add_executable(Shardis ${Sources} Main.cpp)
+add_executable(Collision_Test ${Sources} Main.cpp)
 
 add_subdirectory("${PROJECT_SOURCE_DIR}/L_Utility"
                  "${PROJECT_BINARY_DIR}/L_Utility"
@@ -51,7 +51,7 @@ add_subdirectory("${PROJECT_SOURCE_DIR}/L_GUI"
                  "${PROJECT_BINARY_DIR}/L_GUI"
 )
 
-target_include_directories(Shardis PUBLIC
+target_include_directories(Collision_Test PUBLIC
                             "${PROJECT_SOURCE_DIR}"
                             "${PROJECT_SOURCE_DIR}/include"
                             "${PROJECT_SOURCE_DIR}/L_Utility/include"
@@ -68,7 +68,7 @@ target_include_directories(Shardis PUBLIC
 )
 
 
-target_link_libraries(Shardis PUBLIC
+target_link_libraries(Collision_Test PUBLIC
     L_GUI
     L_Gamedev_Lib
     L_Engine_Modules_Dump
@@ -94,14 +94,14 @@ endif(MSVC)
 
 set_target_properties(OpenAL PROPERTIES IMPORTED_LOCATION "${PROJECT_SOURCE_DIR}/../Third_Party/OpenAL32.lib")
 
-target_link_libraries(Shardis PUBLIC
+target_link_libraries(Collision_Test PUBLIC
     glfw
     glew
     OpenAL
 )
 
 if (WIN32)
-    target_link_libraries(Shardis PUBLIC
+    target_link_libraries(Collision_Test PUBLIC
         opengl32
         user32
         gdi32
@@ -110,7 +110,7 @@ if (WIN32)
 endif (WIN32)
 
 if (UNIX)
-    target_link_libraries(Shardis PUBLIC
+    target_link_libraries(Collision_Test PUBLIC
         pthread
         GL
         X11

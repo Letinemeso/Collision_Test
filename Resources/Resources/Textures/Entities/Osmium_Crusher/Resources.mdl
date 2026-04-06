@@ -1,0 +1,19 @@
+||Osmium_Crusher_Texture||
+\
+    |type|
+    \
+        "LR::Texture_Stub__Default"
+    /
+
+    ||picture||
+    \
+        |type|
+        \
+            "LR::Picture_Stub"
+        /
+        |image_file_path|
+        \
+            "../Resources/Resources/Textures/Entities/Osmium_Crusher/Osmium_Crusher.png"
+        /
+    /
+/

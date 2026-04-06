@@ -1,6 +1,6 @@
 <<<Health_Bar/Resources>>>
 
-||Damag_Indicator_Animation||
+||Damage_Indicator_Animation||
 \
     |type|
     \
@@ -8,7 +8,7 @@
     /
     |image_file_path|
     \
-        "../Resources/Resources/Textures/GUI/Main_Game/Damag_Indicator_Animation.png"
+        "../Resources/Resources/Textures/GUI/Main_Game/Damage_Indicator_Animation.png"
     /
     |frames_amount|
     \

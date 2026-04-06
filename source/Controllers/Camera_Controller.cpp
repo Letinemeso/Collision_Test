@@ -10,7 +10,7 @@ namespace Shardis
 {
     constexpr float Movement_Speed = 5.0f;
 
-    constexpr float View_Rotation_Speed = LEti::Math::PI;
+    constexpr float View_Rotation_Speed = LST::Math::PI;
     constexpr float Cursor_Movement_Threshold_For_View = 1920.0f;
 }
 
@@ -44,12 +44,12 @@ void Camera_Controller::M_process_movement(float _dt)
     }
     if(LR::Window_Controller::instance().is_key_down(GLFW_KEY_A))
     {
-        glm::vec3 stride = LEti::Math::rotate_vector(look_direction * Movement_Speed, camera_settings.top, LEti::Math::HALF_PI);
+        glm::vec3 stride = LST::Math::rotate_vector(look_direction * Movement_Speed, camera_settings.top, LST::Math::HALF_PI);
         movement += stride;
     }
     if(LR::Window_Controller::instance().is_key_down(GLFW_KEY_D))
     {
-        glm::vec3 stride = LEti::Math::rotate_vector(look_direction * Movement_Speed, camera_settings.top, -LEti::Math::HALF_PI);
+        glm::vec3 stride = LST::Math::rotate_vector(look_direction * Movement_Speed, camera_settings.top, -LST::Math::HALF_PI);
         movement += stride;
     }
     if(LR::Window_Controller::instance().is_key_down(GLFW_KEY_SPACE))
@@ -79,20 +79,23 @@ void Camera_Controller::M_process_view(float _dt)
 
     constexpr glm::vec3 rotation_axis = {0.0f, 1.0f, 0.0f};
 
-    LR::Camera_3D::Settings& camera_settings = m_camera->settings();
-    camera_settings.direction = LEti::Math::rotate_vector(camera_settings.direction, rotation_axis, rotation);
-    camera_settings.top = LEti::Math::rotate_vector(camera_settings.top, rotation_axis, rotation);
+    LR::Camera_3D::Settings camera_settings = m_camera->settings();
+    camera_settings.direction = LST::Math::rotate_vector(camera_settings.direction, rotation_axis, rotation);
+    camera_settings.top = LST::Math::rotate_vector(camera_settings.top, rotation_axis, rotation);
 
-    ratio = -cursor_stride.y / Cursor_Movement_Threshold_For_View;
+    ratio = cursor_stride.y / Cursor_Movement_Threshold_For_View;
     rotation = ratio * View_Rotation_Speed;
-    glm::vec3 perpendicular = LEti::Math::cross_product(camera_settings.direction, camera_settings.top);
-    LEti::Math::shrink_vector_to_1(perpendicular);
-    camera_settings.direction = LEti::Math::rotate_vector(camera_settings.direction, perpendicular, rotation);
-    camera_settings.top = LEti::Math::rotate_vector(camera_settings.top, perpendicular, rotation);
+    glm::vec3 perpendicular = LST::Math::cross_product(camera_settings.direction, camera_settings.top);
+    LST::Math::shrink_vector_to_1(perpendicular);
+    camera_settings.direction = LST::Math::rotate_vector(camera_settings.direction, perpendicular, rotation);
+    camera_settings.top = LST::Math::rotate_vector(camera_settings.top, perpendicular, rotation);
 
     if(!m_follow_mode || !m_position_getter_func)
     {
+        m_camera->set_settings(camera_settings);
         m_camera->reconfigure();
+        m_camera->apply_settings_forcefully();
+        m_camera->update(0.0f);
         return;
     }
 
@@ -101,7 +104,10 @@ void Camera_Controller::M_process_view(float _dt)
     camera_settings.position = m_position_getter_func();
     camera_settings.position -= camera_settings.direction * camera_distance;
 
+    m_camera->set_settings(camera_settings);
     m_camera->reconfigure();
+    m_camera->apply_settings_forcefully();
+    m_camera->update(0.0f);
 }
 
 

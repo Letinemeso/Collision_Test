@@ -1,9 +1,10 @@
 "
 
-#define MAX_LIGHT_SOURCES 64
+#define MAX_LIGHT_SOURCES 256
 
 uniform sampler2D fp_in_positions;
 uniform sampler2D fp_in_normals;
+uniform sampler2D fp_in_glow_color;
 
 uniform float min_light_ratio;
 
@@ -41,8 +42,10 @@ void process_light()
 {
     vec3 pixel_position = texture(fp_in_positions, fs_in_texture_coords).xyz;
     vec3 pixel_normal = texture(fp_in_normals, fs_in_texture_coords).xyz;
+    vec3 glow_color = texture(fp_in_glow_color, fs_in_texture_coords).xyz;
 
     vec3 result_light_ratio = vec3(min_light_ratio);
+    result_light_ratio = mix_color(result_light_ratio, glow_color);
 
     for(uint i = 0; i < relevant_light_sources_amount; ++i)
     {

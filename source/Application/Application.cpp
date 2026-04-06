@@ -3,6 +3,7 @@
 #include <glew.h>
 #include <glfw3.h>
 
+#include <LV_Registration.h>
 #include <LEti_Registration.h>
 #include <LR_Registration.h>
 #include <LPhys_Registration.h>
@@ -11,6 +12,9 @@
 
 #include <Collision_Detection/Narrow_Phase/Dynamic_Narrow_CD__Mobile_Vs_Static.h>
 
+#include <LSound_Registration.h>
+#include <Sound_Engine.h>
+
 #include <Misc_Modules/Expiration_Module.h>
 #include <Physics/Rigid_Body/Collision_Resolution__Rigid_Body_3D.h>
 #include <Tools/Objects_Controller/Objects_Controller_Extension__Physics.h>
@@ -18,34 +22,18 @@
 
 #include <Messages/Messages.h>
 #include <Graphics/Fragment_Shader_Light_Component.h>
-#include <Physics/Collision_Resolution.h>
 #include <Modules/Light_Source_Module.h>
-#include <Modules/Velocity_Module.h>
-#include <Modules/Type_Module.h>
-#include <Modules/Health_Module.h>
-#include <Modules/Attack_Module.h>
-#include <Modules/Player_Control_Module.h>
-#include <Modules/On_Death_Effect_Module.h>
-#include <Modules/On_Damaged_Effect_Module.h>
-#include <Modules/Entity_AI/Crystalis_AI.h>
-#include <Modules/Misc_Modules/Health_Bar_Module.h>
-#include <Modules/Misc_Modules/Damage_Indicator_Module.h>
-#include <Weapons/Weapon.h>
-#include <Weapons/Generic_Weapon.h>
 #include <Controllers/Objects_Controller_Extensions/Objects_Controller_Extension__On_Death_Notification.h>
-#include <Controllers/Objects_Controller_Extensions/Objects_Controller_Extension__Entity_Stabilizer.h>
-#include <Controllers/Objects_Controller_Extensions/Objects_Controller_Extension__Entity_Proximity_Checker.h>
 #include <Controllers/Objects_Controller_Extensions/Objects_Controller_Extension__Gravity_Applier.h>
-#include <Controllers/Objects_Controller_Extensions/Objects_Controller_Extension__Physics.h>
 
 using namespace Shardis;
 
-// LEti::Object* terrain_obj = nullptr;
+namespace Shardis
+{
+    constexpr float Max_Proximity_Distance = 200.0f;
+    constexpr float Max_Proximity_Distance_Squared = Max_Proximity_Distance * Max_Proximity_Distance;
+}
 
-
-bool disable_update_on_collision = false;
-bool update_enabled = true;
-LEti::Object* collision_indicator = nullptr;
 
 Application::Application()
 {
@@ -58,19 +46,21 @@ Application::Application()
 
     m_renderer_helper = new Renderer_Helper;
 
-    LV::Type_Manager::register_basic_types();
+    LV::register_types(m_object_constructor);
     LEti::register_types(m_object_constructor);
-    LR::register_types(m_object_constructor, [this](){ return m_resources_manager; }, m_renderer, &m_renderer_helper->draw_order_controller(), [this](){ return m_shader_manager; }, [this](){ return m_dt; });
+    LR::register_types(m_object_constructor, [this](){ return m_resources_manager; }, m_renderer, &m_renderer_helper->draw_order_controller(), [this](){ return m_shader_manager; }, [this](){ return m_main_game_dt; });
     LPhys::register_types(m_object_constructor);
+    LSound::register_types(m_object_constructor, [this](){ return m_resources_manager; });
     LMD::register_types(m_object_constructor, [this](){ return m_resources_manager; }, m_renderer, &m_renderer_helper->draw_order_controller());
     // LGui::register_types(m_object_constructor, m_gui_camera, m_actions_controller);
+
+    LSound::Sound_Engine::instance();
 
     M_register_messages();
     M_init_objects_controller();
     M_register_types();
     M_init_renderer();
     M_init_resources();
-    M_init_weapons();
     M_init_objects();
     M_on_components_initialized();
     M_init_update_logic();
@@ -94,21 +84,11 @@ void Application::M_register_messages()
 {
     LST::Message_Translator::instance().register_message_type<Message__On_Entity_Death>();
     LST::Message_Translator::instance().register_message_type<Message__On_Entity_Damaged>();
+    LST::Message_Translator::instance().register_message_type<Message__On_Entity_Healed>();
+    LST::Message_Translator::instance().register_message_type<Message__On_Natural_Entity_Death>();
     LST::Message_Translator::instance().register_message_type<Message__Player_Evades>();
-    LST::Message_Translator::instance().register_message_type<Message__Find_Player>();
     LST::Message_Translator::instance().register_message_type<Message__Update_Camera>();
-
-    LST::Message_Translator::instance().subscribe<Message__Find_Player>([this](Message__Find_Player& _msg)
-    {
-        _msg.player_object = m_objects_controller->get_suitable_object([](LEti::Object* _object)
-        {
-            Type_Module* type_module = _object->get_module_of_type<Type_Module>();
-            if(!type_module)
-                return false;
-
-            return type_module->object_type() == Object_Type::Player;
-        });
-    });
+    LST::Message_Translator::instance().register_message_type<Message__Pause_Game>();
 }
 
 void Application::M_init_objects_controller()
@@ -123,21 +103,25 @@ void Application::M_init_objects_controller()
     m_objects_controller->add_extension(new Objects_Controller_Extension__Gravity_Applier);
 
     {
-        Objects_Controller_Extension__Physics* ext_physics_terrain = new Objects_Controller_Extension__Physics;
+        LMD::Objects_Controller_Extension__Physics* ext_physics_terrain = new LMD::Objects_Controller_Extension__Physics;
 
-        ext_physics_terrain->on_collision = [&](const LPhys::Intersection_Data& _id)
+        ext_physics_terrain->set_registration_filter([](const LPhys::Physics_Module* _module)
         {
-            if(disable_update_on_collision)
-                update_enabled = false;
-            collision_indicator->current_state().set_position(_id.point);
-        };
+            if(LV::cast_variable<LPhys::Physics_Module__Mesh>(_module))
+                return true;
+            if(LV::cast_variable<LMD::Physics_Module__Rigid_Body>(_module))
+                return true;
+
+            return _module->is_static();
+        });
 
         LPhys::Binary_Space_Partitioner* bp = new LPhys::Binary_Space_Partitioner;
         bp->set_precision(2);
+        bp->set_max_recursion_level(20);
         bp->add_filter([](const LPhys::Physics_Module* _first, const LPhys::Physics_Module* _second)->bool
-                       {
-                           return _first->is_static() ^ _second->is_static();
-                       });
+        {
+            return _first->is_static() ^ _second->is_static();
+        });
         ext_physics_terrain->collision_detector().set_broad_phase(bp);
 
         LPhys::Dynamic_Narrow_CD__Mobile_Vs_Static* narrow = new LPhys::Dynamic_Narrow_CD__Mobile_Vs_Static;
@@ -146,66 +130,25 @@ void Application::M_init_objects_controller()
 
         LPhys::SAT_Models_Intersection_3D* intersection_detector = new LPhys::SAT_Models_Intersection_3D;
         intersection_detector->set_min_polygons_for_optimization(8);
-        intersection_detector->set_plane_contact_priority_ratio(10.0f);
+        intersection_detector->set_plane_contact_priority_ratio(50.0f);
         narrow->set_intersection_detector(intersection_detector);
 
         ext_physics_terrain->collision_detector().set_narrow_phase(narrow);
 
         LMD::Collision_Resolution__Rigid_Body_3D* rigid_body_resolution = new LMD::Collision_Resolution__Rigid_Body_3D;
-        // rigid_body_resolution->set_impulse_ratio_after_collision(0.9f);
+        rigid_body_resolution->set_soft_damping_multiplier(0.9f);
+        rigid_body_resolution->set_soft_damping_min_velocity(0.1f);
+        rigid_body_resolution->set_soft_damping_min_angular_velocity(0.3f);
+        // rigid_body_resolution->set_soft_damping_min_angular_velocity(0.00005f);
+        rigid_body_resolution->set_hard_damping_velocity_threshold(0.03f);
+        rigid_body_resolution->set_hard_damping_angular_velocity_threshold(0.08f);
+        // rigid_body_resolution->set_hard_damping_angular_velocity_threshold(0.000005f);
         ext_physics_terrain->collision_resolver().add_resolution(rigid_body_resolution);
-
-        Collision_Resolution* resolution = new Collision_Resolution;
-        resolution->set_additional_offset_between_objects(0.05f);
-        ext_physics_terrain->collision_resolver().add_resolution(resolution);
 
         m_objects_controller->add_extension(ext_physics_terrain);
     }
 
-    {
-        LMD::Objects_Controller_Extension__Physics* ext_physics_entities = new LMD::Objects_Controller_Extension__Physics;
-
-        ext_physics_entities->set_registration_filter([](LPhys::Physics_Module* _module)
-        {
-            return !_module->is_static();
-        });
-
-        LPhys::Binary_Space_Partitioner* bsp = new LPhys::Binary_Space_Partitioner;
-        ext_physics_entities->collision_detector().set_broad_phase(bsp);
-
-        LPhys::Dynamic_Narrow_CD* narrow = new LPhys::Dynamic_Narrow_CD;
-        narrow->set_precision(5);
-
-        LPhys::SAT_Models_Intersection_3D* intersection_detector = new LPhys::SAT_Models_Intersection_3D;
-        intersection_detector->set_min_polygons_for_optimization(8);
-        intersection_detector->set_plane_contact_priority_ratio(1.0f);
-        narrow->set_intersection_detector(intersection_detector);
-
-        ext_physics_entities->collision_detector().set_narrow_phase(narrow);
-
-        // LMD::Collision_Resolution__Rigid_Body_3D* rigid_body_resolution = new LMD::Collision_Resolution__Rigid_Body_3D;
-        // // rigid_body_resolution->set_impulse_ratio_after_collision(0.9f);
-        // ext_physics_entities->collision_resolver().add_resolution(rigid_body_resolution);
-
-        ext_physics_entities->collision_resolver().add_resolution(new Collision_Resolution);
-
-        m_objects_controller->add_extension(ext_physics_entities);
-    }
-
     m_objects_controller->add_extension(new Objects_Controller_Extension__On_Death_Notification);
-
-    {
-        Objects_Controller_Extension__Entity_Stabilizer* ext_stabilizer = new Objects_Controller_Extension__Entity_Stabilizer;
-        ext_stabilizer->set_min_stride_per_frame(0.01f);
-        m_objects_controller->add_extension(ext_stabilizer);
-    }
-
-    {
-        Objects_Controller_Extension__Entity_Proximity_Checker* ext_proximity_checker = new Objects_Controller_Extension__Entity_Proximity_Checker;
-        ext_proximity_checker->inject_camera(&m_ingame_camera);
-        ext_proximity_checker->set_max_distance(200);
-        m_objects_controller->add_extension(ext_proximity_checker);
-    }
 }
 
 void Application::M_register_types()
@@ -223,7 +166,12 @@ void Application::M_register_types()
     });
 
 
-    m_object_constructor.register_type<Fragment_Shader_Light_Component_Stub>();
+    m_object_constructor.register_type<Fragment_Shader_Light_Component_Stub>().override_initialization_func([this](LV::Variable_Base* _product)
+    {
+        Fragment_Shader_Light_Component_Stub* product = (Fragment_Shader_Light_Component_Stub*)_product;
+
+        product->camera = &m_ingame_camera;
+    });
 
 
     m_object_constructor.register_type<Light_Source_Module_Stub>().override_initialization_func([this](LV::Variable_Base* _product)
@@ -231,58 +179,6 @@ void Application::M_register_types()
         Light_Source_Module_Stub* product = (Light_Source_Module_Stub*)_product;
 
         product->light_controller = m_renderer_helper->light_controller();
-    });
-
-    m_object_constructor.register_type<Velocity_Module_Stub>();
-
-    m_object_constructor.register_type<Type_Module_Stub>();
-
-    m_object_constructor.register_type<Health_Module_Stub>();
-
-    m_object_constructor.register_type<Attack_Module_Stub>();
-
-    m_object_constructor.register_type<On_Death_Effect_Module_Stub>().override_initialization_func([this](LV::Variable_Base* _product)
-    {
-        On_Death_Effect_Module_Stub* product = (On_Death_Effect_Module_Stub*)_product;
-
-        product->objects_controller = m_objects_controller;
-    });
-
-    m_object_constructor.register_type<On_Damaged_Effect_Module_Stub>().override_initialization_func([this](LV::Variable_Base* _product)
-    {
-        On_Damaged_Effect_Module_Stub* product = (On_Damaged_Effect_Module_Stub*)_product;
-
-        product->objects_controller = m_objects_controller;
-    });
-
-    m_object_constructor.register_type<Player_Control_Module_Stub>().override_initialization_func([this](LV::Variable_Base* _product)
-    {
-        Player_Control_Module_Stub* product = (Player_Control_Module_Stub*)_product;
-
-        product->camera = &m_ingame_camera;
-        product->objects_controller = m_objects_controller;
-        product->weapons_provider = m_weapons_stubs;
-    });
-
-
-    m_object_constructor.register_type<Weapon_Stub>().override_initialization_func([this](LV::Variable_Base* _product)
-    {
-        Weapon_Stub* product = (Weapon_Stub*)_product;
-
-        product->objects_controller = m_objects_controller;
-        product->main_game_camera = &m_ingame_camera;
-    });
-
-    m_object_constructor.register_type<Generic_Weapon_Stub>();
-
-
-    m_object_constructor.register_type<Health_Bar_Module_Stub>();
-
-    m_object_constructor.register_type<Damage_Indicator_Module_Stub>().override_initialization_func([this](LV::Variable_Base* _product)
-    {
-        Damage_Indicator_Module_Stub* product = (Damage_Indicator_Module_Stub*)_product;
-
-        product->camera = &m_ingame_camera;
     });
 }
 
@@ -301,10 +197,12 @@ void Application::M_init_renderer()
     camera_settings.position = { 0.0f, 0.0f, 0.0f };
     camera_settings.direction = {0.0f, 0.0f, 1.0f};
     camera_settings.top = { 0.0f, 1.0f, 0.0f };
-    camera_settings.field_of_view = LEti::Math::HALF_PI;
-    camera_settings.max_distance = 100000.0f;
+    camera_settings.field_of_view = LST::Math::HALF_PI;
+    camera_settings.min_distance = 0.1f;
+    camera_settings.max_distance = 3000.0f;
 
     m_ingame_camera.set_settings(camera_settings);
+    m_ingame_camera.apply_settings_forcefully();
 
     m_renderer.set_camera(&m_ingame_camera);
 
@@ -326,18 +224,9 @@ void Application::M_init_resources()
     LV::MDL_Reader reader;
     reader.parse_file("../Resources/Resources/Resources");
 
-    LEti::Resources_Manager_Stub* resources_manager_stub = (LEti::Resources_Manager_Stub*)m_object_constructor.construct(reader.get_stub("Resources"));
-    m_resources_manager = (LEti::Resources_Manager*)resources_manager_stub->construct();
+    LV::Variable_Loader_Stub* resources_manager_stub = (LV::Variable_Loader_Stub*)m_object_constructor.construct(reader.get_stub("Resources"));
+    m_resources_manager = (LV::Variable_Loader*)resources_manager_stub->construct();
     delete resources_manager_stub;
-}
-
-void Application::M_init_weapons()
-{
-    LV::MDL_Reader reader;
-    reader.parse_file("../Resources/Weapons/Weapons");
-
-    m_weapons_stubs = (LMD::Objects_Storage*)m_object_constructor.construct(reader.get_stub("Weapons"));
-    L_ASSERT(LV::cast_variable<LMD::Objects_Storage>(m_weapons_stubs));
 }
 
 void Application::M_init_objects()
@@ -354,42 +243,24 @@ void Application::M_on_components_initialized()
     m_camera_controller.inject_camera(&m_ingame_camera);
 
     LR::Window_Controller::instance().set_cursor_visibility(false);
+    LR::Window_Controller::instance().set_cursor_pos(LR::Window_Controller::instance().get_window_size() * 0.5f);
 
-    // LEti::Object_Stub* test_object_stub = m_object_stubs->get_object<LEti::Object_Stub>("Crystalis");
-    LEti::Object_Stub* test_object_stub = m_object_stubs->get_object<LEti::Object_Stub>("Model_Test_Entity");
-    L_ASSERT(test_object_stub);
-    LEti::Object_Stub* terrain_stub = m_object_stubs->get_object<LEti::Object_Stub>("Ground");
-    L_ASSERT(terrain_stub);
-    LEti::Object_Stub* indicator_stub = m_object_stubs->get_object<LEti::Object_Stub>("Collision_Indicator");
-    L_ASSERT(indicator_stub);
+    LEti::Object* light_source = new LEti::Object;
+    Light_Source_Module* ls_module = new Light_Source_Module;
+    ls_module->inject_light_controller(m_renderer_helper->light_controller());
+    ls_module->set_light_color({1.0f, 1.0f, 1.0f});
+    ls_module->set_max_light_distance(1000);
+    light_source->add_module(ls_module);
+    light_source->update(0.0f);
+    light_source->update_previous_state();
+    m_objects_controller->add_object(light_source);
 
-    collision_indicator = LEti::Object_Stub::construct_from(indicator_stub);
-
-    LEti::Object* terrain_obj = LEti::Object_Stub::construct_from(terrain_stub);
-    m_objects_controller->add_object(terrain_obj);
-
-    // for(unsigned int i = 0; i < 0; ++i)
-    // {
-    //     LEti::Object* test_object = LEti::Object_Stub::construct_from(test_object_stub);
-    //     // test_object->current_state().set_position(initial_position);
-    //     test_object->current_state().move({ 5.0f * (float)(i + 1), 2.0f, 2.0f });
-    //     test_object->update(0.0f);
-    //     test_object->update_previous_state();
-    //     m_objects_controller->add_object(test_object);
-    // }
-
-    LR::Shader_Program* sp = m_shader_manager->get_shader_program("Shader_Program__Final_Shader");
-    LR::Shader* shader = sp->get_shader_of_type(LR::Shader_Type::Fragment);
-    Fragment_Shader_Light_Component* light_controller = shader->get_shader_component_of_type<Fragment_Shader_Light_Component>();
-    light_controller->add_light_source( {-10.0f, 10.0f, -10.0f}, {1.0f, 1.0f, 1.0f}, 50.0f );
-    light_controller->add_light_source( {10.0f, 10.0f, 10.0f}, {1.0f, 1.0f, 1.0f}, 50.0f );
-
-    // LEti::Object_Stub* fx_object_stub = m_object_stubs->get_object<LEti::Object_Stub>("Shards_Splash_FX");
-    // LEti::Object* fx_object = LEti::Object_Stub::construct_from(fx_object_stub);
-    // fx_object->current_state().set_position(player_object->current_state().position() + glm::vec3(-5, 0, 0));
-    // fx_object->update(0.0f);
-    // fx_object->update_previous_state();
-    // m_objects_controller->add_object(fx_object);
+    const LEti::Object_Stub* ground_object_stub = m_object_stubs->get_object<LEti::Object_Stub>("Ground");
+    LEti::Object* ground_object = LEti::Object_Stub::construct_from(ground_object_stub);
+    ground_object->current_state().set_position({0.0f, -5.0f, 0.0f});
+    ground_object->update(0.0f);
+    ground_object->update_previous_state();
+    m_objects_controller->add_object(ground_object);
 }
 
 void Application::M_init_update_logic()
@@ -399,73 +270,111 @@ void Application::M_init_update_logic()
     m_fps_timer.set_on_tick(
     [this](float _dt)
     {
-        m_dt = _dt;
+        m_main_game_dt = _dt * m_dt_multiplier;
 
         LR::Window_Controller::instance().update();
 
-        M_update_game(_dt);
+        M_update_game();
     });
 }
 
 
 
-void Application::M_update_game(float _dt)
+#ifdef L_DEBUG
+
+void Application::M_create_entity()
 {
-    if(LR::Window_Controller::instance().key_was_pressed(GLFW_KEY_ESCAPE))
+    if(LR::Window_Controller::instance().key_was_pressed(GLFW_KEY_O))
     {
-        LR::Window_Controller::instance().set_window_should_close(true);
-    }
+        // const LEti::Object_Stub* stub = m_object_stubs->get_object<LEti::Object_Stub>("Physics_Test_Object");
+        const LEti::Object_Stub* stub = m_object_stubs->get_object<LEti::Object_Stub>("Physics_Test_Object__Pyramid");
 
-    if(LR::Window_Controller::instance().key_was_pressed(GLFW_KEY_P))
-        disable_update_on_collision = !disable_update_on_collision;
-
-    if(LR::Window_Controller::instance().key_was_pressed(GLFW_KEY_Q))
-        update_enabled = !update_enabled;
-
-    if(LR::Window_Controller::instance().key_was_pressed(GLFW_KEY_M))
-    {
-        m_ingame_camera.settings().position = collision_indicator->current_state().position() - (m_ingame_camera.settings().direction * 2.0f);
-    }
-
-    if(update_enabled)
-        m_objects_controller->update_previous_state();
-
-    collision_indicator->update_previous_state();
-
-    if(LR::Window_Controller::instance().key_was_pressed(GLFW_KEY_E))
-    {
-        const LEti::Object_Stub* stub = m_object_stubs->get_object<LEti::Object_Stub>("Model_Test_Entity");
         LEti::Object* object = LEti::Object_Stub::construct_from(stub);
+
+        object->current_state().set_position( m_ingame_camera.settings().position + ( m_ingame_camera.settings().direction * 10.0f ) );
 
         LMD::Physics_Module__Rigid_Body* pm = object->get_module_of_type<LMD::Physics_Module__Rigid_Body>();
         if(pm)
         {
-            pm->set_velocity( m_ingame_camera.settings().direction * 3.0f );
+            // pm->set_velocity( m_ingame_camera.settings().direction * 10.0f );
             // pm->set_angular_velocity( m_ingame_camera.settings().top * 10.0f );
-            pm->set_angular_velocity( { LEti::Math::random_number_float(-10.0f, 10.0f), LEti::Math::random_number_float(-10.0f, 10.0f), LEti::Math::random_number_float(-10.0f, 10.0f) } );
-            pm->set_center_of_mass_position( m_ingame_camera.settings().position + ( m_ingame_camera.settings().direction * 3.0f ) );
+
+            pm->set_velocity( {LST::Math::random_number_float(-2.0f, 2.0f),
+                              LST::Math::random_number_float(-2.0f, 2.0f),
+                              LST::Math::random_number_float(-2.0f, 2.0f)} );
+            pm->set_angular_velocity( {LST::Math::random_number_float(-LST::Math::DOUBLE_PI, LST::Math::DOUBLE_PI),
+                                      LST::Math::random_number_float(-LST::Math::DOUBLE_PI, LST::Math::DOUBLE_PI),
+                                      LST::Math::random_number_float(-LST::Math::DOUBLE_PI, LST::Math::DOUBLE_PI)} );
         }
 
         object->update(0.0f);
         object->update_previous_state();
         m_objects_controller->add_object(object);
     }
+}
 
-    m_camera_controller.update(_dt);
+void Application::M_spawn_controller_debug_control()
+{
 
-    if(update_enabled)
-        m_objects_controller->update(_dt);
+}
 
-    collision_indicator->update(_dt);
+void Application::M_process_force_pause()
+{
+    if(!LR::Window_Controller::instance().key_was_pressed(GLFW_KEY_F1))
+        return;
 
-    m_renderer_helper->update(_dt);
+    bool should_pause = m_dt_multiplier > LST::Math::Float_Precision_Tolerance;
+    M_pause_dt(should_pause);
+}
+
+#endif
+
+
+
+void Application::M_pause_dt(bool _pause)
+{
+    if(_pause)
+        m_dt_multiplier = 0.0f;
+    else
+        m_dt_multiplier = 1.0f;
+}
+
+
+void Application::M_update_game()
+{
+    if(LR::Window_Controller::instance().key_was_pressed(GLFW_KEY_ESCAPE))
+    {
+        LR::Window_Controller::instance().set_window_should_close(true);
+    }
+
+#ifdef L_DEBUG
+    M_process_force_pause();
+#endif
+
+    m_objects_controller->update_previous_state();
+
+#ifdef L_DEBUG
+    M_create_entity();
+    M_spawn_controller_debug_control();
+
+#endif
+
+    m_camera_controller.update(m_main_game_dt);
+
+    m_objects_controller->update(m_main_game_dt);
+
+    LR::Window_Controller::instance().clear(true, true);
+    glEnable(GL_DEPTH_TEST);
+    m_renderer_helper->update(m_main_game_dt);
+    glDisable(GL_DEPTH_TEST);
+    LR::Window_Controller::instance().swap_buffers();
 }
 
 
 
 void Application::run()
 {
-    while (!LR::Window_Controller::instance().window_should_close())
+    while (!m_should_terminate && !LR::Window_Controller::instance().window_should_close())
     {
         m_fps_timer.tick();
     }

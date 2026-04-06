@@ -3,7 +3,7 @@
 #include <Data_Structures/Vector.h>
 
 #include <Shader/Shader_Components/Shader_Component.h>
-#include <Camera/Camera_2D.h>
+#include <Camera/Camera_3D.h>
 
 
 namespace Shardis
@@ -15,7 +15,7 @@ namespace Shardis
         INIT_VARIABLE(Shardis::Fragment_Shader_Light_Component, LR::Shader_Component)
 
     private:
-        static constexpr unsigned int Max_Light_Sources = 64;
+        static constexpr unsigned int Max_Light_Sources = 256;
 
     public:
         struct Light_Source_Data
@@ -44,7 +44,10 @@ namespace Shardis
         };
 
     private:
-        float m_min_light_ratio = 0.00f;
+        const LR::Camera_3D* m_camera = nullptr;
+
+    private:
+        float m_min_light_ratio = 0.05f;
 
     private:
         using Light_Sources_Container = LDS::List<Light_Source_Data>;
@@ -60,6 +63,7 @@ namespace Shardis
         ~Fragment_Shader_Light_Component();
 
     public:
+        inline void inject_camera(const LR::Camera_3D* _ptr) { m_camera = _ptr; }
         inline void set_min_light_ratio(float _value) { m_min_light_ratio = _value; }
 
         inline float min_light_ratio() const { return m_min_light_ratio; }
@@ -87,7 +91,14 @@ namespace Shardis
         INIT_VARIABLE(Shardis::Fragment_Shader_Light_Component_Stub, LR::Shader_Component_Stub)
 
     public:
+        const LR::Camera_3D* camera = nullptr;
+
+    public:
         INIT_BUILDER_STUB(Fragment_Shader_Light_Component)
+
+        INIT_BUILDER_STUB_SETTERS
+        ADD_BUILDER_STUB_SETTER(inject_camera, camera)
+        BUILDER_STUB_SETTERS_END
 
     };
 

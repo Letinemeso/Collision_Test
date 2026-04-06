@@ -1,0 +1,28 @@
+<<<Idle/Animation>>>
+<<<Crawl/Animation>>>
+<<<Jump/Animation>>>
+<<<Attack/Animation>>>
+<<<Stagger/Animation>>>
+
+||Topaz_Crawler_Model||
+\
+    |type|
+    \
+        "LMD::Model_Stub"
+    /
+    |file_path|
+    \
+        "../Resources/Resources/Models/Topaz_Crawler/Topaz_Crawler.obj"
+    /
+/
+||Topaz_Crawler_Hull_Model||
+\
+    |type|
+    \
+        "LMD::Model_Stub"
+    /
+    |file_path|
+    \
+        "../Resources/Resources/Models/Topaz_Crawler/Topaz_Crawler_Hull.obj"
+    /
+/

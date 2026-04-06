@@ -1,0 +1,33 @@
+||Clutter_Model__Quartz_Crystal||
+\
+    |type|
+    \
+        "LMD::Model_Stub"
+    /
+    |file_path|
+    \
+        "../Resources/Resources/Models/Clutter/Quatz_Crystal.obj"
+    /
+/
+||Clutter_Model__Almandine_Crystal||
+\
+    |type|
+    \
+        "LMD::Model_Stub"
+    /
+    |file_path|
+    \
+        "../Resources/Resources/Models/Clutter/Almandine_Crystal.obj"
+    /
+/
+||Clutter_Model__Sodalite_Crystal||
+\
+    |type|
+    \
+        "LMD::Model_Stub"
+    /
+    |file_path|
+    \
+        "../Resources/Resources/Models/Clutter/Sodalite_Crystal.obj"
+    /
+/

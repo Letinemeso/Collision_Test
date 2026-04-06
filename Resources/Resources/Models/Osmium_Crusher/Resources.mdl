@@ -1,0 +1,58 @@
+||Osmium_Crusher_Model__Core||
+\
+    |type|
+    \
+        "LMD::Model_Stub"
+    /
+    |file_path|
+    \
+        "../Resources/Resources/Models/Osmium_Crusher/Core.obj"
+    /
+/
+||Osmium_Crusher_Model__Damageable_Area||
+\
+    |type|
+    \
+        "LMD::Model_Stub"
+    /
+    |file_path|
+    \
+        "../Resources/Resources/Models/Osmium_Crusher/Damageable_Area.obj"
+    /
+/
+||Osmium_Crusher_Model__Leg||
+\
+    |type|
+    \
+        "LMD::Model_Stub"
+    /
+    |file_path|
+    \
+        "../Resources/Resources/Models/Osmium_Crusher/Leg.obj"
+    /
+/
+||Osmium_Crusher_Model__Hull||
+\
+    |type|
+    \
+        "LMD::Model_Stub"
+    /
+    |file_path|
+    \
+        "../Resources/Resources/Models/Osmium_Crusher/Hull.obj"
+    /
+/
+||Osmium_Crusher_Model__Rigid_Body_Hull||
+\
+    |type|
+    \
+        "LMD::Model_Stub"
+    /
+    |file_path|
+    \
+        "../Resources/Resources/Models/Osmium_Crusher/Rigid_Body_Hull.obj"
+    /
+/
+
+<<<Core_Animations/Animation__Open>>>
+<<<Core_Animations/Animation__Close>>>

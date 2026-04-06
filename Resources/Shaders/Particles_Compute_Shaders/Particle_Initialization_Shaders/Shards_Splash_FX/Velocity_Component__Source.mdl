@@ -11,20 +11,19 @@ uint current_velocity_buffer_offset_index()
 }
 
 
-float max_velocity = 3.0f;
+uniform vec3 min_velocity;
+uniform vec3 max_velocity;
 
 vec3 calculate_particle_velocity()
 {
     vec3 result = vec3(0.0f, 0.0f, 0.0f);
 
     uint seed = random_number();
-    result.x = limit_random_number_float(seed, -max_velocity, max_velocity);
-
-    seed = next_random_number(seed);
-    result.y += limit_random_number_float(seed, max_velocity * 0.35f, max_velocity);
-
-    seed = next_random_number(seed);
-    result.z += limit_random_number_float(seed, -max_velocity, max_velocity);
+    for(uint i = 0; i < 3; ++i)
+    {
+        result[i] = limit_random_number_float(seed, min_velocity[i], max_velocity[i]);
+        seed = next_random_number(seed);
+    }
 
     return result;
 }

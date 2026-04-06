@@ -1,0 +1,17 @@
+||Shader_Component__glow||
+\
+    |type|
+    \
+        "LR::Shader_Component_Stub"
+    /
+
+    |source|
+    \
+        <<<Fragment_Shader__Glow_Component__Source>>>
+    /
+
+    |main_function_name|
+    \
+        "process_glow();"
+    /
+/

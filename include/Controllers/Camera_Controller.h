@@ -2,7 +2,7 @@
 
 #include <Stuff/Function_Wrapper.h>
 
-#include <Camera/Camera_3D.h>
+#include <Graphics/Camera.h>
 
 
 namespace Shardis
@@ -11,13 +11,13 @@ namespace Shardis
     class Camera_Controller
     {
     private:
-        LR::Camera_3D* m_camera = nullptr;
+        Camera* m_camera = nullptr;
 
         LST::Function<const glm::vec3&()> m_position_getter_func;
         bool m_follow_mode = false;
 
     public:
-        inline void inject_camera(LR::Camera_3D* _ptr) { m_camera = _ptr; }
+        inline void inject_camera(Camera* _ptr) { m_camera = _ptr; }
 
         inline void set_position_getter_func(const LST::Function<const glm::vec3&()>& _value) { m_position_getter_func = _value; }
 

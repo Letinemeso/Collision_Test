@@ -1,0 +1,17 @@
+||Shader_Component__brightness||
+\
+    |type|
+    \
+        "LR::Shader_Component_Stub"
+    /
+
+    |source|
+    \
+        <<<Fragment_Shader__Brightness_Component__Source>>>
+    /
+
+    |main_function_name|
+    \
+        "process_brightness();"
+    /
+/

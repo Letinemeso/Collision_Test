@@ -1,0 +1,210 @@
+||Crystal_Ambience||
+\
+    |type|
+    \
+        "LSound::Sound_Data_Stub"
+    /
+    |sound_file_path|
+    \
+        "../Resources/Resources/Sounds/Crystal_Ambience.wav"
+    /
+/
+||Crystal_Break||
+\
+    |type|
+    \
+        "LSound::Sound_Data_Stub"
+    /
+    |sound_file_path|
+    \
+        "../Resources/Resources/Sounds/Crystal_Break.wav"
+    /
+/
+||Crystal_Damaged||
+\
+    |type|
+    \
+        "LSound::Sound_Data_Stub"
+    /
+    |sound_file_path|
+    \
+        "../Resources/Resources/Sounds/Crystal_Damaged.wav"
+    /
+/
+||Crystal_Step||
+\
+    |type|
+    \
+        "LSound::Sound_Data_Stub"
+    /
+    |sound_file_path|
+    \
+        "../Resources/Resources/Sounds/Crystal_Step.wav"
+    /
+/
+||Swing||
+\
+    |type|
+    \
+        "LSound::Sound_Data_Stub"
+    /
+    |sound_file_path|
+    \
+        "../Resources/Resources/Sounds/Swing.wav"
+    /
+/
+||Swing_Lower||
+\
+    |type|
+    \
+        "LSound::Sound_Data_Stub"
+    /
+    |sound_file_path|
+    \
+        "../Resources/Resources/Sounds/Swing_Lower.wav"
+    /
+/
+||Swing_Higher||
+\
+    |type|
+    \
+        "LSound::Sound_Data_Stub"
+    /
+    |sound_file_path|
+    \
+        "../Resources/Resources/Sounds/Swing_Higher.wav"
+    /
+/
+||Crystal_Whoosh||
+\
+    |type|
+    \
+        "LSound::Sound_Data_Stub"
+    /
+    |sound_file_path|
+    \
+        "../Resources/Resources/Sounds/Crystal_Whoosh.wav"
+    /
+/
+||Crystal_Whoosh_Quieter||
+\
+    |type|
+    \
+        "LSound::Sound_Data_Stub"
+    /
+    |sound_file_path|
+    \
+        "../Resources/Resources/Sounds/Crystal_Whoosh_Quieter.wav"
+    /
+/
+||Crystal_Whoosh_Higher||
+\
+    |type|
+    \
+        "LSound::Sound_Data_Stub"
+    /
+    |sound_file_path|
+    \
+        "../Resources/Resources/Sounds/Crystal_Whoosh_Higher.wav"
+    /
+/
+||Crystal_Hits_Ground||
+\
+    |type|
+    \
+        "LSound::Sound_Data_Stub"
+    /
+    |sound_file_path|
+    \
+        "../Resources/Resources/Sounds/Crystal_Hits_Ground.wav"
+    /
+/
+||Stoney_Step||
+\
+    |type|
+    \
+        "LSound::Sound_Data_Stub"
+    /
+    |sound_file_path|
+    \
+        "../Resources/Resources/Sounds/Stoney_Step.wav"
+    /
+/
+
+||Crawler_Attack||
+\
+    |type|
+    \
+        "LSound::Sound_Data_Stub"
+    /
+    |sound_file_path|
+    \
+        "../Resources/Resources/Sounds/Crawler_Attack.wav"
+    /
+/
+||Crawler_Break||
+\
+    |type|
+    \
+        "LSound::Sound_Data_Stub"
+    /
+    |sound_file_path|
+    \
+        "../Resources/Resources/Sounds/Crawler_Break.wav"
+    /
+/
+||Crawler_Leap||
+\
+    |type|
+    \
+        "LSound::Sound_Data_Stub"
+    /
+    |sound_file_path|
+    \
+        "../Resources/Resources/Sounds/Crawler_Leap.wav"
+    /
+/
+||Glass_Break||
+\
+    |type|
+    \
+        "LSound::Sound_Data_Stub"
+    /
+    |sound_file_path|
+    \
+        "../Resources/Resources/Sounds/Glass_Break.wav"
+    /
+/
+||Metal_Screak||
+\
+    |type|
+    \
+        "LSound::Sound_Data_Stub"
+    /
+    |sound_file_path|
+    \
+        "../Resources/Resources/Sounds/Metal_Screak.wav"
+    /
+/
+||Scratching_Noise||
+\
+    |type|
+    \
+        "LSound::Sound_Data_Stub"
+    /
+    |sound_file_path|
+    \
+        "../Resources/Resources/Sounds/Scratching_Noise.wav"
+    /
+/
+||Rock_Crumble||
+\
+    |type|
+    \
+        "LSound::Sound_Data_Stub"
+    /
+    |sound_file_path|
+    \
+        "../Resources/Resources/Sounds/Rock_Crumble.wav"
+    /
+/

@@ -1,0 +1,22 @@
+||Shard_Drop__Collider__0||
+\
+    |type|
+    \
+        "LMD::Model_Stub"
+    /
+    |file_path|
+    \
+        "../Resources/Resources/Models/Shard_Drops/Shard_Drop__Collider__0.obj"
+    /
+/
+||Shard_Drop__Visual__0||
+\
+    |type|
+    \
+        "LMD::Model_Stub"
+    /
+    |file_path|
+    \
+        "../Resources/Resources/Models/Shard_Drops/Shard_Drop__Visual__0.obj"
+    /
+/

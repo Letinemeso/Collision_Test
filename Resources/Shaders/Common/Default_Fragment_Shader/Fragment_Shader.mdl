@@ -17,4 +17,5 @@
 
     <<<Fragment_Shader__Texture_Coords_Component>>>
     <<<Fragment_Shader__Process_Additional_Data_Component>>>
+    <<<Fragment_Shader__Glow_Component>>>
 /

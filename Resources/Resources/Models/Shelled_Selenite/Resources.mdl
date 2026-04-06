@@ -1,0 +1,66 @@
+||Selenite_Model||
+\
+    |type|
+    \
+        "LMD::Model_Stub"
+    /
+    |file_path|
+    \
+        "../Resources/Resources/Models/Shelled_Selenite/Selenite.obj"
+    /
+/
+||Selenite_Shell_5-5_Model||
+\
+    |type|
+    \
+        "LMD::Model_Stub"
+    /
+    |file_path|
+    \
+        "../Resources/Resources/Models/Shelled_Selenite/Shell_5-5.obj"
+    /
+/
+||Selenite_Shell_4-5_Model||
+\
+    |type|
+    \
+        "LMD::Model_Stub"
+    /
+    |file_path|
+    \
+        "../Resources/Resources/Models/Shelled_Selenite/Shell_4-5.obj"
+    /
+/
+||Selenite_Shell_3-5_Model||
+\
+    |type|
+    \
+        "LMD::Model_Stub"
+    /
+    |file_path|
+    \
+        "../Resources/Resources/Models/Shelled_Selenite/Shell_3-5.obj"
+    /
+/
+||Selenite_Shell_2-5_Model||
+\
+    |type|
+    \
+        "LMD::Model_Stub"
+    /
+    |file_path|
+    \
+        "../Resources/Resources/Models/Shelled_Selenite/Shell_2-5.obj"
+    /
+/
+||Selenite_Shell_1-5_Model||
+\
+    |type|
+    \
+        "LMD::Model_Stub"
+    /
+    |file_path|
+    \
+        "../Resources/Resources/Models/Shelled_Selenite/Shell_1-5.obj"
+    /
+/

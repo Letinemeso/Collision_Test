@@ -31,7 +31,7 @@
         "../Resources/Resources/Models/Shard.obj"
     /
 /
-||Shard_Big_Model||
+||Triangle_Ass_Model||
 \
     |type|
     \
@@ -39,20 +39,14 @@
     /
     |file_path|
     \
-        "../Resources/Resources/Models/Shard_Big.obj"
-    /
-/
-||Ground_Model||
-\
-    |type|
-    \
-        "LMD::Model_Stub"
-    /
-    |file_path|
-    \
-        "../Resources/Resources/Models/Ground.obj"
+        "../Resources/Resources/Models/Triangle_Ass.obj"
     /
 /
 
 <<<Crystalis/Resources>>>
+<<<Topaz_Crawler/Resources>>>
 <<<First_Person_Animations/Resources>>>
+<<<Shard_Drops/Resources>>>
+<<<Osmium_Crusher/Resources>>>
+<<<Clutter/Resources>>>
+<<<Shelled_Selenite/Resources>>>

@@ -36,3 +36,98 @@
         /
     /
 /
+||Topaz_Texture||
+\
+    |type|
+    \
+        "LR::Texture_Stub__Default"
+    /
+
+    ||picture||
+    \
+        |type|
+        \
+            "LR::Picture_Stub"
+        /
+        |image_file_path|
+        \
+            "../Resources/Resources/Textures/Minerals/Topaz.png"
+        /
+    /
+/
+||Osmium_Texture||
+\
+    |type|
+    \
+        "LR::Texture_Stub__Default"
+    /
+
+    ||picture||
+    \
+        |type|
+        \
+            "LR::Picture_Stub"
+        /
+        |image_file_path|
+        \
+            "../Resources/Resources/Textures/Minerals/Osmium.png"
+        /
+    /
+/
+||Quartz_Texture||
+\
+    |type|
+    \
+        "LR::Texture_Stub__Default"
+    /
+
+    ||picture||
+    \
+        |type|
+        \
+            "LR::Picture_Stub"
+        /
+        |image_file_path|
+        \
+            "../Resources/Resources/Textures/Minerals/Quartz.png"
+        /
+    /
+/
+||Selenite_Texture||
+\
+    |type|
+    \
+        "LR::Texture_Stub__Default"
+    /
+
+    ||picture||
+    \
+        |type|
+        \
+            "LR::Picture_Stub"
+        /
+        |image_file_path|
+        \
+            "../Resources/Resources/Textures/Minerals/Selenite.png"
+        /
+    /
+/
+||Slag_Texture||
+\
+    |type|
+    \
+        "LR::Texture_Stub__Default"
+    /
+
+    ||picture||
+    \
+        |type|
+        \
+            "LR::Picture_Stub"
+        /
+        |image_file_path|
+        \
+            "../Resources/Resources/Textures/Minerals/Slag.png"
+        /
+    /
+/

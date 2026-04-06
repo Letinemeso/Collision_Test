@@ -1,0 +1,55 @@
+||Blue_Crystal_Button||
+\
+    |type|
+    \
+        "LR::Picture_Stub"
+    /
+    |image_file_path|
+    \
+        "../Resources/Resources/Textures/GUI/Menu/Buttons/Blue_Crystal_Button.png"
+    /
+/
+||Red_Crystal_Button||
+\
+    |type|
+    \
+        "LR::Picture_Stub"
+    /
+    |image_file_path|
+    \
+        "../Resources/Resources/Textures/GUI/Menu/Buttons/Red_Crystal_Button.png"
+    /
+/
+||Red_Crystal_Button_Cracked||
+\
+    |type|
+    \
+        "LR::Picture_Stub"
+    /
+    |image_file_path|
+    \
+        "../Resources/Resources/Textures/GUI/Menu/Buttons/Red_Crystal_Button_Cracked.png"
+    /
+/
+||Red_Crystal_Button_Crushed||
+\
+    |type|
+    \
+        "LR::Picture_Stub"
+    /
+    |image_file_path|
+    \
+        "../Resources/Resources/Textures/GUI/Menu/Buttons/Red_Crystal_Button_Crushed.png"
+    /
+/
+||Yellow_Crystal_Button||
+\
+    |type|
+    \
+        "LR::Picture_Stub"
+    /
+    |image_file_path|
+    \
+        "../Resources/Resources/Textures/GUI/Menu/Buttons/Yellow_Crystal_Button.png"
+    /
+/

@@ -1,0 +1,23 @@
+||Physics_Test_Object||
+\
+    |type|
+    \
+        "LEti::Object_Stub"
+    /
+
+    <<<Physics_Module>>>
+    <<<Draw_Module>>>
+
+    ||Module__expiration||
+    \
+        |type|
+        \
+            "LMD::Expiration_Module_Stub"
+        /
+
+        |expiration_time|
+        \
+            "15.0"
+        /
+    /
+/

@@ -1,0 +1,52 @@
+||Topaz_Crawler_Jump||
+\
+    |type|
+    \
+        "LMD::Vertex_Animation_Stub"
+    /
+
+    ||Frame_0||
+    \
+        |type|
+        \
+            "LMD::Model_Stub"
+        /
+        |file_path|
+        \
+            "../Resources/Resources/Models/Topaz_Crawler/Jump/Frame_0.obj"
+        /
+    /
+    ||Frame_1||
+    \
+        |type|
+        \
+            "LMD::Model_Stub"
+        /
+        |file_path|
+        \
+            "../Resources/Resources/Models/Topaz_Crawler/Jump/Frame_1.obj"
+        /
+    /
+    ||Frame_2||
+    \
+        |type|
+        \
+            "LMD::Model_Stub"
+        /
+        |file_path|
+        \
+            "../Resources/Resources/Models/Topaz_Crawler/Jump/Frame_2.obj"
+        /
+    /
+    ||Frame_3||
+    \
+        |type|
+        \
+            "LMD::Model_Stub"
+        /
+        |file_path|
+        \
+            "../Resources/Resources/Models/Topaz_Crawler/Jump/Frame_3.obj"
+        /
+    /
+/

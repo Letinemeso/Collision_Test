@@ -1,0 +1,9 @@
+"
+
+void process_brightness()
+{
+    for(uint i = 0; i < 3; ++i)
+        result_color[i] *= brightness;
+}
+
+"

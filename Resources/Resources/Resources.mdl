@@ -2,11 +2,12 @@
 \
     |type|
     \
-        "LEti::Resources_Manager_Stub"
+        "LV::Variable_Loader_Stub"
     /
 
     <<<Font/Resources>>>
     <<<Textures/Resources>>>
     <<<Models/Resources>>>
+    <<<Sounds/Resources>>>
 
 /

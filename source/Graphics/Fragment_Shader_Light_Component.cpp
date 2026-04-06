@@ -92,11 +92,17 @@ void Fragment_Shader_Light_Component::update(const LR::Draw_Module* _draw_module
 {
     LR::Shader_Component::update(_draw_module);
 
+    const LR::Frustum& frustum = m_camera->frustum();
+
     unsigned int relevant_light_sources = 0;
     for(Light_Sources_Container::Iterator it = m_light_sources.begin(); !it.end_reached() && relevant_light_sources < Max_Light_Sources; ++it)
     {
         const Light_Source_Data& light_source_data = *it;
         if(!light_source_data.initialized() || !light_source_data.enabled)
+            continue;
+        if(light_source_data.max_light_spread_distance <= 0.0f)
+            continue;
+        if(!frustum.intersects_with_sphere(light_source_data.point, light_source_data.max_light_spread_distance))
             continue;
 
         Light_Source_Data_Uniforms& locations = m_light_sources_uniforms[relevant_light_sources];

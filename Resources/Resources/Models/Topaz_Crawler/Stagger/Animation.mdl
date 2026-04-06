@@ -1,0 +1,41 @@
+||Topaz_Crawler_Stagger||
+\
+    |type|
+    \
+        "LMD::Vertex_Animation_Stub"
+    /
+
+    ||Frame_0||
+    \
+        |type|
+        \
+            "LMD::Model_Stub"
+        /
+        |file_path|
+        \
+            "../Resources/Resources/Models/Topaz_Crawler/Stagger/Frame_0.obj"
+        /
+    /
+    ||Frame_1||
+    \
+        |type|
+        \
+            "LMD::Model_Stub"
+        /
+        |file_path|
+        \
+            "../Resources/Resources/Models/Topaz_Crawler/Stagger/Frame_1.obj"
+        /
+    /
+    ||Frame_2||
+    \
+        |type|
+        \
+            "LMD::Model_Stub"
+        /
+        |file_path|
+        \
+            "../Resources/Resources/Models/Topaz_Crawler/Stagger/Frame_2.obj"
+        /
+    /
+/

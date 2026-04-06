@@ -1,6 +1,5 @@
 ||Shader_Component__Full_Screen||
 \
-
     |type|
     \
         "LR::Shader_Component_Stub"
@@ -15,5 +14,4 @@
     \
         "process_transform();"
     /
-
 /

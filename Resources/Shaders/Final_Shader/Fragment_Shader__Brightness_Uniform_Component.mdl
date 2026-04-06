@@ -1,0 +1,17 @@
+||Shader_Component__brightness_uniform||
+\
+    |type|
+    \
+        "LR::Shader_Component_Stub__Uniform__Float"
+    /
+
+    |uniform_name|
+    \
+        "brightness"
+    /
+
+    |default_value|
+    \
+        "1.0"
+    /
+/

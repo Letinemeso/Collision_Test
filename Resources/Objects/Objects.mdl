@@ -6,10 +6,7 @@
     /
 
     <<<Ground/Model>>>
-    #<<<Crystalis/Model>>>#
-    #<<<Player/Model>>>#
-    <<<Model_Test_Entity/Model>>>
-    <<<Collision_Indicator/Model>>>
 
-    <<<Shards_Splash_FX/Model>>>
+    <<<Physics_Test_Object/Model>>>
+    <<<Physics_Test_Object__Pyramid/Model>>>
 /
