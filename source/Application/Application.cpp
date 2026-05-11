@@ -137,11 +137,11 @@ void Application::M_init_objects_controller()
 
         LMD::Collision_Resolution__Rigid_Body_3D* rigid_body_resolution = new LMD::Collision_Resolution__Rigid_Body_3D;
         rigid_body_resolution->set_soft_damping_multiplier(0.9f);
-        rigid_body_resolution->set_soft_damping_min_velocity(0.1f);
+        rigid_body_resolution->set_soft_damping_min_velocity(0.5f);
         rigid_body_resolution->set_soft_damping_min_angular_velocity(0.3f);
         // rigid_body_resolution->set_soft_damping_min_angular_velocity(0.00005f);
-        rigid_body_resolution->set_hard_damping_velocity_threshold(0.03f);
-        rigid_body_resolution->set_hard_damping_angular_velocity_threshold(0.08f);
+        rigid_body_resolution->set_hard_damping_velocity_threshold(0.16f);
+        rigid_body_resolution->set_hard_damping_angular_velocity_threshold(0.16f);
         // rigid_body_resolution->set_hard_damping_angular_velocity_threshold(0.000005f);
         ext_physics_terrain->collision_resolver().add_resolution(rigid_body_resolution);
 
