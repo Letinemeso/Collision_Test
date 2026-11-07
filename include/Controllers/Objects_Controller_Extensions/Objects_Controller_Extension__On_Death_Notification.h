@@ -16,7 +16,7 @@ namespace Shardis
     {
     public:
         void on_object_added(LEti::Object* _object) override { }
-        void on_object_removed(LEti::Object* _object) override;
+        void on_object_removed(LEti::Object* _object, bool _forcefuly) override;
 
         void reset() override { }
         void update(Objects_List& _objects, float _dt) override { }

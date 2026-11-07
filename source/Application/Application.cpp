@@ -116,7 +116,6 @@ void Application::M_init_objects_controller()
         });
 
         LPhys::Binary_Space_Partitioner* bp = new LPhys::Binary_Space_Partitioner;
-        bp->set_precision(2);
         bp->set_max_recursion_level(20);
         bp->add_filter([](const LPhys::Physics_Module* _first, const LPhys::Physics_Module* _second)->bool
         {

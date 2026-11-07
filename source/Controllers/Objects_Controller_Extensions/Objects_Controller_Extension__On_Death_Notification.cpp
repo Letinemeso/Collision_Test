@@ -3,7 +3,7 @@
 using namespace Shardis;
 
 
-void Objects_Controller_Extension__On_Death_Notification::on_object_removed(LEti::Object* _object)
+void Objects_Controller_Extension__On_Death_Notification::on_object_removed(LEti::Object* _object, bool _forcefuly)
 {
     Message__On_Entity_Death msg;
     msg.almost_dead_entity = _object;
