@@ -129,7 +129,7 @@ void Application::M_init_objects_controller()
 
         LPhys::SAT_Models_Intersection_3D* intersection_detector = new LPhys::SAT_Models_Intersection_3D;
         intersection_detector->set_min_polygons_for_optimization(8);
-        intersection_detector->set_plane_contact_priority_ratio(50.0f);
+        intersection_detector->set_plane_contact_priority_ratio(2.0f);
         narrow->set_intersection_detector(intersection_detector);
 
         ext_physics_terrain->collision_detector().set_narrow_phase(narrow);
@@ -294,21 +294,23 @@ void Application::M_create_entity()
 
         LEti::Object* object = LEti::Object_Stub::construct_from(stub);
 
-        object->current_state().set_position( m_ingame_camera.settings().position + ( m_ingame_camera.settings().direction * 10.0f ) );
+        object->current_state().set_position( {1.449767f, -9.00106f, 0.0f} );
 
-        LMD::Physics_Module__Rigid_Body* pm = object->get_module_of_type<LMD::Physics_Module__Rigid_Body>();
-        if(pm)
-        {
-            // pm->set_velocity( m_ingame_camera.settings().direction * 10.0f );
-            // pm->set_angular_velocity( m_ingame_camera.settings().top * 10.0f );
+        // object->current_state().set_position( m_ingame_camera.settings().position + ( m_ingame_camera.settings().direction * 10.0f ) );
 
-            pm->set_velocity( {LST::Math::random_number_float(-2.0f, 2.0f),
-                              LST::Math::random_number_float(-2.0f, 2.0f),
-                              LST::Math::random_number_float(-2.0f, 2.0f)} );
-            pm->set_angular_velocity( {LST::Math::random_number_float(-LST::Math::DOUBLE_PI, LST::Math::DOUBLE_PI),
-                                      LST::Math::random_number_float(-LST::Math::DOUBLE_PI, LST::Math::DOUBLE_PI),
-                                      LST::Math::random_number_float(-LST::Math::DOUBLE_PI, LST::Math::DOUBLE_PI)} );
-        }
+        // LMD::Physics_Module__Rigid_Body* pm = object->get_module_of_type<LMD::Physics_Module__Rigid_Body>();
+        // if(pm)
+        // {
+        //     // pm->set_velocity( m_ingame_camera.settings().direction * 10.0f );
+        //     // pm->set_angular_velocity( m_ingame_camera.settings().top * 10.0f );
+
+        //     pm->set_velocity( {LST::Math::random_number_float(-2.0f, 2.0f),
+        //                       LST::Math::random_number_float(-2.0f, 2.0f),
+        //                       LST::Math::random_number_float(-2.0f, 2.0f)} );
+        //     pm->set_angular_velocity( {LST::Math::random_number_float(-LST::Math::DOUBLE_PI, LST::Math::DOUBLE_PI),
+        //                               LST::Math::random_number_float(-LST::Math::DOUBLE_PI, LST::Math::DOUBLE_PI),
+        //                               LST::Math::random_number_float(-LST::Math::DOUBLE_PI, LST::Math::DOUBLE_PI)} );
+        // }
 
         object->update(0.0f);
         object->update_previous_state();
