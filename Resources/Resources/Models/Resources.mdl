@@ -31,6 +31,17 @@
         "../Resources/Resources/Models/Shard.obj"
     /
 /
+||Arrows_With_Shard_Model||
+\
+    |type|
+    \
+        "LMD::Model_Stub"
+    /
+    |file_path|
+    \
+        "../Resources/Resources/Models/Arrows_With_Shard.obj"
+    /
+/
 ||Triangle_Ass_Model||
 \
     |type|

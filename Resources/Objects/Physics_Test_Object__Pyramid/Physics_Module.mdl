@@ -2,27 +2,7 @@
 \
     |type|
     \
-        "LMD::Physics_Module_Stub__Rigid_Body"
-    /
-
-    |mass|
-    \
-        "100.0"
-    /
-
-    |restitution|
-    \
-        "0.4"
-    /
-
-    |moment_of_inertia_scale|
-    \
-        "0.3"
-    /
-
-    |traction|
-    \
-        "0.4"
+        "LPhys::Physics_Module_Stub__Mesh"
     /
 
     ||data_provider||
